@@ -33,6 +33,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".PresentacionActivity"/>
+        <activity android:name=".EditActivity" />
 
 
     </application>

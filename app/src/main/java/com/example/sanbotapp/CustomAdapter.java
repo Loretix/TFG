@@ -35,7 +35,7 @@ public class CustomAdapter extends ArrayAdapter<String> {
         TextView nameTextView = listItemView.findViewById(R.id.textView_item_name);
         nameTextView.setText(currentItem);
 
-        Button actionButton = listItemView.findViewById(R.id.button_item_action);
+        Button actionButton = listItemView.findViewById(R.id.button_edit);
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
