@@ -7,13 +7,19 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 
 import com.qihancloud.opensdk.base.TopBaseActivity;
 
+import java.util.ArrayList;
+
 
 public class MainActivity extends TopBaseActivity {
-    Button btnPresentacion;
+    private ListView listView;
+    private CustomAdapter adapter;
+    private ArrayList<String> dataList;
 
     @Override
     protected void onMainServiceConnected() {
@@ -28,24 +34,19 @@ public class MainActivity extends TopBaseActivity {
         onMainServiceConnected();
         setContentView(R.layout.activity_main);
 
-        btnPresentacion = findViewById(R.id.btnPresentacion);
+        listView = findViewById(R.id.listView);
+        dataList = new ArrayList<>();
 
-        setonClicks();
+        // Agregar algunos elementos a la lista
+        dataList.add("Presentación mujeres ingenieras");
+        dataList.add("Elemento 2");
+        dataList.add("Elemento 3");
 
-    }
+        // Crear el adaptador personalizado
+        adapter = new CustomAdapter(this, dataList);
 
-    public void setonClicks() {
-
-        btnPresentacion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Crea un Intent para iniciar la actividad Presentacion
-                Intent intent = new Intent(MainActivity.this, PresentacionActivity.class);
-
-                // Inicia la actividad Presentacion
-                startActivity(intent);
-            }
-        });
+        // Establecer el adaptador en la ListView
+        listView.setAdapter(adapter);
 
     }
 

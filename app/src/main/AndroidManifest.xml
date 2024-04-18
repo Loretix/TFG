@@ -32,11 +32,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".HandControl" />
-        <activity android:name=".SpeechControl" />
-        <activity android:name=".FaceRecognitionControl" />
-        <activity android:name=".MediaControlActivity" />
-        <activity android:name=".WheelControlActivity"/>
         <activity android:name=".PresentacionActivity"/>
 
 
