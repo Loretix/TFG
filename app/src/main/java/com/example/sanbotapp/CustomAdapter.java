@@ -1,6 +1,7 @@
 package com.example.sanbotapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -35,11 +36,22 @@ public class CustomAdapter extends ArrayAdapter<String> {
         TextView nameTextView = listItemView.findViewById(R.id.textView_item_name);
         nameTextView.setText(currentItem);
 
-        Button actionButton = listItemView.findViewById(R.id.button_edit);
-        actionButton.setOnClickListener(new View.OnClickListener() {
+        Button editButton = listItemView.findViewById(R.id.button_edit);
+        editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Aquí puedes realizar alguna acción cuando se hace clic en el botón
+                Intent intent = new Intent(mContext, EditActivity.class);
+                mContext.startActivity(intent);
+            }
+        });
+
+        Button playButton = listItemView.findViewById(R.id.button_play);
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Reproducir la presentación juju
+
             }
         });
 

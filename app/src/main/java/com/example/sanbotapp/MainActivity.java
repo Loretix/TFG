@@ -20,7 +20,6 @@ public class MainActivity extends TopBaseActivity {
     private ListView listView;
     private CustomAdapter adapter;
     private ArrayList<String> dataList;
-    private Button buttonEdit;
 
     @Override
     protected void onMainServiceConnected() {
@@ -34,6 +33,7 @@ public class MainActivity extends TopBaseActivity {
         super.onCreate(savedInstanceState);
         onMainServiceConnected();
         setContentView(R.layout.activity_main);
+        setTitle("Presentaciones");
 
         listView = findViewById(R.id.listView);
         dataList = new ArrayList<>();
@@ -48,19 +48,6 @@ public class MainActivity extends TopBaseActivity {
 
         // Establecer el adaptador en la ListView
         listView.setAdapter(adapter);
-
-        // TODO: Agregar un OnClickListener al botón y arreglar esto para que para cada elemento de la lista se pueda editar
-
-        buttonEdit = findViewById(R.id.button_edit);
-
-        buttonEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Define la actividad que quieres iniciar cuando se hace clic en el botón
-                Intent intent = new Intent(MainActivity.this, EditActivity.class);
-                startActivity(intent); // Inicia la actividad
-            }
-        });
 
     }
 
