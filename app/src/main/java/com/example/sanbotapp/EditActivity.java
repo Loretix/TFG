@@ -1,7 +1,11 @@
 package com.example.sanbotapp;
 
 
+import android.annotation.SuppressLint;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,9 +16,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.qihancloud.opensdk.base.TopBaseActivity;
+import com.qihancloud.opensdk.beans.FuncConstant;
+import com.qihancloud.opensdk.function.beans.SpeakOption;
+import com.qihancloud.opensdk.function.unit.SpeechManager;
 
 import java.util.ArrayList;
 
@@ -22,10 +32,13 @@ import java.util.ArrayList;
 public class EditActivity extends TopBaseActivity {
 
     private EditText editTextTitle;
-
     private Spinner spinnerOptions;
+    private Button buttonSave, buttonAdd;
+    private ArrayList<DataModel> dataList;
+    private TextView textViewOptions;
+    private LinearLayout layoutTextView;
 
-    private Button buttonSave;
+    private SpeechManager speechManager;
 
     @Override
     protected void onMainServiceConnected() {
@@ -41,12 +54,18 @@ public class EditActivity extends TopBaseActivity {
         setContentView(R.layout.activity_edit);
         setTitle("Configuración");
 
+        speechManager = (SpeechManager) getUnitManager(FuncConstant.SPEECH_MANAGER);
+
         // Obtener referencias a los elementos de UI
         editTextTitle = findViewById(R.id.editTextTitle);
         spinnerOptions = findViewById(R.id.spinnerOptions);
         buttonSave = findViewById(R.id.button_save);
+        buttonAdd = findViewById(R.id.buttonAdd);
+        layoutTextView = findViewById(R.id.layoutTextView);
         LinearLayout layoutEditText = findViewById(R.id.layoutEditText);
         EditText editTextOption = findViewById(R.id.editTextOption);
+
+        dataList = new ArrayList<>();
 
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -76,7 +95,132 @@ public class EditActivity extends TopBaseActivity {
             }
         });
 
+        buttonAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Obtener el texto y la opción del EditText y el Spinner
+                String text = editTextOption.getText().toString().trim();
+                String spinnerOption = spinnerOptions.getSelectedItem().toString();
+
+                // Verificar si el texto y la opción no están vacíos
+                if (!TextUtils.isEmpty(text)) {
+                    // Crear un nuevo objeto DataModel y agregarlo a la lista
+                    DataModel dataModel = new DataModel(text, spinnerOption);
+                    dataList.add(dataModel);
+
+                    // Actualizar el TextView para mostrar la información
+                    actualizarInterfaz();
+                } else {
+                    // Mostrar un mensaje de error si el texto está vacío
+                    Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
+
+   /*
+
+   FUNCION VIEJA SIN BOTON ACCION
+
+    private void actualizarInterfaz() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (DataModel data : dataList) {
+            stringBuilder.append("Spinner Option: ").append(data.getSpinnerOption()).append("\n");
+            stringBuilder.append("Text: ").append(data.getText()).append("\n\n");
+        }
+        textViewOptions.setText(stringBuilder.toString());
+    }*/
+
+    @SuppressLint("SetTextI18n")
+
+    private void actualizarInterfaz() {
+        // Obtener el último elemento agregado
+        DataModel ultimoElemento = dataList.get(dataList.size() - 1);
+
+        // Crear un nuevo LinearLayout para cada par de TextView y Button
+        LinearLayout nuevoLinearLayout = new LinearLayout(this);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+
+// Agregar márgenes en la parte inferior
+        params.bottomMargin = 20;
+        nuevoLinearLayout.setLayoutParams(params);
+
+// Agregar color de fondo;
+        nuevoLinearLayout.setBackground(getResources().getDrawable(R.drawable.action_shape));
+
+// Crear un nuevo TextView para mostrar el texto del último elemento
+        TextView nuevoTextView = new TextView(this);
+        nuevoTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                0,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                1
+        ));
+        nuevoTextView.setText("Spinner Option: " + ultimoElemento.getSpinnerOption() + "\n"
+                + "Text: " + ultimoElemento.getText() + "\n\n");
+
+// Crear un nuevo botón para acciones relacionadas con el nuevo texto
+        Button nuevoBoton = new Button(this);
+        nuevoBoton.setText("Acción");
+        nuevoBoton.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+
+        Button eliminarBoton = new Button(this);
+        eliminarBoton.setText("Eliminar");
+        eliminarBoton.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+
+// Crear un nuevo LinearLayout para contener el TextView y el botón
+        LinearLayout contenidoLayout = new LinearLayout(this);
+        contenidoLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        contenidoLayout.setOrientation(LinearLayout.HORIZONTAL);
+        contenidoLayout.setGravity(Gravity.CENTER_VERTICAL);
+
+// Agregar el TextView y el botón al LinearLayout de contenido
+        contenidoLayout.addView(nuevoTextView);
+        contenidoLayout.addView(nuevoBoton);
+        contenidoLayout.addView(eliminarBoton);
+
+// Agregar el LinearLayout de contenido al nuevo LinearLayout principal
+        nuevoLinearLayout.addView(contenidoLayout);
+
+// Agregar el nuevo LinearLayout al layout principal
+        layoutTextView.addView(nuevoLinearLayout);
+
+        // Establecer un OnClickListener para el botón
+        nuevoBoton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(EditActivity.this, ultimoElemento.getText() , Toast.LENGTH_SHORT).show();
+                //SPEECH, velocidad y tono del dialogo
+                SpeakOption speakOption = new SpeakOption();
+                speakOption.setSpeed(60);
+                speakOption.setIntonation(50);
+
+                speechManager.startSpeak(ultimoElemento.getText(), speakOption);
+            }
+        });
+
+        eliminarBoton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dataList.remove(ultimoElemento);
+                layoutTextView.removeView(nuevoLinearLayout);
+            }
+        });
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

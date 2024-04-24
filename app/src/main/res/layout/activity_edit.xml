@@ -8,6 +8,7 @@
     tools:context=".EditActivity"
     tools:ignore="MissingClass">
 
+
     <EditText
         android:id="@+id/editTextTitle"
         android:layout_width="0dp"
@@ -21,6 +22,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Spinner
+        android:id="@+id/spinnerOptions"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextTitle" />
+
     <LinearLayout
         android:id="@+id/layoutEditText"
         android:layout_width="0dp"
@@ -32,7 +44,7 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextTitle">
+        app:layout_constraintTop_toBottomOf="@id/spinnerOptions">
 
         <EditText
             android:id="@+id/editTextOption"
@@ -49,16 +61,25 @@
             android:text="Añadir"/>
     </LinearLayout>
 
-    <Spinner
-        android:id="@+id/spinnerOptions"
+    <ScrollView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/layoutEditText"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutEditText" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/button_save">
+
+        <LinearLayout
+            android:id="@+id/layoutTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"/>
+
+    </ScrollView>
+
 
 
     <Button
