@@ -1,5 +1,6 @@
 package com.example.sanbotapp;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,9 +71,9 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.DataViewHolder
             buttonDelete = itemView.findViewById(R.id.button_delete_RV);
         }
 
+        @SuppressLint("SetTextI18n")
         public void bindData(DataModel data) {
-            textView.setText("Spinner Option: " + data.getSpinnerOption() + "\n"
-                    + "Text: " + data.getText() + "\n\n");
+            textView.setText(data.getSpinnerOption() + ": " + data.getText() );
             buttonAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
