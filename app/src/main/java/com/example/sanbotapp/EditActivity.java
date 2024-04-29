@@ -43,6 +43,8 @@ public class EditActivity extends TopBaseActivity {
     private SpeechManager speechManager;
 
     private RecyclerView recyclerView;
+    private DataAdapter adapterV;
+
 
     @Override
     protected void onMainServiceConnected() {
@@ -65,19 +67,31 @@ public class EditActivity extends TopBaseActivity {
         spinnerOptions = findViewById(R.id.spinnerOptions);
         buttonSave = findViewById(R.id.button_save);
         buttonAdd = findViewById(R.id.buttonAdd);
+        recyclerView = findViewById(R.id.recycler_view);
+
         //layoutTextView = findViewById(R.id.layoutTextView);
         LinearLayout layoutEditText = findViewById(R.id.layoutEditText);
         EditText editTextOption = findViewById(R.id.editTextOption);
 
-        dataList = new ArrayList<>();
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.options, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerOptions.setAdapter(adapter);
 
-        recyclerView = findViewById(R.id.recycler_view);
+        // Crear un ArrayList para contener los datos
+        dataList = new ArrayList<>();
+
+        // Crear un nuevo adaptador y establecerlo en el RecyclerView
+        adapterV = new DataAdapter(dataList, this);
+        recyclerView.setAdapter(adapterV);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Configura el ItemTouchHelper
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapterV);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        adapterV.setItemTouchHelper(itemTouchHelper);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
 
         spinnerOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -113,14 +127,15 @@ public class EditActivity extends TopBaseActivity {
                     DataModel dataModel = new DataModel(text, spinnerOption);
                     dataList.add(dataModel);
 
-                    // Actualizar el TextView para mostrar la información
-                    actualizarInterfaz();
+                    // Limpiar el EditText después de agregar el elemento
+                    editTextOption.setText("");
                 } else {
                     // Mostrar un mensaje de error si el texto está vacío
                     Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+
 
     }
 
@@ -223,6 +238,17 @@ public class EditActivity extends TopBaseActivity {
                 layoutTextView.removeView(nuevoLinearLayout);
             }
         });
+    }
+
+    public void speakOperation(String texto, String tipo){
+
+        SpeakOption speakOption = new SpeakOption();
+        if( tipo == "Normal"){
+            speakOption.setSpeed(60);
+            speakOption.setIntonation(50);
+        }
+        speechManager.startSpeak(texto, speakOption);
+
     }
 
 
