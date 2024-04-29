@@ -2,7 +2,6 @@ package com.example.sanbotapp;
 
 
 import android.annotation.SuppressLint;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -15,11 +14,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.qihancloud.opensdk.base.TopBaseActivity;
 import com.qihancloud.opensdk.beans.FuncConstant;
@@ -39,6 +41,8 @@ public class EditActivity extends TopBaseActivity {
     private LinearLayout layoutTextView;
 
     private SpeechManager speechManager;
+
+    private RecyclerView recyclerView;
 
     @Override
     protected void onMainServiceConnected() {
@@ -61,18 +65,19 @@ public class EditActivity extends TopBaseActivity {
         spinnerOptions = findViewById(R.id.spinnerOptions);
         buttonSave = findViewById(R.id.button_save);
         buttonAdd = findViewById(R.id.buttonAdd);
-        layoutTextView = findViewById(R.id.layoutTextView);
+        //layoutTextView = findViewById(R.id.layoutTextView);
         LinearLayout layoutEditText = findViewById(R.id.layoutEditText);
         EditText editTextOption = findViewById(R.id.editTextOption);
 
         dataList = new ArrayList<>();
-
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.options, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerOptions.setAdapter(adapter);
 
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
         spinnerOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -145,14 +150,14 @@ public class EditActivity extends TopBaseActivity {
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
 
-// Agregar márgenes en la parte inferior
+        // Agregar márgenes en la parte inferior
         params.bottomMargin = 20;
         nuevoLinearLayout.setLayoutParams(params);
 
-// Agregar color de fondo;
+        // Agregar color de fondo;
         nuevoLinearLayout.setBackground(getResources().getDrawable(R.drawable.action_shape));
 
-// Crear un nuevo TextView para mostrar el texto del último elemento
+        // Crear un nuevo TextView para mostrar el texto del último elemento
         TextView nuevoTextView = new TextView(this);
         nuevoTextView.setLayoutParams(new LinearLayout.LayoutParams(
                 0,
@@ -162,7 +167,7 @@ public class EditActivity extends TopBaseActivity {
         nuevoTextView.setText("Spinner Option: " + ultimoElemento.getSpinnerOption() + "\n"
                 + "Text: " + ultimoElemento.getText() + "\n\n");
 
-// Crear un nuevo botón para acciones relacionadas con el nuevo texto
+        // Crear un nuevo botón para acciones relacionadas con el nuevo texto
         Button nuevoBoton = new Button(this);
         nuevoBoton.setText("Acción");
         nuevoBoton.setLayoutParams(new LinearLayout.LayoutParams(
@@ -177,7 +182,7 @@ public class EditActivity extends TopBaseActivity {
                 LinearLayout.LayoutParams.WRAP_CONTENT
         ));
 
-// Crear un nuevo LinearLayout para contener el TextView y el botón
+        // Crear un nuevo LinearLayout para contener el TextView y el botón
         LinearLayout contenidoLayout = new LinearLayout(this);
         contenidoLayout.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -186,15 +191,15 @@ public class EditActivity extends TopBaseActivity {
         contenidoLayout.setOrientation(LinearLayout.HORIZONTAL);
         contenidoLayout.setGravity(Gravity.CENTER_VERTICAL);
 
-// Agregar el TextView y el botón al LinearLayout de contenido
+        // Agregar el TextView y el botón al LinearLayout de contenido
         contenidoLayout.addView(nuevoTextView);
         contenidoLayout.addView(nuevoBoton);
         contenidoLayout.addView(eliminarBoton);
 
-// Agregar el LinearLayout de contenido al nuevo LinearLayout principal
+        // Agregar el LinearLayout de contenido al nuevo LinearLayout principal
         nuevoLinearLayout.addView(contenidoLayout);
 
-// Agregar el nuevo LinearLayout al layout principal
+        // Agregar el nuevo LinearLayout al layout principal
         layoutTextView.addView(nuevoLinearLayout);
 
         // Establecer un OnClickListener para el botón
@@ -219,7 +224,6 @@ public class EditActivity extends TopBaseActivity {
             }
         });
     }
-
 
 
     @Override
