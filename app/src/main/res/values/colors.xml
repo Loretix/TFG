@@ -7,4 +7,6 @@
     <color name="colorLightPurple">#DAD2E4</color>
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="colorRed">#972D2D</color>
+    <color name="colorGreen">#2D972D</color>
 </resources>

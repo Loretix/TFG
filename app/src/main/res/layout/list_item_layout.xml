@@ -19,25 +19,29 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textSize="18sp"
-        android:textColor="@color/colorBlack"
-        />
+        android:textColor="@color/colorPurple"
+        android:gravity="center_vertical" />
 
-        <!-- Botón de "editar" -->
-        <Button
-            android:id="@+id/button_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="✏️"
-            />
-
-        <!-- Botón de "play" -->
-        <Button
+        <ImageButton
             android:id="@+id/button_play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="▶️"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/play" />
 
-            />
+        <ImageButton
+            android:id="@+id/button_edit"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/editar" />
+
+        <ImageButton
+            android:id="@+id/button_delete"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/delete" />
 
     </LinearLayout>
 

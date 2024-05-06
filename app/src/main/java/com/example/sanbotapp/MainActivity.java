@@ -3,6 +3,7 @@ package com.example.sanbotapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,6 +11,9 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 
 import com.qihancloud.opensdk.base.TopBaseActivity;
 
@@ -33,7 +37,8 @@ public class MainActivity extends TopBaseActivity {
         super.onCreate(savedInstanceState);
         onMainServiceConnected();
         setContentView(R.layout.activity_main);
-        setTitle("Presentaciones");
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.custom_action_bar_title);
 
         listView = findViewById(R.id.listView);
         dataList = new ArrayList<>();
