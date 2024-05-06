@@ -46,7 +46,7 @@ public class CustomAdapter extends ArrayAdapter<String> {
             @Override
             public void onClick(View v) {
                 // Aquí puedes realizar alguna acción cuando se hace clic en el botón
-                Intent intent = new Intent(mContext, EditActivity.class);
+                Intent intent = new Intent(mContext, ModificarActivity.class);
                 mContext.startActivity(intent);
             }
         });

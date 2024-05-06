@@ -3,6 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:padding="16dp"
     android:orientation="vertical">
 
     <!-- Imagen de advertencia -->
@@ -30,10 +31,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="Esta acción es irreversible."
+        android:text="Esta acción es irreversible"
         android:textColor="@color/colorPurple"
-        android:textSize="10sp"
-        android:layout_marginBottom="10dp"/>
+        android:textSize="15sp"
+        android:layout_marginBottom="8dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"

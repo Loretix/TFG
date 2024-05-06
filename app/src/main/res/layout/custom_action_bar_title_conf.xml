@@ -8,16 +8,16 @@
     <ImageView
         android:layout_width="30dp"
         android:layout_height="wrap_content"
-        android:src="@drawable/board"
+        android:src="@drawable/configuracion"
         android:layout_gravity="center_vertical" />
 
     <TextView
         android:id="@+id/action_bar_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
         android:layout_marginLeft="5dp"
-        android:text="Presentaciones"
+        android:textStyle="bold"
+        android:text="Configuración"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         android:layout_gravity="center_vertical" />
