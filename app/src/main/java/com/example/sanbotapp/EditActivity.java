@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -58,12 +59,13 @@ public class EditActivity extends TopBaseActivity {
         super.onCreate(savedInstanceState);
         onMainServiceConnected();
         setContentView(R.layout.activity_edit);
-        setTitle("Configuración");
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.custom_action_bar_title_conf);
 
         speechManager = (SpeechManager) getUnitManager(FuncConstant.SPEECH_MANAGER);
 
         // Obtener referencias a los elementos de UI
-        editTextTitle = findViewById(R.id.editTextTitle);
+        editTextTitle = findViewById(R.id.editTextTitleBloque);
         spinnerOptions = findViewById(R.id.spinnerOptions);
         buttonSave = findViewById(R.id.button_save);
         buttonAdd = findViewById(R.id.buttonAdd);

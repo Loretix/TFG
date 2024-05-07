@@ -27,6 +27,7 @@
         android:layout_height="wrap_content"
         android:textColor="@android:color/white"
         android:background="@drawable/button_rounded"
+        android:textSize="18sp"
         android:textAllCaps="false"
         android:text="Nueva Presentación"
         android:padding="5dp"
