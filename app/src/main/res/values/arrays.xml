@@ -2,7 +2,13 @@
 <resources>
     <string-array name="options">
         <item>Selecciona la opción que desees</item>
-        <item>Discurso</item>
-        <item>Option 3</item>
+        <item>Síntesis de voz</item>
+        <item>Movimiento de brazos</item>
+        <item>Movimiento de cabeza</item>
+        <item>Movimiento de ruedas</item>
+        <item>Encender LEDs</item>
+        <item>Cambio de expresión facial</item>
+        <item>Insertar imagen</item>
+        <item>Insertar vídeo</item>
     </string-array>
 </resources>

@@ -96,15 +96,36 @@ public class EditActivity extends TopBaseActivity {
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
 
+        // TODO: Agregar más opciones si es necesario
+
         spinnerOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedItem = parent.getItemAtPosition(position).toString();
-                if (selectedItem.equals("Discurso")) {
+                if (selectedItem.equals("Síntesis de voz")) {
                     layoutEditText.setVisibility(View.VISIBLE);
                     editTextOption.setHint("Introduce el discurso");
-                } else if (selectedItem.equals("Otra opción")) {
-                    // Aquí puedes manejar otras opciones y mostrar diferentes elementos si es necesario
+                } else if (selectedItem.equals("Movimiento de brazos")) {
+                    layoutEditText.setVisibility(View.GONE);
+
+                } else if (selectedItem.equals("Movimiento de cabeza")) {
+                    layoutEditText.setVisibility(View.GONE);
+
+                } else if (selectedItem.equals("Movimiento de ruedas")) {
+                    layoutEditText.setVisibility(View.GONE);
+
+                } else if (selectedItem.equals("Encender LEDs")) {
+                    layoutEditText.setVisibility(View.GONE);
+
+                } else if (selectedItem.equals("Cambio de expresión facial")) {
+                    layoutEditText.setVisibility(View.GONE);
+
+                } else if (selectedItem.equals("Insertar imagen")) {
+                    layoutEditText.setVisibility(View.GONE);
+
+                } else if (selectedItem.equals("Insertar vídeo")) {
+                    layoutEditText.setVisibility(View.GONE);
+
                 } else {
                     layoutEditText.setVisibility(View.GONE);
                 }
@@ -141,106 +162,6 @@ public class EditActivity extends TopBaseActivity {
 
     }
 
-   /*
-
-   FUNCION VIEJA SIN BOTON ACCION
-
-    private void actualizarInterfaz() {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (DataModel data : dataList) {
-            stringBuilder.append("Spinner Option: ").append(data.getSpinnerOption()).append("\n");
-            stringBuilder.append("Text: ").append(data.getText()).append("\n\n");
-        }
-        textViewOptions.setText(stringBuilder.toString());
-    }*/
-
-    @SuppressLint("SetTextI18n")
-
-    private void actualizarInterfaz() {
-        // Obtener el último elemento agregado
-        DataModel ultimoElemento = dataList.get(dataList.size() - 1);
-
-        // Crear un nuevo LinearLayout para cada par de TextView y Button
-        LinearLayout nuevoLinearLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-
-        // Agregar márgenes en la parte inferior
-        params.bottomMargin = 20;
-        nuevoLinearLayout.setLayoutParams(params);
-
-        // Agregar color de fondo;
-        nuevoLinearLayout.setBackground(getResources().getDrawable(R.drawable.action_shape));
-
-        // Crear un nuevo TextView para mostrar el texto del último elemento
-        TextView nuevoTextView = new TextView(this);
-        nuevoTextView.setLayoutParams(new LinearLayout.LayoutParams(
-                0,
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                1
-        ));
-        nuevoTextView.setText("Spinner Option: " + ultimoElemento.getSpinnerOption() + "\n"
-                + "Text: " + ultimoElemento.getText() + "\n\n");
-
-        // Crear un nuevo botón para acciones relacionadas con el nuevo texto
-        Button nuevoBoton = new Button(this);
-        nuevoBoton.setText("Acción");
-        nuevoBoton.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-
-        Button eliminarBoton = new Button(this);
-        eliminarBoton.setText("Eliminar");
-        eliminarBoton.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-
-        // Crear un nuevo LinearLayout para contener el TextView y el botón
-        LinearLayout contenidoLayout = new LinearLayout(this);
-        contenidoLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
-        contenidoLayout.setOrientation(LinearLayout.HORIZONTAL);
-        contenidoLayout.setGravity(Gravity.CENTER_VERTICAL);
-
-        // Agregar el TextView y el botón al LinearLayout de contenido
-        contenidoLayout.addView(nuevoTextView);
-        contenidoLayout.addView(nuevoBoton);
-        contenidoLayout.addView(eliminarBoton);
-
-        // Agregar el LinearLayout de contenido al nuevo LinearLayout principal
-        nuevoLinearLayout.addView(contenidoLayout);
-
-        // Agregar el nuevo LinearLayout al layout principal
-        layoutTextView.addView(nuevoLinearLayout);
-
-        // Establecer un OnClickListener para el botón
-        nuevoBoton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(EditActivity.this, ultimoElemento.getText() , Toast.LENGTH_SHORT).show();
-                //SPEECH, velocidad y tono del dialogo
-                SpeakOption speakOption = new SpeakOption();
-                speakOption.setSpeed(60);
-                speakOption.setIntonation(50);
-
-                speechManager.startSpeak(ultimoElemento.getText(), speakOption);
-            }
-        });
-
-        eliminarBoton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dataList.remove(ultimoElemento);
-                layoutTextView.removeView(nuevoLinearLayout);
-            }
-        });
-    }
 
     public void speakOperation(String texto, String tipo){
 

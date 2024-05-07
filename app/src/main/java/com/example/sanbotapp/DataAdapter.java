@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -61,8 +62,8 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.DataViewHolder
     public class DataViewHolder extends RecyclerView.ViewHolder {
 
         private TextView textView;
-        private Button buttonAction;
-        private Button buttonDelete;
+        private ImageButton buttonAction;
+        private ImageButton buttonDelete;
 
         public DataViewHolder(@NonNull View itemView) {
             super(itemView);
