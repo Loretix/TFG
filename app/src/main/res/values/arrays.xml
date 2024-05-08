@@ -11,4 +11,25 @@
         <item>Insertar imagen</item>
         <item>Insertar vídeo</item>
     </string-array>
+    <string-array name="expresionesFaciales">
+        <item>Arrogancia</item>
+        <item>Sorpresa</item>
+        <item>Silbido</item>
+        <item>Enamorado</item>
+        <item>Adiós</item>
+        <item>Tímido</item>
+        <item>Sudor</item>
+        <item>Risa contenida</item>
+        <item>Recoger nariz</item>
+        <item>Llanto</item>
+        <item>Abuso</item>
+        <item>Beso</item>
+        <item>Dormir</item>
+        <item>Sonrisa</item>
+        <item>Queja</item>
+        <item>Pregunta</item>
+        <item>Desmayo</item>
+        <item>Elogio</item>
+        <item>Normal</item>
+    </string-array>
 </resources>

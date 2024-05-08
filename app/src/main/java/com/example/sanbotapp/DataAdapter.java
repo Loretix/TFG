@@ -78,8 +78,28 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.DataViewHolder
             buttonAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Acción del botón
-                    editActivity.speakOperation(data.getText(), "Normal");
+
+                    if (data.getSpinnerOption().equals("Síntesis de voz")) {
+                        editActivity.speakOperation(data.getText(), "Normal");
+
+                    } else if (data.getSpinnerOption().equals("Movimiento de brazos")) {
+
+                    } else if (data.getSpinnerOption().equals("Movimiento de cabeza")) {
+
+                    } else if (data.getSpinnerOption().equals("Movimiento de ruedas")) {
+
+                    } else if (data.getSpinnerOption().equals("Encender LEDs")) {
+
+                    } else if (data.getSpinnerOption().equals("Cambio de expresión facial")) {
+                        editActivity.changeFaceOperation(data.getText());
+
+                    } else if (data.getSpinnerOption().equals("Insertar imagen")) {
+
+                    } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
+
+                    } else {
+                        // No se ha seleccionado ninguna opción
+                    }
                 }
             });
             buttonDelete.setOnClickListener(new View.OnClickListener() {
