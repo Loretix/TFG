@@ -29,6 +29,7 @@ import com.qihancloud.opensdk.base.TopBaseActivity;
 import com.qihancloud.opensdk.beans.FuncConstant;
 import com.qihancloud.opensdk.function.beans.EmotionsType;
 import com.qihancloud.opensdk.function.beans.SpeakOption;
+import com.qihancloud.opensdk.function.unit.HandMotionManager;
 import com.qihancloud.opensdk.function.unit.SpeechManager;
 import com.qihancloud.opensdk.function.unit.SystemManager;
 
@@ -40,16 +41,20 @@ public class EditActivity extends TopBaseActivity {
 
     private EditText editTextTitle;
     private Spinner spinnerOptions;
-    private Button buttonSave, buttonAdd, buttonAddExpresionFacial;
+    private Button buttonSave, buttonAdd, buttonAddExpresionFacial, buttonAddMovBrazos;
+    private Button buttonAddMovCabeza, buttonAddMovRuedas, buttonAddLED;
     private ArrayList<DataModel> dataList;
     private TextView textViewOptions;
     private LinearLayout layoutTextView;
 
     private SpeechManager speechManager;
     private SystemManager systemManager;
+    private HandMotionManager handMotionManager;
 
     private RecyclerView recyclerView;
     private DataAdapter adapterV;
+
+    private FuncionalidadesActivity funcionalidadesActivity;
 
 
     @Override
@@ -69,22 +74,23 @@ public class EditActivity extends TopBaseActivity {
 
         speechManager = (SpeechManager) getUnitManager(FuncConstant.SPEECH_MANAGER);
         systemManager = (SystemManager) getUnitManager(FuncConstant.SYSTEM_MANAGER);
+        handMotionManager = (HandMotionManager) getUnitManager(FuncConstant.HANDMOTION_MANAGER);
 
 
         // Obtener referencias a los elementos de UI
         editTextTitle = findViewById(R.id.editTextTitleBloque);
         spinnerOptions = findViewById(R.id.spinnerOptions);
         buttonSave = findViewById(R.id.button_save);
-        buttonAdd = findViewById(R.id.buttonAdd);
         recyclerView = findViewById(R.id.recycler_view);
 
-        // Expresion facial
+        // Sistesis de voz
+        buttonAdd = findViewById(R.id.buttonAdd);
         LinearLayout layoutEditText = findViewById(R.id.layoutEditText);
         EditText editTextOption = findViewById(R.id.editTextOption);
+
+        // Expresion facial
         LinearLayout layoutExpresionFacial = findViewById(R.id.layoutExpresionfacial);
         buttonAddExpresionFacial = findViewById(R.id.buttonAddExpresionFacial);
-
-
         Spinner spinnerFacial = (Spinner) findViewById(R.id.spinnerOptionsExpresionFacial);
 
         // Create an ArrayAdapter using the string array and a default spinner layout.
@@ -98,9 +104,70 @@ public class EditActivity extends TopBaseActivity {
         // Apply the adapter to the spinner.
         spinnerFacial.setAdapter(adapterFacial);
 
+        // Movimiento de brazos
+        buttonAddMovBrazos = findViewById(R.id.buttonAddMovBrazos);
+        Spinner spinnerMovBrazos = findViewById(R.id.spinnerOptionsMovBrazos);
+        LinearLayout layoutMovBrazos = findViewById(R.id.layoutMovBrazos);
+
+        ArrayAdapter<CharSequence> adapterMovBrazos = ArrayAdapter.createFromResource(
+                this,
+                R.array.movimientoBrazos,
+                android.R.layout.simple_spinner_item
+        );
+        adapterMovBrazos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerMovBrazos.setAdapter(adapterMovBrazos);
+
+        // Movimiento de cabeza
+        buttonAddMovCabeza = findViewById(R.id.buttonAddMovCabeza);
+        Spinner spinnerMovCabeza = findViewById(R.id.spinnerOptionsMovCabeza);
+        LinearLayout layoutMovCabeza = findViewById(R.id.layoutMovCabeza);
+
+        ArrayAdapter<CharSequence> adapterMovCabeza = ArrayAdapter.createFromResource(
+                this,
+                R.array.movimientoCabeza,
+                android.R.layout.simple_spinner_item
+        );
+        adapterMovCabeza.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerMovCabeza.setAdapter(adapterMovCabeza);
+
+        // Movimiento de ruedas
+        buttonAddMovRuedas = findViewById(R.id.buttonAddMovRuedas);
+        EditText editTextMovRuedas = findViewById(R.id.editTextOptionMovRuedas);
+        Spinner spinnerMovRuedas = findViewById(R.id.spinnerOptionsMovRuedas);
+        LinearLayout layoutMovRuedas = findViewById(R.id.layoutMovRuedas);
+
+        ArrayAdapter<CharSequence> adapterMovRuedas = ArrayAdapter.createFromResource(
+                this,
+                R.array.movimientoRuedas,
+                android.R.layout.simple_spinner_item
+        );
+        adapterMovRuedas.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerMovRuedas.setAdapter(adapterMovRuedas);
+
+        // Encender LEDS
+        buttonAddLED = findViewById(R.id.buttonAddLED);
+        Spinner spinnerLED = findViewById(R.id.spinnerOptionsLEDPart);
+        Spinner spinnerLEDColor = findViewById(R.id.spinnerOptionsLEDMode);
+        LinearLayout layoutLED = findViewById(R.id.layoutLED);
+
+        ArrayAdapter<CharSequence> adapterLED = ArrayAdapter.createFromResource(
+                this,
+                R.array.fled_part,
+                android.R.layout.simple_spinner_item
+        );
+        adapterLED.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLED.setAdapter(adapterLED);
+
+        ArrayAdapter<CharSequence> adapterLEDColor = ArrayAdapter.createFromResource(
+                this,
+                R.array.fled_mode,
+                android.R.layout.simple_spinner_item
+        );
+        adapterLEDColor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLEDColor.setAdapter(adapterLEDColor);
 
 
-
+        // Configurar el Spinner Opciones de funcionalidades
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.options, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -110,7 +177,9 @@ public class EditActivity extends TopBaseActivity {
         dataList = new ArrayList<>();
 
         // Crear un nuevo adaptador y establecerlo en el RecyclerView
-        adapterV = new DataAdapter(dataList, this);
+
+        funcionalidadesActivity = new FuncionalidadesActivity(speechManager, systemManager, handMotionManager);
+        adapterV = new DataAdapter(dataList, funcionalidadesActivity);
         recyclerView.setAdapter(adapterV);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -130,39 +199,81 @@ public class EditActivity extends TopBaseActivity {
                 if (selectedItem.equals("Síntesis de voz")) {
                     layoutEditText.setVisibility(View.VISIBLE);
                     layoutExpresionFacial.setVisibility(View.GONE);
+                    layoutMovBrazos.setVisibility(View.GONE);
+                    layoutLED.setVisibility(View.GONE);
+                    layoutMovCabeza.setVisibility(View.GONE);
+                    layoutMovRuedas.setVisibility(View.GONE);
                     editTextOption.setHint("Introduce el discurso");
                 } else if (selectedItem.equals("Movimiento de brazos")) {
                     layoutEditText.setVisibility(View.GONE);
                     layoutExpresionFacial.setVisibility(View.GONE);
+                    layoutMovBrazos.setVisibility(View.VISIBLE);
+                    layoutLED.setVisibility(View.GONE);
+                    layoutMovCabeza.setVisibility(View.GONE);
+                    layoutMovRuedas.setVisibility(View.GONE);
 
                 } else if (selectedItem.equals("Movimiento de cabeza")) {
                     layoutEditText.setVisibility(View.GONE);
                     layoutExpresionFacial.setVisibility(View.GONE);
+                    layoutMovBrazos.setVisibility(View.GONE);
+                    layoutLED.setVisibility(View.GONE);
+                    layoutMovCabeza.setVisibility(View.VISIBLE);
+                    layoutMovRuedas.setVisibility(View.GONE);
+
 
                 } else if (selectedItem.equals("Movimiento de ruedas")) {
                     layoutEditText.setVisibility(View.GONE);
                     layoutExpresionFacial.setVisibility(View.GONE);
+                    layoutMovBrazos.setVisibility(View.GONE);
+                    layoutLED.setVisibility(View.GONE);
+                    layoutMovCabeza.setVisibility(View.GONE);
+                    layoutMovRuedas.setVisibility(View.VISIBLE);
+
 
                 } else if (selectedItem.equals("Encender LEDs")) {
                     layoutEditText.setVisibility(View.GONE);
                     layoutExpresionFacial.setVisibility(View.GONE);
+                    layoutMovBrazos.setVisibility(View.GONE);
+                    layoutLED.setVisibility(View.VISIBLE);
+                    layoutMovCabeza.setVisibility(View.GONE);
+                    layoutMovRuedas.setVisibility(View.GONE);
+
 
                 } else if (selectedItem.equals("Cambio de expresión facial")) {
                     layoutEditText.setVisibility(View.GONE);
+                    layoutMovBrazos.setVisibility(View.GONE);
                     layoutExpresionFacial.setVisibility(View.VISIBLE);
                     spinnerFacial.setEnabled(true);
+                    layoutLED.setVisibility(View.GONE);
+                    layoutMovCabeza.setVisibility(View.GONE);
+                    layoutMovRuedas.setVisibility(View.GONE);
 
                 } else if (selectedItem.equals("Insertar imagen")) {
                     layoutEditText.setVisibility(View.GONE);
                     layoutExpresionFacial.setVisibility(View.GONE);
+                    layoutMovBrazos.setVisibility(View.GONE);
+                    layoutLED.setVisibility(View.GONE);
+                    layoutMovCabeza.setVisibility(View.GONE);
+                    layoutMovRuedas.setVisibility(View.GONE);
+
 
                 } else if (selectedItem.equals("Insertar vídeo")) {
                     layoutEditText.setVisibility(View.GONE);
                     layoutExpresionFacial.setVisibility(View.GONE);
+                    layoutMovBrazos.setVisibility(View.GONE);
+                    layoutLED.setVisibility(View.GONE);
+                    layoutMovCabeza.setVisibility(View.GONE);
+                    layoutMovRuedas.setVisibility(View.GONE);
+
 
                 } else {
                     layoutEditText.setVisibility(View.GONE);
                     layoutExpresionFacial.setVisibility(View.GONE);
+                    layoutMovBrazos.setVisibility(View.GONE);
+                    layoutLED.setVisibility(View.GONE);
+                    layoutMovCabeza.setVisibility(View.GONE);
+                    layoutMovRuedas.setVisibility(View.GONE);
+
                 }
             }
 
@@ -172,17 +283,21 @@ public class EditActivity extends TopBaseActivity {
             }
         });
 
-        spinnerFacial.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-
+        spinnerMovRuedas.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+           @Override
+           public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+               String selectedItem = parent.getItemAtPosition(position).toString();
+               if (selectedItem.equals("Avanzar") || selectedItem.equals("Retroceder")) {
+                   editTextMovRuedas.setVisibility(View.VISIBLE);
+               } else {
+                   editTextMovRuedas.setVisibility(View.GONE);
+               }
+           }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 // No hacer nada si no hay selección
             }
-        });
+       });
 
 
         buttonAdd.setOnClickListener(new View.OnClickListener() {
@@ -226,60 +341,86 @@ public class EditActivity extends TopBaseActivity {
             }
         });
 
-    }
+        buttonAddMovBrazos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Obtener el texto y la opción del EditText y el Spinner
+                String text = spinnerMovBrazos.getSelectedItem().toString();
+                String spinnerOption = spinnerOptions.getSelectedItem().toString();
 
+                // Verificar si el texto y la opción no están vacíos
+                if (!TextUtils.isEmpty(text)) {
+                    // Crear un nuevo objeto DataModel y agregarlo a la lista
+                    DataModel dataModel = new DataModel(text, spinnerOption);
+                    dataList.add(dataModel);
+                } else {
+                    // Mostrar un mensaje de error si el texto está vacío
+                    Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
-    //  FUNCIONALIDADES ROBOT
-    public void speakOperation(String texto, String tipo){
+        buttonAddMovCabeza.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Obtener el texto y la opción del EditText y el Spinner
+                String text = spinnerMovCabeza.getSelectedItem().toString();
+                String spinnerOption = spinnerOptions.getSelectedItem().toString();
 
-        SpeakOption speakOption = new SpeakOption();
-        if( tipo == "Normal"){
-            speakOption.setSpeed(60);
-            speakOption.setIntonation(50);
-        }
-        speechManager.startSpeak(texto, speakOption);
-    }
+                // Verificar si el texto y la opción no están vacíos
+                if (!TextUtils.isEmpty(text)) {
+                    // Crear un nuevo objeto DataModel y agregarlo a la lista
+                    DataModel dataModel = new DataModel(text, spinnerOption);
+                    dataList.add(dataModel);
+                } else {
+                    // Mostrar un mensaje de error si el texto está vacío
+                    Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
-    public void changeFaceOperation( String tipo){
-        if(Objects.equals(tipo, "Arrogancia")){
-            systemManager.showEmotion(EmotionsType.ARROGANCE);
-        } else if (Objects.equals(tipo, "Sorpresa")){
-            systemManager.showEmotion(EmotionsType.SURPRISE);
-        } else if (Objects.equals(tipo, "Silbido")){
-            systemManager.showEmotion(EmotionsType.WHISTLE);
-        } else if (Objects.equals(tipo, "Enamorado")){
-            systemManager.showEmotion(EmotionsType.LAUGHTER);
-        } else if (Objects.equals(tipo, "Adiós")){
-            systemManager.showEmotion(EmotionsType.GOODBYE);
-        } else if (Objects.equals(tipo, "Tímido")){
-            systemManager.showEmotion(EmotionsType.SHY);
-        } else if (Objects.equals(tipo, "Normal")){
-            systemManager.showEmotion(EmotionsType.NORMAL);
-        } else if (Objects.equals(tipo, "Sudor")){
-            systemManager.showEmotion(EmotionsType.SWEAT);
-        } else if (Objects.equals(tipo, "Risa contenida")){
-            systemManager.showEmotion(EmotionsType.SNICKER);
-        } else if (Objects.equals(tipo, "Recoger nariz")){
-            systemManager.showEmotion(EmotionsType.PICKNOSE);
-        } else if (Objects.equals(tipo, "Llanto")){
-            systemManager.showEmotion(EmotionsType.CRY);
-        } else if (Objects.equals(tipo, "Abuso")){
-            systemManager.showEmotion(EmotionsType.ABUSE);
-        } else if (Objects.equals(tipo, "Beso")){
-            systemManager.showEmotion(EmotionsType.KISS);
-        } else if (Objects.equals(tipo, "Dormir")){
-            systemManager.showEmotion(EmotionsType.SLEEP);
-        } else if (Objects.equals(tipo, "Sonrisa")){
-            systemManager.showEmotion(EmotionsType.SMILE);
-        } else if (Objects.equals(tipo, "Queja")){
-            systemManager.showEmotion(EmotionsType.GRIEVANCE);
-        } else if (Objects.equals(tipo, "Pregunta")){
-            systemManager.showEmotion(EmotionsType.QUESTION);
-        } else if (Objects.equals(tipo, "Desmayo")){
-            systemManager.showEmotion(EmotionsType.FAINT);
-        } else if (Objects.equals(tipo, "Elogio")){
-            systemManager.showEmotion(EmotionsType.PRISE);
-        }
+        buttonAddMovRuedas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Obtener el texto y la opción del EditText y el Spinner
+                String text = spinnerMovRuedas.getSelectedItem().toString();
+                String spinnerOption = spinnerOptions.getSelectedItem().toString();
+
+                if (text.equals("Avanzar") || text.equals("Retroceder")) {
+                    text = text + "-" + editTextMovRuedas.getText().toString();
+                }
+
+                // Verificar si el texto y la opción no están vacíos
+                if (!TextUtils.isEmpty(text)) {
+                    // Crear un nuevo objeto DataModel y agregarlo a la lista
+                    DataModel dataModel = new DataModel(text, spinnerOption);
+                    dataList.add(dataModel);
+                } else {
+                    // Mostrar un mensaje de error si el texto está vacío
+                    Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        buttonAddLED.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Gardamos la opción de los dos selectores separada por un guión
+                String text = spinnerLED.getSelectedItem().toString() + "-" + spinnerLEDColor.getSelectedItem().toString();
+                String spinnerOption = spinnerOptions.getSelectedItem().toString();
+
+                // Verificar si el texto y la opción no están vacíos
+                if (!TextUtils.isEmpty(text)) {
+                    // Crear un nuevo objeto DataModel y agregarlo a la lista
+                    DataModel dataModel = new DataModel(text, spinnerOption);
+                    dataList.add(dataModel);
+                } else {
+                    // Mostrar un mensaje de error si el texto está vacío
+                    Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
 
 

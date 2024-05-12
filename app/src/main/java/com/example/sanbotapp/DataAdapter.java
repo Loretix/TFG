@@ -21,7 +21,7 @@ import java.util.Collections;
 public class DataAdapter extends RecyclerView.Adapter<DataAdapter.DataViewHolder> implements ItemTouchHelperAdapter {
 
     private ArrayList<DataModel> dataList;
-    private EditActivity editActivity;
+    private FuncionalidadesActivity funcionalidadesActivity;
     private ItemTouchHelper itemTouchHelper;
 
     public void setItemTouchHelper(ItemTouchHelper itemTouchHelper) {
@@ -36,9 +36,9 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.DataViewHolder
         notifyItemMoved(fromPosition, toPosition);
     }
 
-    public DataAdapter(ArrayList<DataModel> dataList, EditActivity editActivity) {
+    public DataAdapter(ArrayList<DataModel> dataList, FuncionalidadesActivity funcionalidadesActivity) {
         this.dataList = dataList;
-        this.editActivity = editActivity;
+        this.funcionalidadesActivity = funcionalidadesActivity;
     }
 
     @NonNull
@@ -80,18 +80,22 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.DataViewHolder
                 public void onClick(View v) {
 
                     if (data.getSpinnerOption().equals("Síntesis de voz")) {
-                        editActivity.speakOperation(data.getText(), "Normal");
+                        funcionalidadesActivity.speakOperation(data.getText(), "Normal");
 
                     } else if (data.getSpinnerOption().equals("Movimiento de brazos")) {
+                        funcionalidadesActivity.moveBrazosOperation(data.getText());
 
                     } else if (data.getSpinnerOption().equals("Movimiento de cabeza")) {
+                        funcionalidadesActivity.moveCabezaOperation(data.getText());
 
                     } else if (data.getSpinnerOption().equals("Movimiento de ruedas")) {
+                        funcionalidadesActivity.moveRuedasOperation(data.getText());
 
                     } else if (data.getSpinnerOption().equals("Encender LEDs")) {
+                        funcionalidadesActivity.encenderLedsOperation(data.getText());
 
                     } else if (data.getSpinnerOption().equals("Cambio de expresión facial")) {
-                        editActivity.changeFaceOperation(data.getText());
+                        funcionalidadesActivity.changeFaceOperation(data.getText());
 
                     } else if (data.getSpinnerOption().equals("Insertar imagen")) {
 

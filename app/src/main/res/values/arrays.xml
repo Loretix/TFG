@@ -32,4 +32,57 @@
         <item>Elogio</item>
         <item>Normal</item>
     </string-array>
+    <string-array name="movimientoBrazos">
+        <item>Saludo</item>
+        <item>Señalar</item>
+        <item>Tengo una duda</item>
+        <item>¿Me das un abrazo?</item>
+        <item>Arriba las manos policía</item>
+        <item>Hagamos una OLA</item>
+        <item>El limbo</item>
+        <item>El robot</item>
+        <item> Hip, hip, hurra!</item>
+    </string-array>
+    <string-array name="movimientoCabeza">
+        <item>Asentir</item>
+        <item>Negar</item>
+        <item>Mirar a la derecha</item>
+        <item>Mirar a la izquierda</item>
+        <item>Mirar arriba</item>
+        <item>Mirar abajo</item>
+        <item>Lo siento</item>
+        <item>Resignación</item>
+    </string-array>
+    <string-array name="movimientoRuedas">
+        <item>Avanzar</item>
+        <item>Retroceder</item>
+        <item>Girar a la derecha</item>
+        <item>Girar a la izquierda</item>
+        <item>Girar sobre si mismo</item>
+    </string-array>
+    <string-array name="fled_part">
+        <item>Todo</item>
+        <item>Ruedas</item>
+        <item>Brazo izquierdo</item>
+        <item>Brazo derecho</item>
+        <item>Oreja izquierda</item>
+        <item>Oreja derecha</item>
+    </string-array>
+    <string-array name="fled_mode">
+        <item>Blanco</item>
+        <item>Rojo</item>
+        <item>Verde</item>
+        <item>Rosa</item>
+        <item>Morado</item>
+        <item>Azul</item>
+        <item>Amarillo</item>
+        <item>Parpadeo blanco</item>
+        <item>Parpadeo rojo</item>
+        <item>Parpadeo verde</item>
+        <item>Parpadeo rosa</item>
+        <item>Parpadeo morado</item>
+        <item>Parpadeo azul</item>
+        <item>Parpadeo amarillo</item>
+        <item>Parpadeo aleatorio</item>
+    </string-array>
 </resources>

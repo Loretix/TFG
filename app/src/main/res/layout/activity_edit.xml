@@ -118,6 +118,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_margin="16dp"
+            android:visibility="gone"
             android:orientation="horizontal"
             android:textColor="@color/colorPurple"
             android:textSize="18sp">
@@ -133,6 +134,156 @@
 
             <Button
                 android:id="@+id/buttonAddExpresionFacial"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/button_rounded"
+                android:textSize="18sp"
+                android:textAllCaps="false"
+                android:text="Añadir"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutMovBrazos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="16dp"
+            android:visibility="gone"
+            android:orientation="horizontal"
+            android:textColor="@color/colorPurple"
+            android:textSize="18sp">
+
+            <Spinner
+                android:id="@+id/spinnerOptionsMovBrazos"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/colorPurple"
+                android:textSize="18sp"
+                android:background="@drawable/edittext_border"/>
+
+            <Button
+                android:id="@+id/buttonAddMovBrazos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/button_rounded"
+                android:textSize="18sp"
+                android:textAllCaps="false"
+                android:text="Añadir"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutMovCabeza"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="16dp"
+            android:visibility="gone"
+            android:orientation="horizontal"
+            android:textColor="@color/colorPurple"
+            android:textSize="18sp">
+
+            <Spinner
+                android:id="@+id/spinnerOptionsMovCabeza"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/colorPurple"
+                android:textSize="18sp"
+                android:background="@drawable/edittext_border"/>
+
+            <Button
+                android:id="@+id/buttonAddMovCabeza"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/button_rounded"
+                android:textSize="18sp"
+                android:textAllCaps="false"
+                android:text="Añadir"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutMovRuedas"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="16dp"
+            android:visibility="gone"
+            android:orientation="horizontal"
+            android:textColor="@color/colorPurple"
+            android:textSize="18sp">
+
+            <Spinner
+                android:id="@+id/spinnerOptionsMovRuedas"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/colorPurple"
+                android:textSize="18sp"
+                android:background="@drawable/edittext_border"/>
+
+            <EditText
+                android:id="@+id/editTextOptionMovRuedas"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="3dp"
+                android:visibility="gone"
+                android:background="@drawable/edittext_border"
+                android:textColor="@color/colorPurple"
+                android:textSize="18sp"
+                android:inputType="number"/>
+
+            <Button
+                android:id="@+id/buttonAddMovRuedas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/button_rounded"
+                android:textSize="18sp"
+                android:textAllCaps="false"
+                android:text="Añadir"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutLED"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="16dp"
+            android:visibility="gone"
+            android:orientation="horizontal"
+            android:textColor="@color/colorPurple"
+            android:textSize="18sp">
+
+            <Spinner
+                android:id="@+id/spinnerOptionsLEDPart"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/colorPurple"
+                android:textSize="18sp"
+                android:background="@drawable/edittext_border"/>
+
+            <Spinner
+                android:id="@+id/spinnerOptionsLEDMode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="3dp"
+                android:textColor="@color/colorPurple"
+                android:textSize="18sp"
+                android:background="@drawable/edittext_border"/>
+
+            <Button
+                android:id="@+id/buttonAddLED"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
