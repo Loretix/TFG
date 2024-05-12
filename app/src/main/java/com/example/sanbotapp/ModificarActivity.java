@@ -2,11 +2,15 @@ package com.example.sanbotapp;
 
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -23,6 +27,11 @@ public class ModificarActivity extends TopBaseActivity {
     private ArrayList<String> dataList;
     private RecyclerView recyclerView;
     private DataAdapterModificar adapterV;
+
+    private PresentacionesDbAdapter mDbHelper;
+    private Long mRowId;
+    private EditText mNombreText;
+
 
     private Button nuevoBloque;
 
@@ -41,10 +50,31 @@ public class ModificarActivity extends TopBaseActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.custom_action_bar_title_conf);
 
+        // Database Connection
+        mDbHelper = new PresentacionesDbAdapter( this );
+        mDbHelper.open();
+
+        mRowId = (savedInstanceState == null) ? null :
+                (Long)savedInstanceState.getSerializable(PresentacionesDbAdapter.KEY_ROWID ) ;
+        if (mRowId == null) {
+            Bundle extras = getIntent().getExtras();
+            mRowId = (extras != null)?extras.getLong(PresentacionesDbAdapter.KEY_ROWID):null ;
+        }
+
         nuevoBloque = findViewById(R.id.button_new_block);
+        mNombreText = findViewById(R.id.editTextTitlePresentacion);
+        Button guardar = findViewById(R.id.button_save);
+
+        guardar.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
 
         // RecyclerView
         recyclerView = findViewById(R.id.recycler_view);
+
 
         // LISTA DE BLOQUES DE LA PRESENTACION
         dataList = new ArrayList<>();
@@ -77,6 +107,48 @@ public class ModificarActivity extends TopBaseActivity {
         });*/
 
 
+
+    }
+
+    private void populateFields () {
+        if (mRowId != null) {
+            Cursor presentacion = mDbHelper.fetchPresentacion(mRowId);
+            startManagingCursor(presentacion);
+            mNombreText.setText(presentacion.getString(presentacion.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_NOMBRE)));
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState ( Bundle outState ) {
+        super.onSaveInstanceState( outState ) ;
+        saveState();
+        outState.putSerializable (PresentacionesDbAdapter.KEY_ROWID , mRowId ) ;
+    }
+
+    @Override
+    public void onPause () {
+        super.onPause();
+        saveState();
+    }
+
+    @Override
+    public void onResume () {
+        super.onResume();
+        populateFields();
+    }
+
+    private void saveState () {
+        String nombre = mNombreText.getText().toString();
+        if (nombre == null || nombre.equals("") ) {
+            Toast.makeText(getApplicationContext(),"Presentación no creada/modificada, campos inválidos", Toast.LENGTH_SHORT).show();
+        } else{
+            if ( mRowId == null ) {
+                long id = mDbHelper.createPresentacion( nombre );
+                if (id > 0) { mRowId = id; }
+            } else {
+                mDbHelper.updateHabitacion( mRowId , nombre );
+            }
+        }
 
     }
 
