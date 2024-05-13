@@ -41,7 +41,6 @@
         <item>Hagamos una OLA</item>
         <item>El limbo</item>
         <item>El robot</item>
-        <item> Hip, hip, hurra!</item>
     </string-array>
     <string-array name="movimientoCabeza">
         <item>Asentir</item>
@@ -51,7 +50,6 @@
         <item>Mirar arriba</item>
         <item>Mirar abajo</item>
         <item>Lo siento</item>
-        <item>Resignación</item>
     </string-array>
     <string-array name="movimientoRuedas">
         <item>Avanzar</item>

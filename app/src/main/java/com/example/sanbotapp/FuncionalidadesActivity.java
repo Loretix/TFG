@@ -4,6 +4,7 @@ package com.example.sanbotapp;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,8 +26,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.qihancloud.opensdk.base.TopBaseActivity;
 import com.qihancloud.opensdk.beans.FuncConstant;
 import com.qihancloud.opensdk.function.beans.EmotionsType;
+import com.qihancloud.opensdk.function.beans.LED;
 import com.qihancloud.opensdk.function.beans.SpeakOption;
 import com.qihancloud.opensdk.function.beans.handmotion.AbsoluteAngleHandMotion;
+import com.qihancloud.opensdk.function.beans.headmotion.AbsoluteAngleHeadMotion;
+import com.qihancloud.opensdk.function.beans.headmotion.LocateAbsoluteAngleHeadMotion;
+import com.qihancloud.opensdk.function.beans.wheelmotion.DistanceWheelMotion;
+import com.qihancloud.opensdk.function.beans.wheelmotion.RelativeAngleWheelMotion;
 import com.qihancloud.opensdk.function.unit.HandMotionManager;
 import com.qihancloud.opensdk.function.unit.HardWareManager;
 import com.qihancloud.opensdk.function.unit.HeadMotionManager;
@@ -48,9 +54,6 @@ public class FuncionalidadesActivity extends TopBaseActivity {
     private HeadMotionManager headMotionManager;
     private HardWareManager hardWareManager; //leds //touch sensors //voice locate //gyroscope
     private WheelMotionManager wheelMotionManager;
-    private MediaManager mediaManager;
-    private ProjectorManager projectorManager;
-    private AudioManager audioManager;
 
 
     @Override
@@ -58,10 +61,14 @@ public class FuncionalidadesActivity extends TopBaseActivity {
 
     }
 
-    public FuncionalidadesActivity( SpeechManager speechManager, SystemManager systemManager, HandMotionManager handMotionManager) {
+    public FuncionalidadesActivity( SpeechManager speechManager, SystemManager systemManager, HandMotionManager handMotionManager,
+                                    HeadMotionManager headMotionManager, HardWareManager hardWareManager, WheelMotionManager wheelMotionManager) {
         this.speechManager = speechManager;
         this.systemManager = systemManager;
         this.handMotionManager = handMotionManager;
+        this.headMotionManager = headMotionManager;
+        this.hardWareManager = hardWareManager;
+        this.wheelMotionManager = wheelMotionManager;
     }
 
     // Método que dado una cadena y un tipo de voz, reproduce el texto con la voz seleccionada
@@ -135,6 +142,12 @@ public class FuncionalidadesActivity extends TopBaseActivity {
                     new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_RIGHT,5,180);
             handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
 
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         } else if (Objects.equals(tipo, "Señalar")){
             SpeakOption speakOption = new SpeakOption();
             speakOption.setSpeed(60);
@@ -160,6 +173,12 @@ public class FuncionalidadesActivity extends TopBaseActivity {
             absoluteAngleHandMotion =
                     new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_RIGHT,5,180);
             handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         } else if (Objects.equals(tipo, "Tengo una duda")){
             SpeakOption speakOption = new SpeakOption();
@@ -188,6 +207,12 @@ public class FuncionalidadesActivity extends TopBaseActivity {
                     new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_RIGHT,5,180);
             handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
 
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         } else if (Objects.equals(tipo, "¿Me das un abrazo?")){
             SpeakOption speakOption = new SpeakOption();
             speakOption.setSpeed(60);
@@ -214,6 +239,12 @@ public class FuncionalidadesActivity extends TopBaseActivity {
                     new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_BOTH,5,180);
             handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
 
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         } else if (Objects.equals(tipo, "Arriba las manos policía")){
             SpeakOption speakOption = new SpeakOption();
             speakOption.setSpeed(60);
@@ -239,6 +270,13 @@ public class FuncionalidadesActivity extends TopBaseActivity {
             absoluteAngleHandMotion =
                     new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_BOTH,5,180);
             handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         } else if (Objects.equals(tipo, "Hagamos una OLA")){
             SpeakOption speakOption = new SpeakOption();
             speakOption.setSpeed(60);
@@ -273,6 +311,12 @@ public class FuncionalidadesActivity extends TopBaseActivity {
                     new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_BOTH,5,180);
             handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
 
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         } else if (Objects.equals(tipo, "El limbo")){
             AbsoluteAngleHandMotion absoluteAngleHandMotion =
                     new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_BOTH,5,90);
@@ -287,6 +331,13 @@ public class FuncionalidadesActivity extends TopBaseActivity {
             absoluteAngleHandMotion =
                     new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_BOTH,5,180);
             handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         } else if (Objects.equals(tipo, "El robot")){
             AbsoluteAngleHandMotion absoluteAngleHandMotion =
                     new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_LEFT,8,90);
@@ -342,43 +393,280 @@ public class FuncionalidadesActivity extends TopBaseActivity {
                     new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_BOTH,8,180);
             handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
 
-        } else if (Objects.equals(tipo, "Hip, hip, hurra!")){
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
     // Método que dado un tipo de movimiento de cabeza, realiza el movimiento seleccionado
     public void moveCabezaOperation(String tipo){
         if(Objects.equals(tipo, "Asentir")){
+            AbsoluteAngleHeadMotion absoluteAngleHeadMotion =
+                    new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_VERTICAL,30);
+            headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            absoluteAngleHeadMotion =
+                    new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_VERTICAL,7);
+            headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            absoluteAngleHeadMotion =
+                    new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_VERTICAL,30);
+            headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            LocateAbsoluteAngleHeadMotion locateAbsoluteAngleHeadMotion = new LocateAbsoluteAngleHeadMotion(LocateAbsoluteAngleHeadMotion.ACTION_BOTH_LOCK, 90, 15);
+            headMotionManager.doAbsoluteLocateMotion(locateAbsoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         } else if (Objects.equals(tipo, "Negar")){
+            AbsoluteAngleHeadMotion absoluteAngleHeadMotion =
+                    new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_HORIZONTAL,0);
+            headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            absoluteAngleHeadMotion =
+                    new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_HORIZONTAL,180);
+            headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            absoluteAngleHeadMotion =
+                    new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_HORIZONTAL,0);
+            headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            LocateAbsoluteAngleHeadMotion locateAbsoluteAngleHeadMotion = new LocateAbsoluteAngleHeadMotion(LocateAbsoluteAngleHeadMotion.ACTION_BOTH_LOCK, 90, 15);
+            headMotionManager.doAbsoluteLocateMotion(locateAbsoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         } else if (Objects.equals(tipo, "Mirar a la derecha")){
+            AbsoluteAngleHeadMotion absoluteAngleHeadMotion =
+                    new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_HORIZONTAL,180);
+            headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(6000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            LocateAbsoluteAngleHeadMotion locateAbsoluteAngleHeadMotion = new LocateAbsoluteAngleHeadMotion(LocateAbsoluteAngleHeadMotion.ACTION_BOTH_LOCK, 90, 15);
+            headMotionManager.doAbsoluteLocateMotion(locateAbsoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         } else if (Objects.equals(tipo, "Mirar a la izquierda")){
+            AbsoluteAngleHeadMotion absoluteAngleHeadMotion =
+                    new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_HORIZONTAL,0);
+            headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(6000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            LocateAbsoluteAngleHeadMotion locateAbsoluteAngleHeadMotion = new LocateAbsoluteAngleHeadMotion(LocateAbsoluteAngleHeadMotion.ACTION_BOTH_LOCK, 90, 15);
+            headMotionManager.doAbsoluteLocateMotion(locateAbsoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         } else if (Objects.equals(tipo, "Mirar arriba")){
+            AbsoluteAngleHeadMotion absoluteAngleHeadMotion =
+                    new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_VERTICAL,30);
+            headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(6000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            LocateAbsoluteAngleHeadMotion locateAbsoluteAngleHeadMotion = new LocateAbsoluteAngleHeadMotion(LocateAbsoluteAngleHeadMotion.ACTION_BOTH_LOCK, 90, 15);
+            headMotionManager.doAbsoluteLocateMotion(locateAbsoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         } else if (Objects.equals(tipo, "Mirar abajo")){
+            AbsoluteAngleHeadMotion absoluteAngleHeadMotion =
+                    new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_VERTICAL,7);
+            headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(6000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            LocateAbsoluteAngleHeadMotion locateAbsoluteAngleHeadMotion = new LocateAbsoluteAngleHeadMotion(LocateAbsoluteAngleHeadMotion.ACTION_BOTH_LOCK, 90, 15);
+            headMotionManager.doAbsoluteLocateMotion(locateAbsoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         } else if (Objects.equals(tipo, "Lo siento")){
 
-        } else if (Objects.equals(tipo, "Resignación")){
+            SpeakOption speakOption = new SpeakOption();
+            speakOption.setSpeed(60);
+            speakOption.setIntonation(50);
+            speechManager.startSpeak("Lo siento", speakOption);
 
+            AbsoluteAngleHeadMotion absoluteAngleHeadMotion =
+                    new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_VERTICAL,7);
+            headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(6000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            LocateAbsoluteAngleHeadMotion locateAbsoluteAngleHeadMotion = new LocateAbsoluteAngleHeadMotion(LocateAbsoluteAngleHeadMotion.ACTION_BOTH_LOCK, 90, 15);
+            headMotionManager.doAbsoluteLocateMotion(locateAbsoluteAngleHeadMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     // Método que dado un tipo de movimiento de ruedas, realiza el movimiento seleccionado
     public void moveRuedasOperation(String tipo){
         if(Objects.equals(tipo, "Avanzar")){
+            String[] partes = tipo.split("-");
+            int distancia = Integer.parseInt(partes[1]);
+
+            System.out.println("Movimiento de ruedas" +"Avanzar " + distancia + " cm");
+            DistanceWheelMotion distanceWheelMotion = new DistanceWheelMotion(DistanceWheelMotion.ACTION_FORWARD_RUN, 5, distancia);
+            wheelMotionManager.doDistanceMotion(distanceWheelMotion);
+
+            long tiempoEspera = (long) (5000 * (distancia / 100.0));
+            try {
+                Thread.sleep(tiempoEspera);
+            } catch (InterruptedException e) {
+                System.out.println("Error al avanzar: " + e.getMessage());
+                e.printStackTrace();
+            }
 
         } else if (Objects.equals(tipo, "Retroceder")){
 
+            RelativeAngleWheelMotion movimientoRuedas = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_RIGHT, 5, 180);
+            wheelMotionManager.doRelativeAngleMotion(movimientoRuedas);
+
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            String[] partes = tipo.split("-");
+            int distancia = Integer.parseInt(partes[1]);
+
+            DistanceWheelMotion distanceWheelMotion = new DistanceWheelMotion(DistanceWheelMotion.ACTION_FORWARD_RUN, 5, distancia);
+            wheelMotionManager.doDistanceMotion(distanceWheelMotion);
+
+            long tiempoEspera = (long) (5000 * (distancia / 100.0));
+            try {
+                Thread.sleep(tiempoEspera);
+            } catch (InterruptedException e) {
+                System.out.println("Error al avanzar: " + e.getMessage());
+                e.printStackTrace();
+            }
+
+            movimientoRuedas = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_RIGHT, 5, 180);
+            wheelMotionManager.doRelativeAngleMotion(movimientoRuedas);
+
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         } else if (Objects.equals(tipo, "Girar a la derecha")){
+            RelativeAngleWheelMotion movimientoRuedas = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_RIGHT, 5, 90);
+            wheelMotionManager.doRelativeAngleMotion(movimientoRuedas);
+
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         } else if (Objects.equals(tipo, "Girar a la izquierda")){
+            RelativeAngleWheelMotion movimientoRuedas = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5, 90);
+            wheelMotionManager.doRelativeAngleMotion(movimientoRuedas);
+
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         } else if (Objects.equals(tipo, "Girar sobre si mismo")){
-
+            RelativeAngleWheelMotion movimientoRuedas = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5, 360);
+            wheelMotionManager.doRelativeAngleMotion(movimientoRuedas);
         }
     }
 
@@ -387,11 +675,199 @@ public class FuncionalidadesActivity extends TopBaseActivity {
         String[] partes = tipo.split("-");
         String partEsp = partes[0];
         String modeEsp = partes[1];
-        String part = "";
-        String mode = "";
 
         if (Objects.equals(partEsp, "Todo")){
-
+            if (Objects.equals(modeEsp, "Blanco")){
+                hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_WHITE));
+            } else if (Objects.equals(modeEsp, "Rojo")){
+                hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_RED));
+            } else if (Objects.equals(modeEsp, "Verde")){
+                hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_GREEN));
+            }  else if (Objects.equals(modeEsp, "Rosa")){
+                hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_PINK));
+            }  else if (Objects.equals(modeEsp, "Morado")){
+                hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_PURPLE));
+            }  else if (Objects.equals(modeEsp, "Azul")){
+                hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_BLUE));
+            }  else if (Objects.equals(modeEsp, "Amarillo")){
+                hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_YELLOW));
+            }  else if (Objects.equals(modeEsp, "Parpadeo blanco")){
+                hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_FLICKER_WHITE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo rojo")){
+                hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_FLICKER_RED));
+            }  else if (Objects.equals(modeEsp, "Parpadeo verde")){
+                hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_FLICKER_GREEN));
+            }  else if (Objects.equals(modeEsp, "Parpadeo rosa")){
+                hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_FLICKER_PINK));
+            }  else if (Objects.equals(modeEsp, "Parpadeo morado")){
+                hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_FLICKER_PURPLE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo azul")){
+                hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_FLICKER_BLUE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo amarillo")){
+                hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_FLICKER_YELLOW));
+            }  else if (Objects.equals(modeEsp, "Parpadeo aleatorio")){
+                hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_FLICKER_RANDOM));
+            }
+        } else if (Objects.equals(partEsp, "Ruedas")){
+            if (Objects.equals(modeEsp, "Blanco")){
+                hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_WHITE));
+            } else if (Objects.equals(modeEsp, "Rojo")){
+                hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_RED));
+            } else if (Objects.equals(modeEsp, "Verde")){
+                hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_GREEN));
+            }  else if (Objects.equals(modeEsp, "Rosa")){
+                hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_PINK));
+            }  else if (Objects.equals(modeEsp, "Morado")){
+                hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_PURPLE));
+            }  else if (Objects.equals(modeEsp, "Azul")){
+                hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_BLUE));
+            }  else if (Objects.equals(modeEsp, "Amarillo")){
+                hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_YELLOW));
+            }  else if (Objects.equals(modeEsp, "Parpadeo blanco")){
+                hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_FLICKER_WHITE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo rojo")){
+                hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_FLICKER_RED));
+            }  else if (Objects.equals(modeEsp, "Parpadeo verde")){
+                hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_FLICKER_GREEN));
+            }  else if (Objects.equals(modeEsp, "Parpadeo rosa")){
+                hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_FLICKER_PINK));
+            }  else if (Objects.equals(modeEsp, "Parpadeo morado")){
+                hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_FLICKER_PURPLE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo azul")){
+                hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_FLICKER_BLUE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo amarillo")){
+                hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_FLICKER_YELLOW));
+            }  else if (Objects.equals(modeEsp, "Parpadeo aleatorio")){
+                hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_FLICKER_RANDOM));
+            }
+        }  else if (Objects.equals(partEsp, "Brazo izquierdo")){
+            if (Objects.equals(modeEsp, "Blanco")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_WHITE));
+            } else if (Objects.equals(modeEsp, "Rojo")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_RED));
+            } else if (Objects.equals(modeEsp, "Verde")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_GREEN));
+            }  else if (Objects.equals(modeEsp, "Rosa")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_PINK));
+            }  else if (Objects.equals(modeEsp, "Morado")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_PURPLE));
+            }  else if (Objects.equals(modeEsp, "Azul")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_BLUE));
+            }  else if (Objects.equals(modeEsp, "Amarillo")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_YELLOW));
+            }  else if (Objects.equals(modeEsp, "Parpadeo blanco")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_FLICKER_WHITE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo rojo")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_FLICKER_RED));
+            }  else if (Objects.equals(modeEsp, "Parpadeo verde")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_FLICKER_GREEN));
+            }  else if (Objects.equals(modeEsp, "Parpadeo rosa")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_FLICKER_PINK));
+            }  else if (Objects.equals(modeEsp, "Parpadeo morado")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_FLICKER_PURPLE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo azul")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_FLICKER_BLUE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo amarillo")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_FLICKER_YELLOW));
+            }  else if (Objects.equals(modeEsp, "Parpadeo aleatorio")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_FLICKER_RANDOM));
+            }
+        } else if (Objects.equals(partEsp, "Brazo derecho")){
+            if (Objects.equals(modeEsp, "Blanco")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_WHITE));
+            } else if (Objects.equals(modeEsp, "Rojo")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_RED));
+            } else if (Objects.equals(modeEsp, "Verde")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_GREEN));
+            }  else if (Objects.equals(modeEsp, "Rosa")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_PINK));
+            }  else if (Objects.equals(modeEsp, "Morado")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_PURPLE));
+            }  else if (Objects.equals(modeEsp, "Azul")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_BLUE));
+            }  else if (Objects.equals(modeEsp, "Amarillo")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_YELLOW));
+            }  else if (Objects.equals(modeEsp, "Parpadeo blanco")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_FLICKER_WHITE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo rojo")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_FLICKER_RED));
+            }  else if (Objects.equals(modeEsp, "Parpadeo verde")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_FLICKER_GREEN));
+            }  else if (Objects.equals(modeEsp, "Parpadeo rosa")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_FLICKER_PINK));
+            }  else if (Objects.equals(modeEsp, "Parpadeo morado")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_FLICKER_PURPLE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo azul")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_FLICKER_BLUE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo amarillo")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_FLICKER_YELLOW));
+            }  else if (Objects.equals(modeEsp, "Parpadeo aleatorio")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_FLICKER_RANDOM));
+            }
+        } else if (Objects.equals(partEsp, "Oreja izquierda")){
+            if (Objects.equals(modeEsp, "Blanco")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_WHITE));
+            } else if (Objects.equals(modeEsp, "Rojo")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_RED));
+            } else if (Objects.equals(modeEsp, "Verde")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_GREEN));
+            }  else if (Objects.equals(modeEsp, "Rosa")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_PINK));
+            }  else if (Objects.equals(modeEsp, "Morado")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_PURPLE));
+            }  else if (Objects.equals(modeEsp, "Azul")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_BLUE));
+            }  else if (Objects.equals(modeEsp, "Amarillo")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_YELLOW));
+            }  else if (Objects.equals(modeEsp, "Parpadeo blanco")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_WHITE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo rojo")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_RED));
+            }  else if (Objects.equals(modeEsp, "Parpadeo verde")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_GREEN));
+            }  else if (Objects.equals(modeEsp, "Parpadeo rosa")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_PINK));
+            }  else if (Objects.equals(modeEsp, "Parpadeo morado")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_PURPLE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo azul")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_BLUE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo amarillo")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_YELLOW));
+            }  else if (Objects.equals(modeEsp, "Parpadeo aleatorio")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_RANDOM));
+            }
+        } else if (Objects.equals(partEsp, "Oreja derecha")){
+            if (Objects.equals(modeEsp, "Blanco")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_WHITE));
+            } else if (Objects.equals(modeEsp, "Rojo")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_RED));
+            } else if (Objects.equals(modeEsp, "Verde")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_GREEN));
+            }  else if (Objects.equals(modeEsp, "Rosa")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_PINK));
+            }  else if (Objects.equals(modeEsp, "Morado")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_PURPLE));
+            }  else if (Objects.equals(modeEsp, "Azul")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_BLUE));
+            }  else if (Objects.equals(modeEsp, "Amarillo")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_YELLOW));
+            }  else if (Objects.equals(modeEsp, "Parpadeo blanco")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_WHITE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo rojo")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_RED));
+            }  else if (Objects.equals(modeEsp, "Parpadeo verde")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_GREEN));
+            }  else if (Objects.equals(modeEsp, "Parpadeo rosa")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_PINK));
+            }  else if (Objects.equals(modeEsp, "Parpadeo morado")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_PURPLE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo azul")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_BLUE));
+            }  else if (Objects.equals(modeEsp, "Parpadeo amarillo")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_YELLOW));
+            }  else if (Objects.equals(modeEsp, "Parpadeo aleatorio")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_RANDOM));
+            }
         }
 
     }

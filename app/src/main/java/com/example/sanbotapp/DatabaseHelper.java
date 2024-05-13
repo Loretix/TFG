@@ -30,6 +30,7 @@ class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String BLOQUES_ACCIONES = "create table bloques_acciones ("
             + "_id           integer primary key autoincrement,"
+            + "ordenacion           integer not null,"
             + "nombre        text    not null,"
             + "idPresentaciones       integer not null,"
             + "foreign key(idPresentaciones) references presentaciones(_id) on delete cascade"
