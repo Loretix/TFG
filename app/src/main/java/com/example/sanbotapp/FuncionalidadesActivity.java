@@ -1,6 +1,8 @@
 package com.example.sanbotapp;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -54,6 +56,7 @@ public class FuncionalidadesActivity extends TopBaseActivity {
     private HeadMotionManager headMotionManager;
     private HardWareManager hardWareManager; //leds //touch sensors //voice locate //gyroscope
     private WheelMotionManager wheelMotionManager;
+    private Context context;
 
 
     @Override
@@ -61,14 +64,15 @@ public class FuncionalidadesActivity extends TopBaseActivity {
 
     }
 
-    public FuncionalidadesActivity( SpeechManager speechManager, SystemManager systemManager, HandMotionManager handMotionManager,
-                                    HeadMotionManager headMotionManager, HardWareManager hardWareManager, WheelMotionManager wheelMotionManager) {
+    public FuncionalidadesActivity(SpeechManager speechManager, SystemManager systemManager, HandMotionManager handMotionManager,
+                                   HeadMotionManager headMotionManager, HardWareManager hardWareManager, WheelMotionManager wheelMotionManager, Context context) {
         this.speechManager = speechManager;
         this.systemManager = systemManager;
         this.handMotionManager = handMotionManager;
         this.headMotionManager = headMotionManager;
         this.hardWareManager = hardWareManager;
         this.wheelMotionManager = wheelMotionManager;
+        this.context = context;
     }
 
     // Método que dado una cadena y un tipo de voz, reproduce el texto con la voz seleccionada
@@ -82,39 +86,60 @@ public class FuncionalidadesActivity extends TopBaseActivity {
         speechManager.startSpeak(texto, speakOption);
     }
 
+    public void trueFalseOperation(String tipo){
+
+        String[] partes = tipo.split("-");
+        String pregunta = partes[0];
+        String respuesta = partes[1];
+
+        SpeakOption speakOption = new SpeakOption();
+        speakOption.setSpeed(60);
+        speakOption.setIntonation(50);
+        speechManager.startSpeak(pregunta, speakOption);
+
+        // Crear un intent para iniciar la actividad TrueFalseActivity
+        Intent intent = new Intent(context, TrueFalseActivity.class);
+        // Pasar la pregunta y la respuesta como extras del intent
+        intent.putExtra("pregunta", pregunta);
+        intent.putExtra("respuesta", respuesta);
+        // Iniciar la actividad
+        context.startActivity(intent);
+
+    }
+
     // Método que dado un tipo de emoción, cambia la cara del robot a la emoción seleccionada
     public void changeFaceOperation( String tipo){
         if(Objects.equals(tipo, "Arrogancia")){
             systemManager.showEmotion(EmotionsType.ARROGANCE);
         } else if (Objects.equals(tipo, "Sorpresa")){
             systemManager.showEmotion(EmotionsType.SURPRISE);
-        } else if (Objects.equals(tipo, "Silbido")){
+        } else if (Objects.equals(tipo, "Ojos brillantes")){
             systemManager.showEmotion(EmotionsType.WHISTLE);
         } else if (Objects.equals(tipo, "Enamorado")){
             systemManager.showEmotion(EmotionsType.LAUGHTER);
-        } else if (Objects.equals(tipo, "Adiós")){
+        } else if (Objects.equals(tipo, "Despedida emotiva")){
             systemManager.showEmotion(EmotionsType.GOODBYE);
         } else if (Objects.equals(tipo, "Tímido")){
             systemManager.showEmotion(EmotionsType.SHY);
         } else if (Objects.equals(tipo, "Normal")){
             systemManager.showEmotion(EmotionsType.NORMAL);
-        } else if (Objects.equals(tipo, "Sudor")){
+        } else if (Objects.equals(tipo, "Inseguro")){
             systemManager.showEmotion(EmotionsType.SWEAT);
-        } else if (Objects.equals(tipo, "Risa contenida")){
+        } else if (Objects.equals(tipo, "Pillo")){
             systemManager.showEmotion(EmotionsType.SNICKER);
-        } else if (Objects.equals(tipo, "Recoger nariz")){
+        } else if (Objects.equals(tipo, "Culpa")){
             systemManager.showEmotion(EmotionsType.PICKNOSE);
         } else if (Objects.equals(tipo, "Llanto")){
             systemManager.showEmotion(EmotionsType.CRY);
-        } else if (Objects.equals(tipo, "Abuso")){
+        } else if (Objects.equals(tipo, "Enfado")){
             systemManager.showEmotion(EmotionsType.ABUSE);
-        } else if (Objects.equals(tipo, "Beso")){
+        } else if (Objects.equals(tipo, "Super enamorado")){
             systemManager.showEmotion(EmotionsType.KISS);
         } else if (Objects.equals(tipo, "Dormir")){
             systemManager.showEmotion(EmotionsType.SLEEP);
         } else if (Objects.equals(tipo, "Sonrisa")){
             systemManager.showEmotion(EmotionsType.SMILE);
-        } else if (Objects.equals(tipo, "Queja")){
+        } else if (Objects.equals(tipo, "Preocupación")){
             systemManager.showEmotion(EmotionsType.GRIEVANCE);
         } else if (Objects.equals(tipo, "Pregunta")){
             systemManager.showEmotion(EmotionsType.QUESTION);
@@ -594,9 +619,11 @@ public class FuncionalidadesActivity extends TopBaseActivity {
 
     // Método que dado un tipo de movimiento de ruedas, realiza el movimiento seleccionado
     public void moveRuedasOperation(String tipo){
-        if(Objects.equals(tipo, "Avanzar")){
-            String[] partes = tipo.split("-");
-            int distancia = Integer.parseInt(partes[1]);
+        String[] partes = tipo.split("-");
+        String movimiento = partes[0];
+        int distancia = Integer.parseInt(partes[1]);
+
+        if(Objects.equals(movimiento, "Avanzar")){
 
             System.out.println("Movimiento de ruedas" +"Avanzar " + distancia + " cm");
             DistanceWheelMotion distanceWheelMotion = new DistanceWheelMotion(DistanceWheelMotion.ACTION_FORWARD_RUN, 5, distancia);
@@ -610,7 +637,7 @@ public class FuncionalidadesActivity extends TopBaseActivity {
                 e.printStackTrace();
             }
 
-        } else if (Objects.equals(tipo, "Retroceder")){
+        } else if (Objects.equals(movimiento, "Retroceder")){
 
             RelativeAngleWheelMotion movimientoRuedas = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_RIGHT, 5, 180);
             wheelMotionManager.doRelativeAngleMotion(movimientoRuedas);
@@ -620,9 +647,6 @@ public class FuncionalidadesActivity extends TopBaseActivity {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-            String[] partes = tipo.split("-");
-            int distancia = Integer.parseInt(partes[1]);
 
             DistanceWheelMotion distanceWheelMotion = new DistanceWheelMotion(DistanceWheelMotion.ACTION_FORWARD_RUN, 5, distancia);
             wheelMotionManager.doDistanceMotion(distanceWheelMotion);
@@ -820,22 +844,30 @@ public class FuncionalidadesActivity extends TopBaseActivity {
             }  else if (Objects.equals(modeEsp, "Amarillo")){
                 hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_YELLOW));
             }  else if (Objects.equals(modeEsp, "Parpadeo blanco")){
-                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_WHITE));
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_WHITE, (byte) 10, (byte) 3));
             }  else if (Objects.equals(modeEsp, "Parpadeo rojo")){
-                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_RED));
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_RED, (byte) 10, (byte) 3));
             }  else if (Objects.equals(modeEsp, "Parpadeo verde")){
-                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_GREEN));
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_GREEN, (byte) 10, (byte) 3));
             }  else if (Objects.equals(modeEsp, "Parpadeo rosa")){
-                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_PINK));
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_PINK, (byte) 10, (byte) 3));
             }  else if (Objects.equals(modeEsp, "Parpadeo morado")){
-                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_PURPLE));
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_PURPLE, (byte) 10, (byte) 3));
             }  else if (Objects.equals(modeEsp, "Parpadeo azul")){
-                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_BLUE));
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_BLUE, (byte) 10, (byte) 3));
             }  else if (Objects.equals(modeEsp, "Parpadeo amarillo")){
-                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_YELLOW));
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_YELLOW, (byte) 10, (byte) 3));
             }  else if (Objects.equals(modeEsp, "Parpadeo aleatorio")){
-                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_RANDOM));
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_RANDOM, (byte) 10, (byte) 3));
             }
+
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_CLOSE));
+
         } else if (Objects.equals(partEsp, "Oreja derecha")){
             if (Objects.equals(modeEsp, "Blanco")){
                 hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_WHITE));
@@ -852,22 +884,29 @@ public class FuncionalidadesActivity extends TopBaseActivity {
             }  else if (Objects.equals(modeEsp, "Amarillo")){
                 hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_YELLOW));
             }  else if (Objects.equals(modeEsp, "Parpadeo blanco")){
-                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_WHITE));
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_WHITE, (byte) 10, (byte) 3));
             }  else if (Objects.equals(modeEsp, "Parpadeo rojo")){
-                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_RED));
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_RED, (byte) 10, (byte) 3));
             }  else if (Objects.equals(modeEsp, "Parpadeo verde")){
-                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_GREEN));
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_GREEN, (byte) 10, (byte) 3));
             }  else if (Objects.equals(modeEsp, "Parpadeo rosa")){
-                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_PINK));
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_PINK, (byte) 10, (byte) 3));
             }  else if (Objects.equals(modeEsp, "Parpadeo morado")){
-                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_PURPLE));
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_PURPLE, (byte) 10, (byte) 3));
             }  else if (Objects.equals(modeEsp, "Parpadeo azul")){
-                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_BLUE));
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_BLUE, (byte) 10, (byte) 3));
             }  else if (Objects.equals(modeEsp, "Parpadeo amarillo")){
-                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_YELLOW));
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_YELLOW, (byte) 10, (byte) 3));
             }  else if (Objects.equals(modeEsp, "Parpadeo aleatorio")){
-                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_RANDOM));
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_RANDOM, (byte) 10, (byte) 3));
             }
+
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_CLOSE));
         }
 
     }

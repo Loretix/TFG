@@ -10,23 +10,24 @@
         <item>Cambio de expresión facial</item>
         <item>Insertar imagen</item>
         <item>Insertar vídeo</item>
+        <item>Pregunta verdadero o falso</item>
     </string-array>
     <string-array name="expresionesFaciales">
         <item>Arrogancia</item>
         <item>Sorpresa</item>
-        <item>Silbido</item>
+        <item>Ojos brillantes</item>
         <item>Enamorado</item>
-        <item>Adiós</item>
+        <item>Despedida emotiva</item>
         <item>Tímido</item>
-        <item>Sudor</item>
-        <item>Risa contenida</item>
-        <item>Recoger nariz</item>
+        <item>Inseguro</item>
+        <item>Pillo</item>
+        <item>Culpa</item>
         <item>Llanto</item>
-        <item>Abuso</item>
-        <item>Beso</item>
+        <item>Enfado</item>
+        <item>Super enamorado</item>
         <item>Dormir</item>
         <item>Sonrisa</item>
-        <item>Queja</item>
+        <item>Preocupación</item>
         <item>Pregunta</item>
         <item>Desmayo</item>
         <item>Elogio</item>
@@ -82,5 +83,9 @@
         <item>Parpadeo azul</item>
         <item>Parpadeo amarillo</item>
         <item>Parpadeo aleatorio</item>
+    </string-array>
+    <string-array name="pregunta_true_false">
+        <item>True</item>
+        <item>False</item>
     </string-array>
 </resources>

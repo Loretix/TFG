@@ -293,6 +293,51 @@
                 android:textAllCaps="false"
                 android:text="Añadir"/>
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutTrueFalse"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="16dp"
+            android:visibility="gone"
+            android:orientation="horizontal"
+            android:textColor="@color/colorPurple"
+            android:textSize="18sp">
+
+            <EditText
+                android:id="@+id/editTextOptionTrueFalse"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_border"
+                android:textColor="@color/colorPurple"
+                android:textSize="18sp"
+                android:hint="Introduce tu pregunta"
+                android:inputType="text"/>
+
+            <Spinner
+                android:id="@+id/spinnerOptionsTrueFalse"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="3dp"
+                android:textColor="@color/colorPurple"
+                android:textSize="18sp"
+                android:background="@drawable/edittext_border"/>
+
+            <Button
+                android:id="@+id/buttonAddTrueFalse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/button_rounded"
+                android:textSize="18sp"
+                android:textAllCaps="false"
+                android:text="Añadir"/>
+        </LinearLayout>
+
     </LinearLayout>
 
     <ScrollView

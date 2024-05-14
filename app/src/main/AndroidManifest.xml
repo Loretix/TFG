@@ -35,7 +35,7 @@
         <activity android:name=".PresentacionActivity"/>
         <activity android:name=".EditActivity" />
         <activity android:name=".ModificarActivity" />
-
+        <activity android:name=".TrueFalseActivity" />
 
     </application>
 

@@ -101,6 +101,8 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.DataViewHolder
 
                     } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
 
+                    } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
+                        funcionalidadesActivity.trueFalseOperation(data.getText());
                     } else {
                         // No se ha seleccionado ninguna opción
                     }

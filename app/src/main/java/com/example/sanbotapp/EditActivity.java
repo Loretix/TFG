@@ -45,7 +45,7 @@ public class EditActivity extends TopBaseActivity {
     private EditText editTextTitle;
     private Spinner spinnerOptions;
     private Button buttonSave, buttonAdd, buttonAddExpresionFacial, buttonAddMovBrazos;
-    private Button buttonAddMovCabeza, buttonAddMovRuedas, buttonAddLED;
+    private Button buttonAddMovCabeza, buttonAddMovRuedas, buttonAddLED, buttonAddTrueFalse;
     private ArrayList<DataModel> dataList;
     private TextView textViewOptions;
     private LinearLayout layoutTextView;
@@ -102,15 +102,15 @@ public class EditActivity extends TopBaseActivity {
         buttonAddExpresionFacial = findViewById(R.id.buttonAddExpresionFacial);
         Spinner spinnerFacial = (Spinner) findViewById(R.id.spinnerOptionsExpresionFacial);
 
-        // Create an ArrayAdapter using the string array and a default spinner layout.
+                // Create an ArrayAdapter using the string array and a default spinner layout.
                 ArrayAdapter<CharSequence> adapterFacial = ArrayAdapter.createFromResource(
                         this,
                         R.array.expresionesFaciales,
                         android.R.layout.simple_spinner_item
                 );
-        // Specify the layout to use when the list of choices appears.
+                // Specify the layout to use when the list of choices appears.
         adapterFacial.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner.
+                // Apply the adapter to the spinner.
         spinnerFacial.setAdapter(adapterFacial);
 
         // Movimiento de brazos
@@ -175,6 +175,20 @@ public class EditActivity extends TopBaseActivity {
         adapterLEDColor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLEDColor.setAdapter(adapterLEDColor);
 
+        // Pregunta verdadero o false
+        buttonAddTrueFalse = findViewById(R.id.buttonAddTrueFalse);
+        Spinner spinnerTrueFalse = findViewById(R.id.spinnerOptionsTrueFalse);
+        LinearLayout layoutTrueFalse = findViewById(R.id.layoutTrueFalse);
+        EditText editTextTrueFalse = findViewById(R.id.editTextOptionTrueFalse);
+
+        ArrayAdapter<CharSequence> adapterTrueFalse = ArrayAdapter.createFromResource(
+                this,
+                R.array.pregunta_true_false,
+                android.R.layout.simple_spinner_item
+        );
+        adapterTrueFalse.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTrueFalse.setAdapter(adapterTrueFalse);
+
 
         // Configurar el Spinner Opciones de funcionalidades
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -188,7 +202,7 @@ public class EditActivity extends TopBaseActivity {
         // Crear un nuevo adaptador y establecerlo en el RecyclerView
 
         funcionalidadesActivity = new FuncionalidadesActivity(speechManager, systemManager, handMotionManager,
-                headMotionManager, hardWareManager, wheelMotionManager);
+                headMotionManager, hardWareManager, wheelMotionManager, EditActivity.this);
         adapterV = new DataAdapter(dataList, funcionalidadesActivity);
         recyclerView.setAdapter(adapterV);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -214,6 +228,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovCabeza.setVisibility(View.GONE);
                     layoutMovRuedas.setVisibility(View.GONE);
                     editTextOption.setHint("Introduce el discurso");
+                    layoutTrueFalse.setVisibility(View.GONE);
                 } else if (selectedItem.equals("Movimiento de brazos")) {
                     layoutEditText.setVisibility(View.GONE);
                     layoutExpresionFacial.setVisibility(View.GONE);
@@ -221,6 +236,8 @@ public class EditActivity extends TopBaseActivity {
                     layoutLED.setVisibility(View.GONE);
                     layoutMovCabeza.setVisibility(View.GONE);
                     layoutMovRuedas.setVisibility(View.GONE);
+                    layoutTrueFalse.setVisibility(View.GONE);
+
 
                 } else if (selectedItem.equals("Movimiento de cabeza")) {
                     layoutEditText.setVisibility(View.GONE);
@@ -229,6 +246,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutLED.setVisibility(View.GONE);
                     layoutMovCabeza.setVisibility(View.VISIBLE);
                     layoutMovRuedas.setVisibility(View.GONE);
+                    layoutTrueFalse.setVisibility(View.GONE);
 
 
                 } else if (selectedItem.equals("Movimiento de ruedas")) {
@@ -238,6 +256,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutLED.setVisibility(View.GONE);
                     layoutMovCabeza.setVisibility(View.GONE);
                     layoutMovRuedas.setVisibility(View.VISIBLE);
+                    layoutTrueFalse.setVisibility(View.GONE);
 
 
                 } else if (selectedItem.equals("Encender LEDs")) {
@@ -247,7 +266,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutLED.setVisibility(View.VISIBLE);
                     layoutMovCabeza.setVisibility(View.GONE);
                     layoutMovRuedas.setVisibility(View.GONE);
-
+                    layoutTrueFalse.setVisibility(View.GONE);
 
                 } else if (selectedItem.equals("Cambio de expresión facial")) {
                     layoutEditText.setVisibility(View.GONE);
@@ -257,6 +276,8 @@ public class EditActivity extends TopBaseActivity {
                     layoutLED.setVisibility(View.GONE);
                     layoutMovCabeza.setVisibility(View.GONE);
                     layoutMovRuedas.setVisibility(View.GONE);
+                    layoutTrueFalse.setVisibility(View.GONE);
+
 
                 } else if (selectedItem.equals("Insertar imagen")) {
                     layoutEditText.setVisibility(View.GONE);
@@ -265,7 +286,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutLED.setVisibility(View.GONE);
                     layoutMovCabeza.setVisibility(View.GONE);
                     layoutMovRuedas.setVisibility(View.GONE);
-
+                    layoutTrueFalse.setVisibility(View.GONE);
 
                 } else if (selectedItem.equals("Insertar vídeo")) {
                     layoutEditText.setVisibility(View.GONE);
@@ -274,7 +295,16 @@ public class EditActivity extends TopBaseActivity {
                     layoutLED.setVisibility(View.GONE);
                     layoutMovCabeza.setVisibility(View.GONE);
                     layoutMovRuedas.setVisibility(View.GONE);
+                    layoutTrueFalse.setVisibility(View.GONE);
 
+                }  else if (selectedItem.equals("Pregunta verdadero o falso")) {
+                    layoutEditText.setVisibility(View.GONE);
+                    layoutExpresionFacial.setVisibility(View.GONE);
+                    layoutMovBrazos.setVisibility(View.GONE);
+                    layoutLED.setVisibility(View.GONE);
+                    layoutMovCabeza.setVisibility(View.GONE);
+                    layoutMovRuedas.setVisibility(View.GONE);
+                    layoutTrueFalse.setVisibility(View.VISIBLE);
 
                 } else {
                     layoutEditText.setVisibility(View.GONE);
@@ -283,6 +313,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutLED.setVisibility(View.GONE);
                     layoutMovCabeza.setVisibility(View.GONE);
                     layoutMovRuedas.setVisibility(View.GONE);
+                    layoutTrueFalse.setVisibility(View.GONE);
 
                 }
             }
@@ -325,6 +356,10 @@ public class EditActivity extends TopBaseActivity {
 
                     // Limpiar el EditText después de agregar el elemento
                     editTextOption.setText("");
+
+                    // Notificar al adaptador que se ha agregado un nuevo elemento
+                    adapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(dataList.size() - 1);
                 } else {
                     // Mostrar un mensaje de error si el texto está vacío
                     Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
@@ -344,6 +379,8 @@ public class EditActivity extends TopBaseActivity {
                     // Crear un nuevo objeto DataModel y agregarlo a la lista
                     DataModel dataModel = new DataModel(text, spinnerOption);
                     dataList.add(dataModel);
+                    adapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(dataList.size() - 1);
                 } else {
                     // Mostrar un mensaje de error si el texto está vacío
                     Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
@@ -363,6 +400,8 @@ public class EditActivity extends TopBaseActivity {
                     // Crear un nuevo objeto DataModel y agregarlo a la lista
                     DataModel dataModel = new DataModel(text, spinnerOption);
                     dataList.add(dataModel);
+                    adapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(dataList.size() - 1);
                 } else {
                     // Mostrar un mensaje de error si el texto está vacío
                     Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
@@ -382,6 +421,8 @@ public class EditActivity extends TopBaseActivity {
                     // Crear un nuevo objeto DataModel y agregarlo a la lista
                     DataModel dataModel = new DataModel(text, spinnerOption);
                     dataList.add(dataModel);
+                    adapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(dataList.size() - 1);
                 } else {
                     // Mostrar un mensaje de error si el texto está vacío
                     Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
@@ -405,6 +446,8 @@ public class EditActivity extends TopBaseActivity {
                     // Crear un nuevo objeto DataModel y agregarlo a la lista
                     DataModel dataModel = new DataModel(text, spinnerOption);
                     dataList.add(dataModel);
+                    adapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(dataList.size() - 1);
                 } else {
                     // Mostrar un mensaje de error si el texto está vacío
                     Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
@@ -424,6 +467,29 @@ public class EditActivity extends TopBaseActivity {
                     // Crear un nuevo objeto DataModel y agregarlo a la lista
                     DataModel dataModel = new DataModel(text, spinnerOption);
                     dataList.add(dataModel);
+                    adapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(dataList.size() - 1);
+                } else {
+                    // Mostrar un mensaje de error si el texto está vacío
+                    Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        buttonAddTrueFalse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Obtener el texto y la opción del EditText y el Spinner
+                String text = editTextTrueFalse.getText().toString()+ "-" + spinnerTrueFalse.getSelectedItem().toString();
+                String spinnerOption = spinnerOptions.getSelectedItem().toString();
+
+                // Verificar si el texto y la opción no están vacíos
+                if (!TextUtils.isEmpty(text)) {
+                    // Crear un nuevo objeto DataModel y agregarlo a la lista
+                    DataModel dataModel = new DataModel(text, spinnerOption);
+                    dataList.add(dataModel);
+                    adapter.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(dataList.size() - 1);
                 } else {
                     // Mostrar un mensaje de error si el texto está vacío
                     Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
