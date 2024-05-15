@@ -2,6 +2,8 @@ package com.example.sanbotapp;
 
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -42,7 +44,6 @@ import java.util.Objects;
 
 public class EditActivity extends TopBaseActivity {
 
-    private EditText editTextTitle;
     private Spinner spinnerOptions;
     private Button buttonSave, buttonAdd, buttonAddExpresionFacial, buttonAddMovBrazos;
     private Button buttonAddMovCabeza, buttonAddMovRuedas, buttonAddLED, buttonAddTrueFalse;
@@ -61,6 +62,11 @@ public class EditActivity extends TopBaseActivity {
     private DataAdapter adapterV;
 
     private FuncionalidadesActivity funcionalidadesActivity;
+
+    private Long mRowId;
+    private Long mRowIdPresentacion;
+    private EditText mNombreText;
+    private BloqueAccionesDbAdapter mDbHelperBloque;
 
 
     @Override
@@ -86,8 +92,22 @@ public class EditActivity extends TopBaseActivity {
         wheelMotionManager = (WheelMotionManager) getUnitManager(FuncConstant.WHEELMOTION_MANAGER);
 
 
+        // Database Connection
+
+        mDbHelperBloque = new BloqueAccionesDbAdapter( this );
+        mDbHelperBloque.open();
+
+        // Extraer el ID del bloque y el ID de la presentación del Intent
+        mRowIdPresentacion = (Long) getIntent().getLongExtra("PRESENTATION_ID", -1);
+        mRowId = (Long) getIntent().getLongExtra("BLOCK_ID", -1);
+
+        if (mRowId == -1) {
+            // Se está editando un bloque existente
+            mRowId = null;
+        }
+
         // Obtener referencias a los elementos de UI
-        editTextTitle = findViewById(R.id.editTextTitleBloque);
+        mNombreText = findViewById(R.id.editTextTitleBloque);
         spinnerOptions = findViewById(R.id.spinnerOptions);
         buttonSave = findViewById(R.id.button_save);
         recyclerView = findViewById(R.id.recycler_view);
@@ -212,9 +232,6 @@ public class EditActivity extends TopBaseActivity {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
         adapterV.setItemTouchHelper(itemTouchHelper);
         itemTouchHelper.attachToRecyclerView(recyclerView);
-
-
-        // TODO: Agregar más opciones si es necesario
 
         spinnerOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -497,7 +514,65 @@ public class EditActivity extends TopBaseActivity {
             }
         });
 
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
+
     }
+
+    private void populateFields () {
+        if (mRowId != null) {
+            Cursor bloqueAcciones = mDbHelperBloque.fetchBloqueAcciones(mRowId);
+            startManagingCursor(bloqueAcciones);
+            mNombreText.setText(bloqueAcciones.getString(bloqueAcciones.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_NOMBRE)));
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState ( Bundle outState ) {
+        super.onSaveInstanceState( outState ) ;
+        saveState();
+        outState.putSerializable (BloqueAccionesDbAdapter.KEY_ROWID , mRowId ) ;
+    }
+
+    @Override
+    public void onPause () {
+        super.onPause();
+        saveState();
+    }
+
+    @Override
+    public void onResume () {
+        super.onResume();
+        populateFields();
+    }
+
+    private void saveState() {
+        String nombre = mNombreText.getText().toString();
+        if (nombre == null || nombre.equals("")) {
+            Toast.makeText(getApplicationContext(), "Bloque de acciones no creado/modificado, campos inválidos", Toast.LENGTH_SHORT).show();
+        } else {
+            if (mRowId == null) {
+
+                if (mRowIdPresentacion == -1) {
+                    // No se encontró el ID de la presentación, muestra un mensaje de error
+                    Toast.makeText(getApplicationContext(), "No se pudo encontrar el ID de la presentación", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Se encontró el ID de la presentación, crea un nuevo bloque de acciones
+                    long id = mDbHelperBloque.createBloqueAcciones(nombre, mRowIdPresentacion);
+                    if (id > 0) {
+                        mRowId = id;
+                    }
+                }
+            } else {
+                mDbHelperBloque.updateBloqueAcciones(mRowId, nombre);
+            }
+        }
+    }
+
 
 
     @Override

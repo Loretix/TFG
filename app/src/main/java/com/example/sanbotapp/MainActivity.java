@@ -61,14 +61,6 @@ public class MainActivity extends TopBaseActivity {
         mDbHelper.open();
         fillData();
 
-        /*
-
-        // Crear el adaptador personalizado
-        adapter = new CustomAdapter(this, dataList);
-
-        // Establecer el adaptador en la ListView
-        listView.setAdapter(adapter);*/
-
         Intent toCreatePresentacion = new Intent(MainActivity.this, ModificarActivity.class);
         addNew.setOnClickListener(new View.OnClickListener() {
             @Override

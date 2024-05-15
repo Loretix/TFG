@@ -1,6 +1,9 @@
 package com.example.sanbotapp;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +20,7 @@ import java.util.Collections;
 
 public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModificar.DataViewHolder> implements ItemTouchHelperAdapter {
 
-    private ArrayList<String> dataList;
+    private Cursor cursor;
     private ModificarActivity modificarActivity;
     private ItemTouchHelper itemTouchHelper;
 
@@ -28,13 +31,23 @@ public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModifi
     // Métodos del ItemTouchHelperAdapter
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        // Reordena los elementos
-        Collections.swap(dataList, fromPosition, toPosition);
+        cursor.moveToPosition(fromPosition);
+        long itemId = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
+
+        // Obtener la nueva ordenación del elemento
+        cursor.moveToPosition(toPosition);
+        int newOrdenation = cursor.getInt(cursor.getColumnIndexOrThrow("ordenacion"));
+
+        // Actualizar la ordenación del elemento movido en la base de datos
+       // updateOrdenation(itemId, newOrdenation);
+
+        // Notificar al RecyclerView del cambio
         notifyItemMoved(fromPosition, toPosition);
     }
 
-    public DataAdapterModificar(ArrayList<String> dataList, ModificarActivity modificarActivity) {
-        this.dataList = dataList;
+
+    public DataAdapterModificar(Cursor cursor, ModificarActivity modificarActivity) {
+        this.cursor = cursor;
         this.modificarActivity = modificarActivity;
     }
 
@@ -47,13 +60,16 @@ public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModifi
 
     @Override
     public void onBindViewHolder(@NonNull DataViewHolder holder, int position) {
-        String data = dataList.get(position);
-        holder.bindData(data);
+        if (cursor != null && cursor.moveToFirst()) {
+            cursor.moveToPosition(position);
+            String data = cursor.getString(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_NOMBRE));
+            holder.bindData(data);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return dataList.size();
+        return cursor.getCount();
     }
 
     public class DataViewHolder extends RecyclerView.ViewHolder {
@@ -82,18 +98,19 @@ public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModifi
             buttonModificar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Acción para modificar el elemento
-                    /*int position = getAdapterPosition();
-                    modificarActivity.openDialog(dataList.get(position), position);*/
+                    // Acción para modificar un elemento bloque de acciones
+                    int position = getAdapterPosition();
+                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ROWID));
+                    Intent i = new Intent(modificarActivity, EditActivity.class);
+                    i.putExtra(BloqueAccionesDbAdapter.KEY_ROWID, id);
+                    modificarActivity.startActivityForResult(i, 1);
                 }
             });
             buttonDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // Acción para eliminar el elemento
-                    int position = getAdapterPosition();
-                    dataList.remove(position);
-                    notifyItemRemoved(position);
+
                 }
             });
         }

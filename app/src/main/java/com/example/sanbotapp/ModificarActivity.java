@@ -2,6 +2,7 @@ package com.example.sanbotapp;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
@@ -24,13 +25,15 @@ import java.util.ArrayList;
 
 public class ModificarActivity extends TopBaseActivity {
 
-    private ArrayList<String> dataList;
     private RecyclerView recyclerView;
-    private DataAdapterModificar adapterV;
 
     private PresentacionesDbAdapter mDbHelper;
     private Long mRowId;
     private EditText mNombreText;
+
+    private BloqueAccionesDbAdapter mDbHelperBloque;
+    private final int BLOQUES_LIMIT = 100;
+    private int bloquesLimit;
 
 
     private Button nuevoBloque;
@@ -50,6 +53,9 @@ public class ModificarActivity extends TopBaseActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.custom_action_bar_title_conf);
 
+        // RecyclerView
+        recyclerView = findViewById(R.id.recycler_view);
+
         // Database Connection
         mDbHelper = new PresentacionesDbAdapter( this );
         mDbHelper.open();
@@ -60,6 +66,10 @@ public class ModificarActivity extends TopBaseActivity {
             Bundle extras = getIntent().getExtras();
             mRowId = (extras != null)?extras.getLong(PresentacionesDbAdapter.KEY_ROWID):null ;
         }
+
+        mDbHelperBloque = new BloqueAccionesDbAdapter(this);
+        mDbHelperBloque.open();
+        fillData();
 
         nuevoBloque = findViewById(R.id.button_new_block);
         mNombreText = findViewById(R.id.editTextTitlePresentacion);
@@ -72,42 +82,30 @@ public class ModificarActivity extends TopBaseActivity {
             }
         });
 
-        // RecyclerView
-        recyclerView = findViewById(R.id.recycler_view);
-
-
-        // LISTA DE BLOQUES DE LA PRESENTACION
-        dataList = new ArrayList<>();
-        dataList.add("Bloque 1");
-        dataList.add("Bloque 2");
-        dataList.add("Bloque 3");
-
-
-        adapterV = new DataAdapterModificar(dataList, this);
-        recyclerView.setAdapter(adapterV);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        // Configura el ItemTouchHelper
-        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapterV);
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
-        adapterV.setItemTouchHelper(itemTouchHelper);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
-
         // Onclick nuevo bloque voy a la pantalla de editar
         nuevoBloque.setOnClickListener(v -> {
             Intent intent = new Intent(ModificarActivity.this, EditActivity.class);
+            intent.putExtra("PRESENTATION_ID", mRowId);
             startActivity(intent);
         });
 
-        /* ESTO LO GUARDO PORQUE ES PARA AÑADIR UN NUEVO ITEM A LA LISTA
+    }
 
-        nuevoBloque.setOnClickListener(v -> {
-            dataList.add("Bloque " + (dataList.size() + 1));
-            adapterV.notifyItemInserted(dataList.size());
-        });*/
+    private void fillData() {
+        if(mRowId != null) {
+            Cursor notesCursor = mDbHelperBloque.fetchAllBloqueAcciones(mRowId);
+            bloquesLimit = notesCursor.getCount();
+            System.out.println("Bloques: " + bloquesLimit);
+            DataAdapterModificar adapter = new DataAdapterModificar(notesCursor, this);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-
-
+            // Configura el ItemTouchHelper
+            ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+            adapter.setItemTouchHelper(itemTouchHelper);
+            itemTouchHelper.attachToRecyclerView(recyclerView);
+        }
     }
 
     private void populateFields () {
@@ -115,6 +113,20 @@ public class ModificarActivity extends TopBaseActivity {
             Cursor presentacion = mDbHelper.fetchPresentacion(mRowId);
             startManagingCursor(presentacion);
             mNombreText.setText(presentacion.getString(presentacion.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_NOMBRE)));
+
+            Cursor notesCursor = mDbHelperBloque.fetchAllBloqueAcciones(mRowId);
+            bloquesLimit = notesCursor.getCount();
+            System.out.println("Bloques: " + bloquesLimit);
+            DataAdapterModificar adapter = new DataAdapterModificar(notesCursor, this);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+            // Configura el ItemTouchHelper
+            ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+            adapter.setItemTouchHelper(itemTouchHelper);
+            itemTouchHelper.attachToRecyclerView(recyclerView);
+
         }
     }
 
@@ -150,6 +162,12 @@ public class ModificarActivity extends TopBaseActivity {
             }
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        fillData();
     }
 
     @Override
