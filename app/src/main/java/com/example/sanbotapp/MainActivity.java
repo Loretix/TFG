@@ -128,7 +128,7 @@ public class MainActivity extends TopBaseActivity {
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mostrarDialogoConfirmacion(nombre);
+                    mostrarDialogoConfirmacion(nombre, id);
                 }
             });
 
@@ -139,7 +139,7 @@ public class MainActivity extends TopBaseActivity {
 
 
     @SuppressLint("SetTextI18n")
-    private void mostrarDialogoConfirmacion(String nombrePresentacion) {
+    private void mostrarDialogoConfirmacion(String nombrePresentacion, long id) {
         // Inflar el layout del diálogo personalizado
         LayoutInflater inflater = LayoutInflater.from(this);
         View dialogView = inflater.inflate(R.layout.popup_delete, null);
@@ -167,6 +167,8 @@ public class MainActivity extends TopBaseActivity {
             public void onClick(View v) {
                 // Aquí puedes colocar el código para eliminar el elemento
                 // Por ejemplo, eliminar un elemento de una lista o realizar una acción de eliminación
+                mDbHelper.deletePresentacion(id);
+                fillData();
                 // Después de eliminar, cierra el diálogo
                 dialog.dismiss();
             }
