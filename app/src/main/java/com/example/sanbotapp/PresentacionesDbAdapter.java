@@ -138,7 +138,7 @@ public class PresentacionesDbAdapter {
      * @param nombre      value to set note title to
      * @return true if the note was successfully updated, false otherwise
      */
-    public boolean updateHabitacion(long rowId, String nombre) {
+    public boolean updatePresentacion(long rowId, String nombre) {
         boolean result = true;
         try {
             if (rowId <= -1) { result = false; }

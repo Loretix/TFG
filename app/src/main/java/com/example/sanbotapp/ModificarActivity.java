@@ -84,9 +84,15 @@ public class ModificarActivity extends TopBaseActivity {
 
         // Onclick nuevo bloque voy a la pantalla de editar
         nuevoBloque.setOnClickListener(v -> {
-            Intent intent = new Intent(ModificarActivity.this, EditActivity.class);
-            intent.putExtra("PRESENTATION_ID", mRowId);
-            startActivity(intent);
+            if (mNombreText.getText().toString().isEmpty()) {
+                Toast.makeText(getApplicationContext(), "El nombre de la presentación no puede estar vacío", Toast.LENGTH_SHORT).show();
+            } else {
+                saveState();
+                System.out.println("ID CREAAR BLOQUE: " + mRowId);
+                Intent intent = new Intent(ModificarActivity.this, EditActivity.class);
+                intent.putExtra("PRESENTATION_ID", mRowId);
+                startActivity(intent);
+            }
         });
 
     }
@@ -158,7 +164,7 @@ public class ModificarActivity extends TopBaseActivity {
                 long id = mDbHelper.createPresentacion( nombre );
                 if (id > 0) { mRowId = id; }
             } else {
-                mDbHelper.updateHabitacion( mRowId , nombre );
+                mDbHelper.updatePresentacion( mRowId , nombre );
             }
         }
 

@@ -79,8 +79,8 @@ public class MainActivity extends TopBaseActivity {
     private void fillData() {
         Cursor notesCursor = mDbHelper.fetchAllPresentaciones();
         presentacionesLimit = notesCursor.getCount();
-        String[] from = new String[] { PresentacionesDbAdapter.KEY_NOMBRE, PresentacionesDbAdapter.KEY_ROWID };
-        int[] to = new int[] { R.id.textView_item_name };
+        String[] from = new String[]{PresentacionesDbAdapter.KEY_NOMBRE, PresentacionesDbAdapter.KEY_ROWID};
+        int[] to = new int[]{R.id.textView_item_name};
 
         CustomCursorAdapter adapter = new CustomCursorAdapter(this, R.layout.list_item_layout, notesCursor, from, to);
         presentaciones.setAdapter(adapter);
@@ -93,37 +93,49 @@ public class MainActivity extends TopBaseActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View view = super.getView(position, convertView, parent);
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_layout, parent, false);
+            }
 
-            // Obtener el cursor
-            Cursor cursor = (Cursor) getItem(position);
+            // Mover el cursor a la posición correcta
+            Cursor cursor = getCursor();
+            cursor.moveToPosition(position);
 
             // Obtener referencias a los botones de editar y borrar
-            ImageButton editButton = view.findViewById(R.id.button_edit);
-            ImageButton deleteButton = view.findViewById(R.id.button_delete);
+            ImageButton editButton = convertView.findViewById(R.id.button_edit);
+            ImageButton deleteButton = convertView.findViewById(R.id.button_delete);
 
-            // Agregar un OnClickListener al botón de editar
+            // Configurar el texto de la vista
+            TextView textView = convertView.findViewById(R.id.textView_item_name);
+            textView.setText(cursor.getString(cursor.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_NOMBRE)));
+
+            // Obtener el ID de la presentación
+            long id = cursor.getLong(cursor.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_ROWID));
+
+            // Obtener el nombre de la presentación
+            String nombre = cursor.getString(cursor.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_NOMBRE));
+
+            // Configurar los OnClickListener para los botones
             editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_ROWID));
                     Intent intent = new Intent(MainActivity.this, ModificarActivity.class);
                     intent.putExtra(PresentacionesDbAdapter.KEY_ROWID, id);
                     startActivityForResult(intent, 1);
                 }
             });
 
-            // Agregar un OnClickListener al botón de borrar
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mostrarDialogoConfirmacion(cursor.getString(cursor.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_NOMBRE)));
+                    mostrarDialogoConfirmacion(nombre);
                 }
             });
 
-            return view;
+            return convertView;
         }
     }
+
 
 
     @SuppressLint("SetTextI18n")
