@@ -56,12 +56,11 @@
 
     <TextView
         android:id="@+id/textViewPresentacionexplicacion"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:layout_marginTop="16dp"
         android:gravity="start"
-        android:text="Un presentación consiste en una secuencia de bloques que ayudan a agrupar las acciones que realizará el
+        android:text="Una presentación consiste en una secuencia de bloques que ayudan a agrupar las acciones que realizará el
 robot durante la presentación."
         android:textAlignment="textStart"
         android:textColor="@color/colorPurple"
@@ -69,7 +68,7 @@ robot durante la presentación."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewPresentacion"  />
+        app:layout_constraintTop_toBottomOf="@id/textViewPresentacion" />
 
     <Button
         android:id="@+id/button_new_block"

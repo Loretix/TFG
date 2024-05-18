@@ -252,5 +252,49 @@ public class BloqueAccionesDbAdapter {
         return result;
     }
 
+    public boolean updateOrdenacion(long rowId, long nuevaOrdenacion) {
+        boolean result = true;
+        mDb.beginTransaction();
+        try {
+            // Obtener el bloque de acciones a reordenar
+            Cursor cursor = fetchBloqueAcciones(rowId);
+            if (cursor == null || !cursor.moveToFirst()) {
+                return false;
+            }
+
+            long idPresentaciones = cursor.getLong(cursor.getColumnIndexOrThrow(KEY_ID_PRESENTACIONES));
+            long ordenacionActual = cursor.getLong(cursor.getColumnIndexOrThrow(KEY_ORDENACION));
+            cursor.close();
+
+            // Actualizar la ordenación de los demás bloques
+            if (ordenacionActual < nuevaOrdenacion) {
+                mDb.execSQL("UPDATE " + DATABASE_TABLE + " SET " + KEY_ORDENACION + " = " + KEY_ORDENACION + " - 1" +
+                        " WHERE " + KEY_ID_PRESENTACIONES + " = " + idPresentaciones +
+                        " AND " + KEY_ORDENACION + " > " + ordenacionActual +
+                        " AND " + KEY_ORDENACION + " <= " + nuevaOrdenacion);
+            } else if (ordenacionActual > nuevaOrdenacion) {
+                mDb.execSQL("UPDATE " + DATABASE_TABLE + " SET " + KEY_ORDENACION + " = " + KEY_ORDENACION + " + 1" +
+                        " WHERE " + KEY_ID_PRESENTACIONES + " = " + idPresentaciones +
+                        " AND " + KEY_ORDENACION + " < " + ordenacionActual +
+                        " AND " + KEY_ORDENACION + " >= " + nuevaOrdenacion);
+            }
+
+            // Actualizar la ordenación del bloque de acciones seleccionado
+            ContentValues values = new ContentValues();
+            values.put(KEY_ORDENACION, nuevaOrdenacion);
+            result = mDb.update(DATABASE_TABLE, values, KEY_ROWID + " = ?", new String[]{String.valueOf(rowId)}) > 0;
+
+            mDb.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e(DATABASE_TABLE, "Error al actualizar la ordenación", e);
+            result = false;
+        } finally {
+            mDb.endTransaction();
+        }
+
+        return result;
+    }
+
+
 
 }

@@ -23,6 +23,7 @@ public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModifi
     private Cursor cursor;
     private ModificarActivity modificarActivity;
     private ItemTouchHelper itemTouchHelper;
+    private BloqueAccionesDbAdapter mDbHelperBloque;
 
     public void setItemTouchHelper(ItemTouchHelper itemTouchHelper) {
         this.itemTouchHelper = itemTouchHelper;
@@ -32,23 +33,23 @@ public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModifi
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
         cursor.moveToPosition(fromPosition);
-        long itemId = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
+        long itemId = cursor.getLong(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ROWID));
 
-        // Obtener la nueva ordenación del elemento
         cursor.moveToPosition(toPosition);
-        int newOrdenation = cursor.getInt(cursor.getColumnIndexOrThrow("ordenacion"));
+        int ordenationTo = cursor.getInt(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ORDENACION));
 
         // Actualizar la ordenación del elemento movido en la base de datos
-       // updateOrdenation(itemId, newOrdenation);
+        mDbHelperBloque.updateOrdenacion(itemId, ordenationTo);
 
         // Notificar al RecyclerView del cambio
         notifyItemMoved(fromPosition, toPosition);
     }
 
 
-    public DataAdapterModificar(Cursor cursor, ModificarActivity modificarActivity) {
+    public DataAdapterModificar(Cursor cursor, ModificarActivity modificarActivity, BloqueAccionesDbAdapter mDbHelperBloque) {
         this.cursor = cursor;
         this.modificarActivity = modificarActivity;
+        this.mDbHelperBloque = mDbHelperBloque;
     }
 
     @NonNull
