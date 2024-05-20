@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,15 +26,15 @@ public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModifi
     private ModificarActivity modificarActivity;
     private ItemTouchHelper itemTouchHelper;
     private BloqueAccionesDbAdapter mDbHelperBloque;
+    private AlertDialog dialog;
 
     public void setItemTouchHelper(ItemTouchHelper itemTouchHelper) {
         this.itemTouchHelper = itemTouchHelper;
     }
 
-    // Métodos del ItemTouchHelperAdapter
-    @Override
-    public void onItemMove(int fromPosition, int toPosition) {
-        cursor.moveToPosition(fromPosition);
+    /* ANTESSSSSSSSSSSSS
+    
+    cursor.moveToPosition(fromPosition);
         long itemId = cursor.getLong(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ROWID));
 
         cursor.moveToPosition(toPosition);
@@ -43,7 +45,38 @@ public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModifi
 
         // Notificar al RecyclerView del cambio
         notifyItemMoved(fromPosition, toPosition);
+    */
+    // Métodos del ItemTouchHelperAdapter
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        // Verificar si el cursor no es nulo y tiene datos
+        if (cursor != null && cursor.getCount() > 0) {
+            if (cursor.moveToPosition(fromPosition)) {
+                long itemId = cursor.getLong(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ROWID));
+
+                if (cursor.moveToPosition(toPosition)) {
+                    System.out.println("fromPosition: " + fromPosition);
+                    System.out.println("toPosition: " + toPosition);
+
+                    cursor.moveToPosition(toPosition);
+                    int ordenationTo = cursor.getInt(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ORDENACION));
+                    // Actualizar la ordenación del elemento movido en la base de datos
+                    mDbHelperBloque.updateOrdenacion(itemId, ordenationTo);
+
+                    // Notificar al RecyclerView del cambio
+                    notifyItemMoved(fromPosition, toPosition);
+                    //modificarActivity.fillData();
+                } else {
+                    Log.e("onItemMove", "Failed to move cursor to 'toPosition'");
+                }
+            } else {
+                Log.e("onItemMove", "Failed to move cursor to 'fromPosition'");
+            }
+        } else {
+            Log.e("onItemMove", "Cursor is null or empty");
+        }
     }
+
 
 
     public DataAdapterModificar(Cursor cursor, ModificarActivity modificarActivity, BloqueAccionesDbAdapter mDbHelperBloque) {
@@ -111,10 +144,59 @@ public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModifi
                 @Override
                 public void onClick(View v) {
                     // Acción para eliminar el elemento
+                    int position = getAdapterPosition();
+                    cursor.moveToPosition(position);
+                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ROWID));
+                    mostrarDialogoConfirmacion(textView.getText().toString(), id);
 
                 }
             });
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void mostrarDialogoConfirmacion(String nombrePresentacion, long id) {
+        // Inflar el layout del diálogo personalizado
+        LayoutInflater inflater = LayoutInflater.from(modificarActivity);
+        View dialogView = inflater.inflate(R.layout.popup_delete, null);
+
+        // Obtener referencias a los botones del layout
+        Button btnCancel = dialogView.findViewById(R.id.btn_cancel);
+        Button btnDelete = dialogView.findViewById(R.id.btn_delete);
+
+        TextView textConfirmacion = dialogView.findViewById(R.id.text_confirmacion);
+        textConfirmacion.setText("¿Desea eliminar el bloque de acciones '" + nombrePresentacion + "'?");
+
+
+        // Configurar el comportamiento del botón "Cancelar"
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Si el usuario elige "Cancelar", simplemente cierra el diálogo
+                dialog.dismiss();
+            }
+        });
+
+        // Configurar el comportamiento del botón "Eliminar"
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Aquí puedes colocar el código para eliminar el elemento
+                // Por ejemplo, eliminar un elemento de una lista o realizar una acción de eliminación
+                mDbHelperBloque.deleteBloqueAcciones(id);
+                modificarActivity.fillData();
+                // Después de eliminar, cierra el diálogo
+                dialog.dismiss();
+            }
+        });
+
+        // Configurar AlertDialog con el layout personalizado y el contexto adecuado
+        AlertDialog.Builder builder = new AlertDialog.Builder(modificarActivity);
+        builder.setView(dialogView);
+
+        // Crear y mostrar el diálogo
+        dialog = builder.create();
+        dialog.show();
     }
 }
 

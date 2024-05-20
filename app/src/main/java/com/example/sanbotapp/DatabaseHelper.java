@@ -22,10 +22,8 @@ class DatabaseHelper extends SQLiteOpenHelper {
             + "tipoFuncionalidad    text    not null,"
             + "tipoConfiguracion    text    not null,"
             + "ordenacion           integer not null,"
-            + "idPresentaciones     integer not null,"
             + "idBloquesAcciones    integer not null,"
-            + "foreign key(idBloquesAcciones) references bloques_acciones(_id) on delete cascade,"
-            + "foreign key(idPresentaciones) references bloques_acciones(idPresentaciones) on delete cascade"
+            + "foreign key(idBloquesAcciones) references bloques_acciones(_id) on delete cascade"
             + "); ";
 
     private static final String BLOQUES_ACCIONES = "create table bloques_acciones ("

@@ -97,7 +97,7 @@ public class ModificarActivity extends TopBaseActivity {
 
     }
 
-    private void fillData() {
+    protected void fillData() {
         if(mRowId != null) {
             Cursor notesCursor = mDbHelperBloque.fetchAllBloqueAcciones(mRowId);
             bloquesLimit = notesCursor.getCount();
@@ -106,7 +106,8 @@ public class ModificarActivity extends TopBaseActivity {
             // printea la ordenacion de los bloques
             for (int i = 0; i < bloquesLimit; i++) {
                 notesCursor.moveToPosition(i);
-                System.out.println("Bloque: " + notesCursor.getString(notesCursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ORDENACION)));
+                System.out.println("ORDENACION: " + notesCursor.getString(notesCursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ORDENACION)));
+                System.out.println("BLOQUE: " + notesCursor.getString(notesCursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_NOMBRE)));
             }
             DataAdapterModificar adapter = new DataAdapterModificar(notesCursor, this, mDbHelperBloque);
             recyclerView.setAdapter(adapter);
