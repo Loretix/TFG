@@ -103,7 +103,7 @@ public class DataAdapterModificarVersion2 extends RecyclerView.Adapter<DataAdapt
                     // Acción para eliminar el elemento
                     int position = getAdapterPosition();
                     long id = dataList.get(position);
-                    mostrarDialogoConfirmacion(textView.getText().toString(), id);
+                    mostrarDialogoConfirmacion(textView.getText().toString(), id, position);
 
                 }
             });
@@ -111,7 +111,7 @@ public class DataAdapterModificarVersion2 extends RecyclerView.Adapter<DataAdapt
     }
 
     @SuppressLint("SetTextI18n")
-    private void mostrarDialogoConfirmacion(String nombrePresentacion, long id) {
+    private void mostrarDialogoConfirmacion(String nombrePresentacion, long id, int position) {
         // Inflar el layout del diálogo personalizado
         LayoutInflater inflater = LayoutInflater.from(modificarActivity);
         View dialogView = inflater.inflate(R.layout.popup_delete, null);
@@ -140,7 +140,8 @@ public class DataAdapterModificarVersion2 extends RecyclerView.Adapter<DataAdapt
                 // Aquí puedes colocar el código para eliminar el elemento
                 // Por ejemplo, eliminar un elemento de una lista o realizar una acción de eliminación
                 mDbHelperBloque.deleteBloqueAcciones(id);
-                modificarActivity.fillData();
+                dataList.remove(position);
+                notifyItemRemoved(position);
                 // Después de eliminar, cierra el diálogo
                 dialog.dismiss();
             }
