@@ -8,6 +8,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 /**
  * Simple notes database access helper class. Defines the basic CRUD operations
  * for the notepad example, and gives the ability to list all notes as well as
@@ -292,6 +294,52 @@ public class BloqueAccionesDbAdapter {
             mDb.endTransaction();
         }
 
+        return result;
+    }
+
+    // Dado un id de bloque devuelve el nombe del bloque
+    public String getNombreBloque(long idBloque) {
+        String nombre = "";
+        Cursor cursor = null;
+        try {
+            String query = "SELECT " + KEY_NOMBRE + " FROM " + DATABASE_TABLE +
+                    " WHERE " + KEY_ROWID + " = " + idBloque;
+            cursor = mDb.rawQuery(query, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                nombre = cursor.getString(0);
+            }
+        } catch (Exception e) {
+            Log.e(DATABASE_TABLE, "Error al obtener el nombre del bloque de acciones", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return nombre;
+    }
+
+    // Dado una lista de ids de bloques actualiza la ordenación de los bloques
+    public boolean updateOrdenacionBloques(ArrayList<Long> idsBloques, long idPresentaciones) {
+        boolean result = true;
+        mDb.beginTransaction();
+        try {
+            for (int i = 0; i < idsBloques.size(); i++) {
+                long idBloque = idsBloques.get(i);
+                ContentValues values = new ContentValues();
+                values.put(KEY_ORDENACION, i + 1);
+                result = mDb.update(DATABASE_TABLE, values, KEY_ROWID + " = ? AND " + KEY_ID_PRESENTACIONES + " = ?",
+                        new String[]{String.valueOf(idBloque), String.valueOf(idPresentaciones)}) > 0;
+                if (!result) {
+                    break;
+                }
+            }
+            mDb.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e(DATABASE_TABLE, "Error al actualizar la ordenación de los bloques", e);
+            result = false;
+        } finally {
+            mDb.endTransaction();
+        }
         return result;
     }
 

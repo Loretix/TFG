@@ -1,7 +1,6 @@
 package com.example.sanbotapp;
 
 import android.annotation.SuppressLint;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.util.Log;
@@ -20,9 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModificar.DataViewHolder> implements ItemTouchHelperAdapter {
+public class DataAdapterModificarVersion2 extends RecyclerView.Adapter<DataAdapterModificarVersion2.DataViewHolder> implements ItemTouchHelperAdapter {
 
-    private Cursor cursor;
+    private ArrayList<Long> dataList;
     private ModificarActivity modificarActivity;
     private ItemTouchHelper itemTouchHelper;
     private BloqueAccionesDbAdapter mDbHelperBloque;
@@ -32,55 +31,16 @@ public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModifi
         this.itemTouchHelper = itemTouchHelper;
     }
 
-    /* ANTESSSSSSSSSSSSS
-
-    cursor.moveToPosition(fromPosition);
-        long itemId = cursor.getLong(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ROWID));
-
-        cursor.moveToPosition(toPosition);
-        int ordenationTo = cursor.getInt(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ORDENACION));
-
-        // Actualizar la ordenación del elemento movido en la base de datos
-        mDbHelperBloque.updateOrdenacion(itemId, ordenationTo);
-
-        // Notificar al RecyclerView del cambio
-        notifyItemMoved(fromPosition, toPosition);
-    */
-    // Métodos del ItemTouchHelperAdapter
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        // Verificar si el cursor no es nulo y tiene datos
-        if (cursor != null && cursor.getCount() > 0) {
-            if (cursor.moveToPosition(fromPosition)) {
-                long itemId = cursor.getLong(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ROWID));
-
-                if (cursor.moveToPosition(toPosition)) {
-                    System.out.println("fromPosition: " + fromPosition);
-                    System.out.println("toPosition: " + toPosition);
-
-                    cursor.moveToPosition(toPosition);
-                    int ordenationTo = cursor.getInt(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ORDENACION));
-                    // Actualizar la ordenación del elemento movido en la base de datos
-                    mDbHelperBloque.updateOrdenacion(itemId, ordenationTo);
-
-                    // Notificar al RecyclerView del cambio
-                    notifyItemMoved(fromPosition, toPosition);
-                    //modificarActivity.fillData();
-                } else {
-                    Log.e("onItemMove", "Failed to move cursor to 'toPosition'");
-                }
-            } else {
-                Log.e("onItemMove", "Failed to move cursor to 'fromPosition'");
-            }
-        } else {
-            Log.e("onItemMove", "Cursor is null or empty");
-        }
+        Collections.swap(dataList, fromPosition, toPosition);
+        notifyItemMoved(fromPosition, toPosition);
     }
 
 
 
-    public DataAdapterModificar(Cursor cursor, ModificarActivity modificarActivity, BloqueAccionesDbAdapter mDbHelperBloque) {
-        this.cursor = cursor;
+    public DataAdapterModificarVersion2(ArrayList<Long> dataList, ModificarActivity modificarActivity, BloqueAccionesDbAdapter mDbHelperBloque) {
+        this.dataList = dataList;
         this.modificarActivity = modificarActivity;
         this.mDbHelperBloque = mDbHelperBloque;
     }
@@ -94,16 +54,13 @@ public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModifi
 
     @Override
     public void onBindViewHolder(@NonNull DataViewHolder holder, int position) {
-        if (cursor != null && cursor.moveToFirst()) {
-            cursor.moveToPosition(position);
-            String data = cursor.getString(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_NOMBRE));
-            holder.bindData(data);
-        }
+        Long data = dataList.get(position);
+        holder.bindData(String.valueOf(data));
     }
 
     @Override
     public int getItemCount() {
-        return cursor.getCount();
+        return dataList.size();
     }
 
     public class DataViewHolder extends RecyclerView.ViewHolder {
@@ -123,7 +80,7 @@ public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModifi
 
         @SuppressLint("SetTextI18n")
         public void bindData(String data) {
-            textView.setText(data);
+            textView.setText(mDbHelperBloque.getNombreBloque(Long.parseLong(data)));
             buttonAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -134,7 +91,7 @@ public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModifi
                 public void onClick(View v) {
                     // Acción para modificar un elemento bloque de acciones
                     int position = getAdapterPosition();
-                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ROWID));
+                    long id = dataList.get(position);
                     Intent i = new Intent(modificarActivity, EditActivity.class);
                     i.putExtra("BLOCK_ID", id);
                     modificarActivity.startActivityForResult(i, 1);
@@ -145,8 +102,7 @@ public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModifi
                 public void onClick(View v) {
                     // Acción para eliminar el elemento
                     int position = getAdapterPosition();
-                    cursor.moveToPosition(position);
-                    long id = cursor.getLong(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ROWID));
+                    long id = dataList.get(position);
                     mostrarDialogoConfirmacion(textView.getText().toString(), id);
 
                 }

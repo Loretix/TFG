@@ -26,6 +26,8 @@ import java.util.ArrayList;
 public class ModificarActivity extends TopBaseActivity {
 
     private RecyclerView recyclerView;
+    private ArrayList<Long> dataList; // Lista de IDs de los bloques
+    private DataAdapterModificarVersion2 adapterV;
 
     private PresentacionesDbAdapter mDbHelper;
     private Long mRowId;
@@ -67,9 +69,22 @@ public class ModificarActivity extends TopBaseActivity {
             mRowId = (extras != null)?extras.getLong(PresentacionesDbAdapter.KEY_ROWID):null ;
         }
 
+        dataList = new ArrayList<>();
+
         mDbHelperBloque = new BloqueAccionesDbAdapter(this);
         mDbHelperBloque.open();
         fillData();
+
+        adapterV = new DataAdapterModificarVersion2(dataList, this, mDbHelperBloque);
+        recyclerView.setAdapter(adapterV);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Configura el ItemTouchHelper
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapterV);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        adapterV.setItemTouchHelper(itemTouchHelper);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
 
         nuevoBloque = findViewById(R.id.button_new_block);
         mNombreText = findViewById(R.id.editTextTitlePresentacion);
@@ -103,21 +118,12 @@ public class ModificarActivity extends TopBaseActivity {
             bloquesLimit = notesCursor.getCount();
             System.out.println("Bloques: " + bloquesLimit);
 
-            // printea la ordenacion de los bloques
-            for (int i = 0; i < bloquesLimit; i++) {
-                notesCursor.moveToPosition(i);
-                System.out.println("ORDENACION: " + notesCursor.getString(notesCursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ORDENACION)));
-                System.out.println("BLOQUE: " + notesCursor.getString(notesCursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_NOMBRE)));
+            dataList.clear();
+            if(notesCursor.moveToFirst()) {
+                do {
+                    dataList.add(notesCursor.getLong(notesCursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ROWID)));
+                } while (notesCursor.moveToNext());
             }
-            DataAdapterModificar adapter = new DataAdapterModificar(notesCursor, this, mDbHelperBloque);
-            recyclerView.setAdapter(adapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-            // Configura el ItemTouchHelper
-            ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
-            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
-            adapter.setItemTouchHelper(itemTouchHelper);
-            itemTouchHelper.attachToRecyclerView(recyclerView);
         }
     }
 
@@ -130,15 +136,12 @@ public class ModificarActivity extends TopBaseActivity {
             Cursor notesCursor = mDbHelperBloque.fetchAllBloqueAcciones(mRowId);
             bloquesLimit = notesCursor.getCount();
 
-            DataAdapterModificar adapter = new DataAdapterModificar(notesCursor, this, mDbHelperBloque);
-            recyclerView.setAdapter(adapter);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-            // Configura el ItemTouchHelper
-            ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
-            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
-            adapter.setItemTouchHelper(itemTouchHelper);
-            itemTouchHelper.attachToRecyclerView(recyclerView);
+            dataList.clear();
+            if(notesCursor.moveToFirst()) {
+                do {
+                    dataList.add(notesCursor.getLong(notesCursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ROWID)));
+                } while (notesCursor.moveToNext());
+            }
 
         }
     }
@@ -172,6 +175,10 @@ public class ModificarActivity extends TopBaseActivity {
                 if (id > 0) { mRowId = id; }
             } else {
                 mDbHelper.updatePresentacion( mRowId , nombre );
+            }
+            // Al guardar el estado se actualiza la ordenación de los bloques
+            if(dataList.size() > 0) {
+                mDbHelperBloque.updateOrdenacionBloques(dataList, mRowId);
             }
         }
 
