@@ -343,6 +343,37 @@ public class BloqueAccionesDbAdapter {
         return result;
     }
 
+    // Dato el id de una presentacion busca los bloques de esa presentación y de cada bloque busca las acciones y devuelve un arraylist tipo datamodel con los datos
+    public ArrayList<DataModel> getDatosPresentacion(long idPresentacion, AccionesDbAdapter accionesDbAdapter) {
+        ArrayList<DataModel> datos = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            String query = "SELECT " + KEY_ROWID + " FROM " + DATABASE_TABLE +
+                    " WHERE " + KEY_ID_PRESENTACIONES + " = " + idPresentacion +
+                    " ORDER BY " + KEY_ORDENACION;
+            cursor = mDb.rawQuery(query, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    long idBloque = cursor.getLong(0);
+                    ArrayList<DataModel> listbloque = accionesDbAdapter.getAccionesBloque(idBloque);
+                    if (listbloque.size() > 0) {
+                        // Añadimos a la lista de datos las acciones del listblque
+                        datos.addAll(listbloque);
+                    }
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e(DATABASE_TABLE, "Error al obtener los datos de la presentación", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return datos;
+    }
+
+
+
 
 
 }

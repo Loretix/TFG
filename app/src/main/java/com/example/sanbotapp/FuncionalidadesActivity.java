@@ -84,6 +84,15 @@ public class FuncionalidadesActivity extends TopBaseActivity {
             speakOption.setIntonation(50);
         }
         speechManager.startSpeak(texto, speakOption);
+
+        // Calculamos el tiempo que tardará en hablar el texto
+        int tiempo = texto.length() * 100;
+        // Esperamos el tiempo que tardará en hablar el texto
+        try {
+            Thread.sleep(tiempo);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void trueFalseOperation(String tipo){

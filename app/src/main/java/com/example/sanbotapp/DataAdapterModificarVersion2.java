@@ -26,6 +26,8 @@ public class DataAdapterModificarVersion2 extends RecyclerView.Adapter<DataAdapt
     private ItemTouchHelper itemTouchHelper;
     private BloqueAccionesDbAdapter mDbHelperBloque;
     private AlertDialog dialog;
+    private FuncionalidadesActivity funcionalidadesActivity;
+    private AccionesDbAdapter mDbHelperAcciones;
 
     public void setItemTouchHelper(ItemTouchHelper itemTouchHelper) {
         this.itemTouchHelper = itemTouchHelper;
@@ -39,10 +41,12 @@ public class DataAdapterModificarVersion2 extends RecyclerView.Adapter<DataAdapt
 
 
 
-    public DataAdapterModificarVersion2(ArrayList<Long> dataList, ModificarActivity modificarActivity, BloqueAccionesDbAdapter mDbHelperBloque) {
+    public DataAdapterModificarVersion2(ArrayList<Long> dataList, ModificarActivity modificarActivity, BloqueAccionesDbAdapter mDbHelperBloque, FuncionalidadesActivity funcionalidadesActivity, AccionesDbAdapter mDbHelperAcciones) {
         this.dataList = dataList;
         this.modificarActivity = modificarActivity;
         this.mDbHelperBloque = mDbHelperBloque;
+        this.funcionalidadesActivity = funcionalidadesActivity;
+        this.mDbHelperAcciones = mDbHelperAcciones;
     }
 
     @NonNull
@@ -84,6 +88,42 @@ public class DataAdapterModificarVersion2 extends RecyclerView.Adapter<DataAdapt
             buttonAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    // Acción para reproducir el bloque de acciones
+                    int position = getAdapterPosition();
+                    long id = dataList.get(position);
+                    ArrayList<DataModel> list = mDbHelperAcciones.getAccionesBloque(id);
+
+                    for (int i = 0; i < list.size(); i++) {
+                        DataModel data = list.get(i);
+                        if (data.getSpinnerOption().equals("Síntesis de voz")) {
+                            funcionalidadesActivity.speakOperation(data.getText(), "Normal");
+
+                        } else if (data.getSpinnerOption().equals("Movimiento de brazos")) {
+                            funcionalidadesActivity.moveBrazosOperation(data.getText());
+
+                        } else if (data.getSpinnerOption().equals("Movimiento de cabeza")) {
+                            funcionalidadesActivity.moveCabezaOperation(data.getText());
+
+                        } else if (data.getSpinnerOption().equals("Movimiento de ruedas")) {
+                            funcionalidadesActivity.moveRuedasOperation(data.getText());
+
+                        } else if (data.getSpinnerOption().equals("Encender LEDs")) {
+                            funcionalidadesActivity.encenderLedsOperation(data.getText());
+
+                        } else if (data.getSpinnerOption().equals("Cambio de expresión facial")) {
+                            funcionalidadesActivity.changeFaceOperation(data.getText());
+
+                        } else if (data.getSpinnerOption().equals("Insertar imagen")) {
+
+                        } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
+
+                        } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
+                            funcionalidadesActivity.trueFalseOperation(data.getText());
+                        } else {
+                            // No se ha seleccionado ninguna opción
+                        }
+                    }
+
                 }
             });
             buttonModificar.setOnClickListener(new View.OnClickListener() {

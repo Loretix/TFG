@@ -19,6 +19,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.qihancloud.opensdk.base.TopBaseActivity;
+import com.qihancloud.opensdk.beans.FuncConstant;
+import com.qihancloud.opensdk.function.unit.HandMotionManager;
+import com.qihancloud.opensdk.function.unit.HardWareManager;
+import com.qihancloud.opensdk.function.unit.HeadMotionManager;
+import com.qihancloud.opensdk.function.unit.SpeechManager;
+import com.qihancloud.opensdk.function.unit.SystemManager;
+import com.qihancloud.opensdk.function.unit.WheelMotionManager;
 
 import java.util.ArrayList;
 
@@ -34,11 +41,23 @@ public class ModificarActivity extends TopBaseActivity {
     private EditText mNombreText;
 
     private BloqueAccionesDbAdapter mDbHelperBloque;
+    private AccionesDbAdapter mDbHelperAccion;
     private final int BLOQUES_LIMIT = 100;
     private int bloquesLimit;
 
+    private SpeechManager speechManager;
+    private SystemManager systemManager;
+    private HandMotionManager handMotionManager;
+    private HeadMotionManager headMotionManager;
+    private HardWareManager hardWareManager; //leds //touch sensors //voice locate //gyroscope
+    private WheelMotionManager wheelMotionManager;
+
+    private FuncionalidadesActivity funcionalidadesActivity;
+
+
 
     private Button nuevoBloque;
+    private Button reproducir;
 
     @Override
     protected void onMainServiceConnected() {
@@ -55,8 +74,16 @@ public class ModificarActivity extends TopBaseActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.custom_action_bar_title_conf);
 
+        speechManager = (SpeechManager) getUnitManager(FuncConstant.SPEECH_MANAGER);
+        systemManager = (SystemManager) getUnitManager(FuncConstant.SYSTEM_MANAGER);
+        handMotionManager = (HandMotionManager) getUnitManager(FuncConstant.HANDMOTION_MANAGER);
+        headMotionManager = (HeadMotionManager) getUnitManager(FuncConstant.HEADMOTION_MANAGER);
+        hardWareManager = (HardWareManager) getUnitManager(FuncConstant.HARDWARE_MANAGER);
+        wheelMotionManager = (WheelMotionManager) getUnitManager(FuncConstant.WHEELMOTION_MANAGER);
+
         // RecyclerView
         recyclerView = findViewById(R.id.recycler_view);
+        reproducir = findViewById(R.id.button_reproducir);
 
         // Database Connection
         mDbHelper = new PresentacionesDbAdapter( this );
@@ -75,7 +102,13 @@ public class ModificarActivity extends TopBaseActivity {
         mDbHelperBloque.open();
         fillData();
 
-        adapterV = new DataAdapterModificarVersion2(dataList, this, mDbHelperBloque);
+        mDbHelperAccion = new AccionesDbAdapter(this);
+        mDbHelperAccion.open();
+
+        funcionalidadesActivity = new FuncionalidadesActivity(speechManager, systemManager, handMotionManager,
+                headMotionManager, hardWareManager, wheelMotionManager, ModificarActivity.this);
+
+        adapterV = new DataAdapterModificarVersion2(dataList, this, mDbHelperBloque, funcionalidadesActivity, mDbHelperAccion);
         recyclerView.setAdapter(adapterV);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -107,6 +140,47 @@ public class ModificarActivity extends TopBaseActivity {
                 Intent intent = new Intent(ModificarActivity.this, EditActivity.class);
                 intent.putExtra("PRESENTATION_ID", mRowId);
                 startActivity(intent);
+            }
+        });
+
+        reproducir.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                // Recorre los bloques y para cada bloque recorre las acciones y las ejecuta
+                for (int i = 0; i < dataList.size(); i++) {
+
+                    ArrayList<DataModel> list = mDbHelperAccion.getAccionesBloque(dataList.get(i));
+
+                    for (int j = 0; j < list.size(); j++) {
+                        DataModel data = list.get(j);
+                        if (data.getSpinnerOption().equals("Síntesis de voz")) {
+                            funcionalidadesActivity.speakOperation(data.getText(), "Normal");
+
+                        } else if (data.getSpinnerOption().equals("Movimiento de brazos")) {
+                            funcionalidadesActivity.moveBrazosOperation(data.getText());
+
+                        } else if (data.getSpinnerOption().equals("Movimiento de cabeza")) {
+                            funcionalidadesActivity.moveCabezaOperation(data.getText());
+
+                        } else if (data.getSpinnerOption().equals("Movimiento de ruedas")) {
+                            funcionalidadesActivity.moveRuedasOperation(data.getText());
+
+                        } else if (data.getSpinnerOption().equals("Encender LEDs")) {
+                            funcionalidadesActivity.encenderLedsOperation(data.getText());
+
+                        } else if (data.getSpinnerOption().equals("Cambio de expresión facial")) {
+                            funcionalidadesActivity.changeFaceOperation(data.getText());
+
+                        } else if (data.getSpinnerOption().equals("Insertar imagen")) {
+
+                        } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
+
+                        } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
+                            funcionalidadesActivity.trueFalseOperation(data.getText());
+                        } else {
+                            // No se ha seleccionado ninguna opción
+                        }
+                    }
+                }
             }
         });
 

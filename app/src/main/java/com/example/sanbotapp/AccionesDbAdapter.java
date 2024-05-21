@@ -8,6 +8,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 /**
  * Simple notes database access helper class. Defines the basic CRUD operations
  * for the notepad example, and gives the ability to list all notes as well as
@@ -298,6 +300,32 @@ public class AccionesDbAdapter {
         }
 
         return result;
+    }
+
+    // Dato el id de un bloque de acciones devuelve un arraylist de tipo datamodel con las acciones de ese bloque
+    public ArrayList<DataModel> getAccionesBloque(long idBloque) {
+        ArrayList<DataModel> acciones = new ArrayList<DataModel>();
+        Cursor cursor = null;
+        try {
+            String query = "SELECT " + AccionesDbAdapter.KEY_CONFIGURACION + ", " + AccionesDbAdapter.KEY_FUNCIONALIDAD +
+                    " FROM " + AccionesDbAdapter.DATABASE_TABLE +
+                    " WHERE " + AccionesDbAdapter.KEY_ID_BLOQUES + " = " + idBloque +
+                    " ORDER BY " + AccionesDbAdapter.KEY_ORDENACION;
+            cursor = mDb.rawQuery(query, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    DataModel dataModel = new DataModel(cursor.getString(0), cursor.getString(1));
+                    acciones.add(dataModel);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e(DATABASE_TABLE, "Error al obtener las acciones del bloque de acciones", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return acciones;
     }
 
 
