@@ -33,7 +33,7 @@ public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModifi
     }
 
     /* ANTESSSSSSSSSSSSS
-    
+
     cursor.moveToPosition(fromPosition);
         long itemId = cursor.getLong(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ROWID));
 
@@ -136,7 +136,7 @@ public class DataAdapterModificar extends RecyclerView.Adapter<DataAdapterModifi
                     int position = getAdapterPosition();
                     long id = cursor.getLong(cursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ROWID));
                     Intent i = new Intent(modificarActivity, EditActivity.class);
-                    i.putExtra(BloqueAccionesDbAdapter.KEY_ROWID, id);
+                    i.putExtra("BLOCK_ID", id);
                     modificarActivity.startActivityForResult(i, 1);
                 }
             });

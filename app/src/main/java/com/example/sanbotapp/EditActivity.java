@@ -67,6 +67,7 @@ public class EditActivity extends TopBaseActivity {
     private Long mRowIdPresentacion;
     private EditText mNombreText;
     private BloqueAccionesDbAdapter mDbHelperBloque;
+    private AccionesDbAdapter mDbHelperAcciones;
 
 
     @Override
@@ -105,6 +106,9 @@ public class EditActivity extends TopBaseActivity {
             // Se está editando un bloque existente
             mRowId = null;
         }
+
+        mDbHelperAcciones = new AccionesDbAdapter( this );
+        mDbHelperAcciones.open();
 
         // Obtener referencias a los elementos de UI
         mNombreText = findViewById(R.id.editTextTitleBloque);
@@ -528,6 +532,22 @@ public class EditActivity extends TopBaseActivity {
             Cursor bloqueAcciones = mDbHelperBloque.fetchBloqueAcciones(mRowId);
             startManagingCursor(bloqueAcciones);
             mNombreText.setText(bloqueAcciones.getString(bloqueAcciones.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_NOMBRE)));
+
+            System.out.println("BloqueAccionesDbAdapter.KEY_NOMBRE: " + bloqueAcciones.getString(bloqueAcciones.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_NOMBRE)));
+            // Cargar los datos de la base de datos en el RecyclerView
+            Cursor acciones = mDbHelperAcciones.fetchAllAcciones(mRowId);
+
+            // Gurdar del data list los datos de la base de datos
+            dataList.clear();
+            if (acciones.moveToFirst()) {
+                do {
+                    String accion = acciones.getString(acciones.getColumnIndexOrThrow(AccionesDbAdapter.KEY_CONFIGURACION));
+                    String tipo = acciones.getString(acciones.getColumnIndexOrThrow(AccionesDbAdapter.KEY_FUNCIONALIDAD));
+                    DataModel dataModel = new DataModel(accion, tipo);
+                    dataList.add(dataModel);
+                } while (acciones.moveToNext());
+            }
+            //adapterV.notifyDataSetChanged();
         }
     }
 
@@ -565,11 +585,29 @@ public class EditActivity extends TopBaseActivity {
                     long id = mDbHelperBloque.createBloqueAcciones(nombre, mRowIdPresentacion);
                     if (id > 0) {
                         mRowId = id;
+                        // Para cada elemento del datalist, guardar en la base de datos
+                        if(dataList.size() > 0) {
+                            for (DataModel data : dataList) {
+                                mDbHelperAcciones.createAcciones(data.getSpinnerOption(), data.getText(), mRowId);
+                            }
+                        }
+
                     }
                 }
             } else {
                 mDbHelperBloque.updateBloqueAcciones(mRowId, nombre);
+                // Guardar las acciones en la base de datos
+                // Borrar todas las acciones del bloque y las vuelve a crear con los datos del datalist
+                if (dataList.size() > 0){
+                    mDbHelperAcciones.deleteAllAcciones(mRowId);
+                    // Para cada elemento del datalist, guardar en la base de datos
+                    for (DataModel data : dataList) {
+                        mDbHelperAcciones.createAcciones(data.getSpinnerOption(), data.getText(), mRowId);
+                    }
+                }
             }
+
+
         }
     }
 

@@ -199,8 +199,8 @@ public class AccionesDbAdapter {
         }
     }
 
-    public boolean deleteAllBloqueAcciones() {
-        return mDb.delete(DATABASE_TABLE, KEY_ROWID + "=" + KEY_ROWID, null) > 0;
+    public boolean deleteAllAcciones(long idBloquesAcciones) {
+        return mDb.delete(DATABASE_TABLE, KEY_ID_BLOQUES + "=" + idBloquesAcciones, null) > 0;
     }
 
     /**
