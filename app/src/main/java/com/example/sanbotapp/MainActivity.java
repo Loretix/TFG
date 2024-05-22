@@ -193,6 +193,7 @@ public class MainActivity extends TopBaseActivity {
                             funcionalidadesActivity.changeFaceOperation(data.getText());
 
                         } else if (data.getSpinnerOption().equals("Insertar imagen")) {
+                            funcionalidadesActivity.mostrarImagen(data.getText());
 
                         } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
 

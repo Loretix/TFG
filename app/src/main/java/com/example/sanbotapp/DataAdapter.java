@@ -98,7 +98,7 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.DataViewHolder
                         funcionalidadesActivity.changeFaceOperation(data.getText());
 
                     } else if (data.getSpinnerOption().equals("Insertar imagen")) {
-
+                        funcionalidadesActivity.mostrarImagen(data.getText());
                     } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
 
                     } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {

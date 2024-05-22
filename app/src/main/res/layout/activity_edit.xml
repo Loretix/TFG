@@ -338,6 +338,31 @@
                 android:text="Añadir"/>
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/layoutImage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="16dp"
+            android:visibility="gone"
+            android:orientation="horizontal"
+            android:textColor="@color/colorPurple"
+            android:textSize="18sp">
+
+            <Button
+                android:id="@+id/BSelectImage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/button_rounded"
+                android:text="Selecciona una imagen"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+
     </LinearLayout>
 
     <ScrollView

@@ -1,13 +1,19 @@
 package com.example.sanbotapp;
 
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -23,6 +30,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,10 +57,13 @@ public class EditActivity extends TopBaseActivity {
     private Spinner spinnerOptions;
     private Button buttonSave, buttonAdd, buttonAddExpresionFacial, buttonAddMovBrazos;
     private Button buttonAddMovCabeza, buttonAddMovRuedas, buttonAddLED, buttonAddTrueFalse;
-    private Button buttonReproducir;
+    private Button buttonReproducir, BSelectImage;
     private ArrayList<DataModel> dataList;
     private TextView textViewOptions;
     private LinearLayout layoutTextView;
+    private AlertDialog dialog;
+    private ImageView IVPreviewImage;
+    private Uri selectedImageUri;
 
     private SpeechManager speechManager;
     private SystemManager systemManager;
@@ -69,6 +82,8 @@ public class EditActivity extends TopBaseActivity {
     private EditText mNombreText;
     private BloqueAccionesDbAdapter mDbHelperBloque;
     private AccionesDbAdapter mDbHelperAcciones;
+
+    int SELECT_PICTURE = 200;
 
 
     @Override
@@ -201,6 +216,10 @@ public class EditActivity extends TopBaseActivity {
         adapterLEDColor.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerLEDColor.setAdapter(adapterLEDColor);
 
+        // Añadir imagen -------------------------------------------------------------------------------------
+        BSelectImage = findViewById(R.id.BSelectImage);
+        LinearLayout layoutImage = findViewById(R.id.layoutImage);
+
         // Pregunta verdadero o false
         buttonAddTrueFalse = findViewById(R.id.buttonAddTrueFalse);
         Spinner spinnerTrueFalse = findViewById(R.id.spinnerOptionsTrueFalse);
@@ -252,6 +271,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovRuedas.setVisibility(View.GONE);
                     editTextOption.setHint("Introduce el discurso");
                     layoutTrueFalse.setVisibility(View.GONE);
+                    layoutImage.setVisibility(View.GONE);
                 } else if (selectedItem.equals("Movimiento de brazos")) {
                     layoutEditText.setVisibility(View.GONE);
                     layoutExpresionFacial.setVisibility(View.GONE);
@@ -260,7 +280,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovCabeza.setVisibility(View.GONE);
                     layoutMovRuedas.setVisibility(View.GONE);
                     layoutTrueFalse.setVisibility(View.GONE);
-
+                    layoutImage.setVisibility(View.GONE);
 
                 } else if (selectedItem.equals("Movimiento de cabeza")) {
                     layoutEditText.setVisibility(View.GONE);
@@ -270,7 +290,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovCabeza.setVisibility(View.VISIBLE);
                     layoutMovRuedas.setVisibility(View.GONE);
                     layoutTrueFalse.setVisibility(View.GONE);
-
+                    layoutImage.setVisibility(View.GONE);
 
                 } else if (selectedItem.equals("Movimiento de ruedas")) {
                     layoutEditText.setVisibility(View.GONE);
@@ -280,7 +300,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovCabeza.setVisibility(View.GONE);
                     layoutMovRuedas.setVisibility(View.VISIBLE);
                     layoutTrueFalse.setVisibility(View.GONE);
-
+                    layoutImage.setVisibility(View.GONE);
 
                 } else if (selectedItem.equals("Encender LEDs")) {
                     layoutEditText.setVisibility(View.GONE);
@@ -290,7 +310,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovCabeza.setVisibility(View.GONE);
                     layoutMovRuedas.setVisibility(View.GONE);
                     layoutTrueFalse.setVisibility(View.GONE);
-
+                    layoutImage.setVisibility(View.GONE);
                 } else if (selectedItem.equals("Cambio de expresión facial")) {
                     layoutEditText.setVisibility(View.GONE);
                     layoutMovBrazos.setVisibility(View.GONE);
@@ -300,7 +320,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovCabeza.setVisibility(View.GONE);
                     layoutMovRuedas.setVisibility(View.GONE);
                     layoutTrueFalse.setVisibility(View.GONE);
-
+                    layoutImage.setVisibility(View.GONE);
 
                 } else if (selectedItem.equals("Insertar imagen")) {
                     layoutEditText.setVisibility(View.GONE);
@@ -310,6 +330,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovCabeza.setVisibility(View.GONE);
                     layoutMovRuedas.setVisibility(View.GONE);
                     layoutTrueFalse.setVisibility(View.GONE);
+                    layoutImage.setVisibility(View.VISIBLE);
 
                 } else if (selectedItem.equals("Insertar vídeo")) {
                     layoutEditText.setVisibility(View.GONE);
@@ -319,6 +340,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovCabeza.setVisibility(View.GONE);
                     layoutMovRuedas.setVisibility(View.GONE);
                     layoutTrueFalse.setVisibility(View.GONE);
+                    layoutImage.setVisibility(View.GONE);
 
                 }  else if (selectedItem.equals("Pregunta verdadero o falso")) {
                     layoutEditText.setVisibility(View.GONE);
@@ -328,6 +350,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovCabeza.setVisibility(View.GONE);
                     layoutMovRuedas.setVisibility(View.GONE);
                     layoutTrueFalse.setVisibility(View.VISIBLE);
+                    layoutImage.setVisibility(View.GONE);
 
                 } else {
                     layoutEditText.setVisibility(View.GONE);
@@ -337,6 +360,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovCabeza.setVisibility(View.GONE);
                     layoutMovRuedas.setVisibility(View.GONE);
                     layoutTrueFalse.setVisibility(View.GONE);
+                    layoutImage.setVisibility(View.GONE);
 
                 }
             }
@@ -520,6 +544,14 @@ public class EditActivity extends TopBaseActivity {
             }
         });
 
+        BSelectImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Crear un intent para seleccionar una imagen de la galería
+                mostrarDialogoSubirImagen();
+            }
+        });
+
         buttonSave.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 setResult(RESULT_OK);
@@ -551,6 +583,7 @@ public class EditActivity extends TopBaseActivity {
                         funcionalidadesActivity.changeFaceOperation(data.getText());
 
                     } else if (data.getSpinnerOption().equals("Insertar imagen")) {
+                        funcionalidadesActivity.mostrarImagen(data.getText());
 
                     } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
 
@@ -646,6 +679,101 @@ public class EditActivity extends TopBaseActivity {
             }
 
 
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void mostrarDialogoSubirImagen() {
+        // Inflar el layout del diálogo personalizado
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.popup_selectimage, null);
+
+        // Obtener referencias a los botones del layout
+        Button btnSelectImage = dialogView.findViewById(R.id.btn_select_image);
+        Button btnCancel = dialogView.findViewById(R.id.btn_cancel);
+        Button btnAceptar = dialogView.findViewById(R.id.btn_aceptar);
+        EditText ETTexto = dialogView.findViewById(R.id.ETTiempo);
+        // One Preview Image
+        IVPreviewImage = dialogView.findViewById(R.id.IVPreviewImage);
+
+
+        // Configurar el comportamiento del botón "Cancelar"
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Si el usuario elige "Cancelar", simplemente cierra el diálogo
+                dialog.dismiss();
+            }
+        });
+
+        // Configurar el comportamiento del botón "Eliminar"
+        btnAceptar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (selectedImageUri != null) {
+                    String text = ETTexto.getText().toString() + "-" + selectedImageUri.toString();
+                    String spinnerOption = spinnerOptions.getSelectedItem().toString();
+
+                    // Verificar si el texto y la opción no están vacíos
+                    if (!TextUtils.isEmpty(text)) {
+                        // Crear un nuevo objeto DataModel y agregarlo a la lista
+                        DataModel dataModel = new DataModel(text, spinnerOption);
+                        dataList.add(dataModel);
+                        //adapterV.notifyDataSetChanged();
+                        recyclerView.scrollToPosition(dataList.size() - 1);
+                    } else {
+                        // Mostrar un mensaje de error si el texto está vacío
+                        Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                dialog.dismiss();
+            }
+        });
+
+        // Configurar el comportamiento del botón "Seleccionar imagen"
+        btnSelectImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkPermissions();
+                IVPreviewImage.setVisibility(View.VISIBLE);
+                // Si el usuario elige "Seleccionar imagen", se abre la galería
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, SELECT_PICTURE);
+            }
+        });
+
+        // Configurar AlertDialog con el layout personalizado y el contexto adecuado
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+
+        // Crear y mostrar el diálogo
+        dialog = builder.create();
+        dialog.show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+
+            // compare the resultCode with the
+            // SELECT_PICTURE constant
+            if (requestCode == SELECT_PICTURE) {
+                // Get the url of the image from data
+                selectedImageUri = data.getData();
+                if (null != selectedImageUri) {
+                    // update the preview image in the layout
+                    IVPreviewImage.setImageURI(selectedImageUri);
+                }
+            }
+        }
+    }
+
+    private void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
         }
     }
 

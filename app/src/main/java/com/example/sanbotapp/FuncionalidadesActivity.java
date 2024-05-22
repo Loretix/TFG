@@ -95,6 +95,21 @@ public class FuncionalidadesActivity extends TopBaseActivity {
         }
     }
 
+    // Método que dado un tipo Insertar imagen en la pantalla, muestra la imagen seleccionada
+    public void mostrarImagen(String tipo){
+        String[] partes = tipo.split("-");
+        String tiempo = partes[0];
+        String uri = partes[1];
+
+        // Creamos un intent para iniciar la actividad ImageActivity
+        Intent intent = new Intent(context, ImageActivity.class);
+        // Pasamos la uri de la imagen como extra del intent
+        intent.putExtra("uri", uri);
+        intent.putExtra("tiempo", tiempo);
+        // Iniciamos la actividad
+        context.startActivity(intent);
+    }
+
     public void trueFalseOperation(String tipo){
 
         String[] partes = tipo.split("-");

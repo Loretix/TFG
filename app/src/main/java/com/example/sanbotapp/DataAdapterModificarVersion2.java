@@ -114,6 +114,7 @@ public class DataAdapterModificarVersion2 extends RecyclerView.Adapter<DataAdapt
                             funcionalidadesActivity.changeFaceOperation(data.getText());
 
                         } else if (data.getSpinnerOption().equals("Insertar imagen")) {
+                            funcionalidadesActivity.mostrarImagen(data.getText());
 
                         } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
 
