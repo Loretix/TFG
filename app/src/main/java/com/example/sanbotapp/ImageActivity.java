@@ -1,6 +1,7 @@
 package com.example.sanbotapp;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 
+import com.bumptech.glide.Glide;
 import com.qihancloud.opensdk.base.TopBaseActivity;
 import com.qihancloud.opensdk.beans.FuncConstant;
 import com.qihancloud.opensdk.function.beans.SpeakOption;
@@ -58,12 +60,20 @@ public class ImageActivity extends TopBaseActivity {
         Intent intent = getIntent();
         if (intent != null) {
             String tiempo = intent.getStringExtra("tiempo");
-            Uri imageUri = Uri.parse(intent.getStringExtra("uri"));
+            String imageUri = intent.getStringExtra("uri");
 
             System.out.println("URI: " + imageUri);
             System.out.println("Tiempo: " + tiempo);
 
-            imageView.setImageURI(imageUri);
+            // si imageUri empieza por http, se trata de una URL
+            if (imageUri.startsWith("http")) {
+                Glide.with(ImageActivity.this)
+                        .load(imageUri)
+                        .into(imageView);
+            } else{
+                // si no, se trata de un URI local
+                imageView.setImageURI(Uri.parse(imageUri));
+            }
 
             // Convertir el tiempo a milisegundos y programar el cierre de la actividad
             int timeInSeconds = Integer.parseInt(tiempo);

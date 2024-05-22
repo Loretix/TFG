@@ -37,6 +37,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.qihancloud.opensdk.base.TopBaseActivity;
 import com.qihancloud.opensdk.beans.FuncConstant;
 import com.qihancloud.opensdk.function.beans.EmotionsType;
@@ -48,6 +49,7 @@ import com.qihancloud.opensdk.function.unit.SpeechManager;
 import com.qihancloud.opensdk.function.unit.SystemManager;
 import com.qihancloud.opensdk.function.unit.WheelMotionManager;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -598,6 +600,7 @@ public class EditActivity extends TopBaseActivity {
 
     }
 
+
     private void populateFields () {
         if (mRowId != null) {
             Cursor bloqueAcciones = mDbHelperBloque.fetchBloqueAcciones(mRowId);
@@ -690,9 +693,15 @@ public class EditActivity extends TopBaseActivity {
 
         // Obtener referencias a los botones del layout
         Button btnSelectImage = dialogView.findViewById(R.id.btn_select_image);
+        Button btnSelectUrl = dialogView.findViewById(R.id.btn_select_url);
         Button btnCancel = dialogView.findViewById(R.id.btn_cancel);
         Button btnAceptar = dialogView.findViewById(R.id.btn_aceptar);
         EditText ETTexto = dialogView.findViewById(R.id.ETTiempo);
+
+        // Obtener referencias a los elementos del layout url
+        LinearLayout LLUrl = dialogView.findViewById(R.id.layoutEditText);
+        EditText ETUrl = dialogView.findViewById(R.id.editTextOption);
+        Button btnAnadir = dialogView.findViewById(R.id.buttonAdd);
         // One Preview Image
         IVPreviewImage = dialogView.findViewById(R.id.IVPreviewImage);
 
@@ -703,6 +712,14 @@ public class EditActivity extends TopBaseActivity {
             public void onClick(View v) {
                 // Si el usuario elige "Cancelar", simplemente cierra el diálogo
                 dialog.dismiss();
+            }
+        });
+
+        // Configurar el comportamiento del botón "Seleccionar imagen"
+        btnSelectUrl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LLUrl.setVisibility(View.VISIBLE);
             }
         });
 
@@ -725,7 +742,25 @@ public class EditActivity extends TopBaseActivity {
                         // Mostrar un mensaje de error si el texto está vacío
                         Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
                     }
+                } else if ( !ETUrl.toString().isEmpty() ) {
+                    String text = ETTexto.getText().toString() + "-" + ETUrl.getText().toString();
+                    String spinnerOption = spinnerOptions.getSelectedItem().toString();
+
+                    // Verificar si el texto y la opción no están vacíos
+                    if (!TextUtils.isEmpty(text)) {
+                        // Crear un nuevo objeto DataModel y agregarlo a la lista
+                        DataModel dataModel = new DataModel(text, spinnerOption);
+                        dataList.add(dataModel);
+                        //adapterV.notifyDataSetChanged();
+                        recyclerView.scrollToPosition(dataList.size() - 1);
+                    } else {
+                        // Mostrar un mensaje de error si el texto está vacío
+                        Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
+                    }
                 }
+
+
+                // Si no hay selected image
                 dialog.dismiss();
             }
         });
@@ -742,6 +777,26 @@ public class EditActivity extends TopBaseActivity {
             }
         });
 
+        btnAnadir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               // Coger url del edit y mostrar la imagen en el layout de imagen
+                if( ETUrl.getText().toString().isEmpty()){
+                    Toast.makeText(EditActivity.this, "Introduce una URL", Toast.LENGTH_SHORT).show();
+                }else {
+                    IVPreviewImage.setVisibility(View.VISIBLE);
+                    String url = ETUrl.getText().toString();
+
+                    Glide.with(EditActivity.this)
+                            .load(url)
+                            .into(IVPreviewImage);
+
+
+                }
+
+            }
+        });
+
         // Configurar AlertDialog con el layout personalizado y el contexto adecuado
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView);
@@ -754,7 +809,6 @@ public class EditActivity extends TopBaseActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (resultCode == RESULT_OK) {
 
             // compare the resultCode with the
