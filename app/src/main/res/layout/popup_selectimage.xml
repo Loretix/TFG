@@ -31,15 +31,36 @@
         android:textSize="15sp"
         android:layout_marginBottom="8dp"/>
 
-    <Button
-        android:id="@+id/btn_select_image"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:textColor="@android:color/white"
-        android:background="@drawable/button_rounded"
-        android:textAllCaps="false"
-        android:text="Seleccionar imagen" />
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/btn_select_image"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/button_rounded"
+            android:textAllCaps="false"
+            android:text="Seleccionar una imagen" />
+
+        <Button
+            android:id="@+id/btn_select_url"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/button_rounded"
+            android:textAllCaps="false"
+            android:text="Insertar url" />
+
+    </LinearLayout>
 
     <!--ImageView to preview the selected image-->
     <ImageView
