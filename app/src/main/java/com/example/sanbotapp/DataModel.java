@@ -1,6 +1,8 @@
 package com.example.sanbotapp;
 
-public class DataModel {
+import java.io.Serializable;
+
+public class DataModel implements Serializable {
     private String text;
     private String spinnerOption;
 

@@ -110,6 +110,19 @@ public class FuncionalidadesActivity extends TopBaseActivity {
         context.startActivity(intent);
     }
 
+    public void mostrarImagenAct(String tipo, Activity activity) {
+        String[] partes = tipo.split("-");
+        String tiempo = partes[0];
+        String uri = partes[1];
+
+        Intent intent = new Intent(activity, ImageActivity.class);
+        intent.putExtra("uri", uri);
+        intent.putExtra("tiempo", tiempo);
+        System.out.println("INICIAR ACTIVIDAD IMAGEN: " + uri);
+        activity.startActivityForResult(intent, 1);
+    }
+
+
     public void trueFalseOperation(String tipo){
 
         String[] partes = tipo.split("-");

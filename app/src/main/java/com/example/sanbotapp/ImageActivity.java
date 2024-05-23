@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,12 +22,34 @@ import com.bumptech.glide.Glide;
 import com.qihancloud.opensdk.base.TopBaseActivity;
 import com.qihancloud.opensdk.beans.FuncConstant;
 import com.qihancloud.opensdk.function.beans.SpeakOption;
+import com.qihancloud.opensdk.function.unit.HandMotionManager;
+import com.qihancloud.opensdk.function.unit.HardWareManager;
+import com.qihancloud.opensdk.function.unit.HeadMotionManager;
 import com.qihancloud.opensdk.function.unit.SpeechManager;
+import com.qihancloud.opensdk.function.unit.SystemManager;
+import com.qihancloud.opensdk.function.unit.WheelMotionManager;
+
+import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 
 public class ImageActivity extends TopBaseActivity {
 
+    private Semaphore imageUpdateSemaphore = new Semaphore(1);
+
     private ImageView imageView;
+    private FuncionalidadesActivity funcionalidadesActivity;
+    private ArrayList<DataModel> dataList;
+    private int currentIndex = 0;
+
+    private SpeechManager speechManager;
+    private SystemManager systemManager;
+    private HandMotionManager handMotionManager;
+    private HeadMotionManager headMotionManager;
+    private HardWareManager hardWareManager; //leds //touch sensors //voice locate //gyroscope
+    private WheelMotionManager wheelMotionManager;
+
+    Button btnComenzar;
 
     @Override
     protected void onMainServiceConnected() {
@@ -54,41 +77,154 @@ public class ImageActivity extends TopBaseActivity {
         onMainServiceConnected();
         setContentView(R.layout.imagen);
 
+        speechManager = (SpeechManager) getUnitManager(FuncConstant.SPEECH_MANAGER);
+        systemManager = (SystemManager) getUnitManager(FuncConstant.SYSTEM_MANAGER);
+        handMotionManager = (HandMotionManager) getUnitManager(FuncConstant.HANDMOTION_MANAGER);
+        headMotionManager = (HeadMotionManager) getUnitManager(FuncConstant.HEADMOTION_MANAGER);
+        hardWareManager = (HardWareManager) getUnitManager(FuncConstant.HARDWARE_MANAGER);
+        wheelMotionManager = (WheelMotionManager) getUnitManager(FuncConstant.WHEELMOTION_MANAGER);
+
+        funcionalidadesActivity = new FuncionalidadesActivity(speechManager, systemManager, handMotionManager,
+                headMotionManager, hardWareManager, wheelMotionManager, ImageActivity.this);
+
         imageView = findViewById(R.id.imagenView);
+        btnComenzar = findViewById(R.id.btnComenzar);
 
-        // Recibe la pregunta y la respuesta como extras del intent
+        // Recibir el intent con la URL de la imagen si se proporciona
         Intent intent = getIntent();
-        if (intent != null) {
-            String tiempo = intent.getStringExtra("tiempo");
-            String imageUri = intent.getStringExtra("uri");
-
-            System.out.println("URI: " + imageUri);
-            System.out.println("Tiempo: " + tiempo);
-
-            // si imageUri empieza por http, se trata de una URL
-            if (imageUri.startsWith("http")) {
-                Glide.with(ImageActivity.this)
-                        .load(imageUri)
-                        .into(imageView);
-            } else{
-                // si no, se trata de un URI local
-                imageView.setImageURI(Uri.parse(imageUri));
-            }
-
-            // Convertir el tiempo a milisegundos y programar el cierre de la actividad
-            int timeInSeconds = Integer.parseInt(tiempo);
-            int timeInMilliseconds = timeInSeconds * 1000;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    finish();
-                }
-            }, timeInMilliseconds);
-
+        if (intent != null ) {
+            dataList = (ArrayList<DataModel>) getIntent().getSerializableExtra("dataList");
         }
 
+        btnComenzar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reproducirAcciones();
+            }
+        });
+
+    }
+
+    public void updateImage(String imageUri) {
+        try {
+            System.out.println("INTENTO ADQUIRIR EL SEMAFORO " + imageUpdateSemaphore);
+            // Intentar adquirir el semáforo
+            imageUpdateSemaphore.acquire();
+
+            System.out.println("TENGO EL SEMAFORO " + imageUri);
+            String[] partes = imageUri.split("-");
+            String tiempo = partes[0];
+            String uri = partes[1];
+
+            runOnUiThread(() -> {
+                if (uri.startsWith("http")) {
+                    Glide.with(this).load(uri).into(imageView);
+                } else {
+                    imageView.setImageURI(Uri.parse(uri));
+                }
+            });
+
+            // Esperar el tiempo especificado antes de liberar el semáforo
+            Thread.sleep(Integer.parseInt(tiempo) * 1000L);
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            // Liberar el semáforo en el bloque finally para asegurarse de que se libere incluso si ocurre una excepción
+            imageUpdateSemaphore.release();
+        }
+    }
 
 
+    public void reproducirAcciones(){
+        // Recorre el dataList y ejecuta las acciones
+        for (int i = 0; i < dataList.size() ; i++) {
+            DataModel data = dataList.get(i);
+            System.out.println("Opción: " + data.getSpinnerOption());
+
+            if (data.getSpinnerOption().equals("Síntesis de voz")) {
+                funcionalidadesActivity.speakOperation(data.getText(), "Normal");
+
+            } else if (data.getSpinnerOption().equals("Movimiento de brazos")) {
+                funcionalidadesActivity.moveBrazosOperation(data.getText());
+
+            } else if (data.getSpinnerOption().equals("Movimiento de cabeza")) {
+                funcionalidadesActivity.moveCabezaOperation(data.getText());
+
+            } else if (data.getSpinnerOption().equals("Movimiento de ruedas")) {
+                funcionalidadesActivity.moveRuedasOperation(data.getText());
+
+            } else if (data.getSpinnerOption().equals("Encender LEDs")) {
+                funcionalidadesActivity.encenderLedsOperation(data.getText());
+
+            } else if (data.getSpinnerOption().equals("Cambio de expresión facial")) {
+                funcionalidadesActivity.changeFaceOperation(data.getText());
+
+            } else if (data.getSpinnerOption().equals("Insertar imagen")) {
+                // Actualizar la imagen en un hilo separado
+                int finalI = i;
+                new Thread(() -> {
+                    updateImage(data.getText());
+                    currentIndex = finalI;
+                    // Después de actualizar la imagen, continuar con la siguiente acción
+                    continueActions();
+                }).start();
+                // Salir del bucle principal para esperar a que la imagen se actualice
+                break;
+
+            } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
+
+            } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
+                funcionalidadesActivity.trueFalseOperation(data.getText());
+            } else {
+                // No se ha seleccionado ninguna opción
+            }
+        }
+    }
+
+    public void continueActions() {
+        // Continuar con las acciones restantes
+        for (int i = currentIndex + 1; i < dataList.size(); i++) {
+            DataModel data = dataList.get(i);
+            // Ejecutar la acción correspondiente según la opción
+            if (data.getSpinnerOption().equals("Síntesis de voz")) {
+                funcionalidadesActivity.speakOperation(data.getText(), "Normal");
+
+            } else if (data.getSpinnerOption().equals("Movimiento de brazos")) {
+                funcionalidadesActivity.moveBrazosOperation(data.getText());
+
+            } else if (data.getSpinnerOption().equals("Movimiento de cabeza")) {
+                funcionalidadesActivity.moveCabezaOperation(data.getText());
+
+            } else if (data.getSpinnerOption().equals("Movimiento de ruedas")) {
+                funcionalidadesActivity.moveRuedasOperation(data.getText());
+
+            } else if (data.getSpinnerOption().equals("Encender LEDs")) {
+                funcionalidadesActivity.encenderLedsOperation(data.getText());
+
+            } else if (data.getSpinnerOption().equals("Cambio de expresión facial")) {
+                funcionalidadesActivity.changeFaceOperation(data.getText());
+
+            } else if (data.getSpinnerOption().equals("Insertar imagen")) {
+                // Actualizar la imagen en un hilo separado
+                int finalI = i;
+                new Thread(() -> {
+                    updateImage(data.getText());
+                    currentIndex = finalI;
+                    // Después de actualizar la imagen, continuar con la siguiente acción
+                    continueActions();
+                }).start();
+                // Salir del bucle principal para esperar a que la imagen se actualice
+                break;
+
+            } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
+
+            } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
+                funcionalidadesActivity.trueFalseOperation(data.getText());
+            } else {
+                // No se ha seleccionado ninguna opción
+            }
+        }
     }
 
     @Override

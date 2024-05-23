@@ -563,38 +563,10 @@ public class EditActivity extends TopBaseActivity {
 
         buttonReproducir.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                // Recorre el dataList y ejecuta las acciones
-                for (int i = 0; i < dataList.size(); i++) {
-                    DataModel data = dataList.get(i);
-                    if (data.getSpinnerOption().equals("Síntesis de voz")) {
-                        funcionalidadesActivity.speakOperation(data.getText(), "Normal");
-
-                    } else if (data.getSpinnerOption().equals("Movimiento de brazos")) {
-                        funcionalidadesActivity.moveBrazosOperation(data.getText());
-
-                    } else if (data.getSpinnerOption().equals("Movimiento de cabeza")) {
-                        funcionalidadesActivity.moveCabezaOperation(data.getText());
-
-                    } else if (data.getSpinnerOption().equals("Movimiento de ruedas")) {
-                        funcionalidadesActivity.moveRuedasOperation(data.getText());
-
-                    } else if (data.getSpinnerOption().equals("Encender LEDs")) {
-                        funcionalidadesActivity.encenderLedsOperation(data.getText());
-
-                    } else if (data.getSpinnerOption().equals("Cambio de expresión facial")) {
-                        funcionalidadesActivity.changeFaceOperation(data.getText());
-
-                    } else if (data.getSpinnerOption().equals("Insertar imagen")) {
-                        funcionalidadesActivity.mostrarImagen(data.getText());
-
-                    } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
-
-                    } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
-                        funcionalidadesActivity.trueFalseOperation(data.getText());
-                    } else {
-                        // No se ha seleccionado ninguna opción
-                    }
-                }
+                // Iniciar actividad imagen
+                Intent intent = new Intent(EditActivity.this, ImageActivity.class);
+                intent.putExtra("dataList", dataList);
+                startActivity(intent);
             }
         });
 
