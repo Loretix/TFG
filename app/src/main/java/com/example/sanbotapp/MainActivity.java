@@ -172,37 +172,10 @@ public class MainActivity extends TopBaseActivity {
                 public void onClick(View v) {
                     ArrayList<DataModel> list = mDbHelperBloqueAcciones.getDatosPresentacion(id, mDbHelperAcciones);
 
-                    for (int i = 0; i < list.size(); i++) {
-                        DataModel data = list.get(i);
-                        if (data.getSpinnerOption().equals("Síntesis de voz")) {
-                            funcionalidadesActivity.speakOperation(data.getText(), "Normal");
+                    Intent intent = new Intent(MainActivity.this, ImageActivity.class);
+                    intent.putExtra("dataList", list);
+                    startActivity(intent);
 
-                        } else if (data.getSpinnerOption().equals("Movimiento de brazos")) {
-                            funcionalidadesActivity.moveBrazosOperation(data.getText());
-
-                        } else if (data.getSpinnerOption().equals("Movimiento de cabeza")) {
-                            funcionalidadesActivity.moveCabezaOperation(data.getText());
-
-                        } else if (data.getSpinnerOption().equals("Movimiento de ruedas")) {
-                            funcionalidadesActivity.moveRuedasOperation(data.getText());
-
-                        } else if (data.getSpinnerOption().equals("Encender LEDs")) {
-                            funcionalidadesActivity.encenderLedsOperation(data.getText());
-
-                        } else if (data.getSpinnerOption().equals("Cambio de expresión facial")) {
-                            funcionalidadesActivity.changeFaceOperation(data.getText());
-
-                        } else if (data.getSpinnerOption().equals("Insertar imagen")) {
-                            funcionalidadesActivity.mostrarImagen(data.getText());
-
-                        } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
-
-                        } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
-                            funcionalidadesActivity.trueFalseOperation(data.getText());
-                        } else {
-                            // No se ha seleccionado ninguna opción
-                        }
-                    }
                 }
             });
 

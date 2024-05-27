@@ -6,15 +6,19 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import androidx.appcompat.app.ActionBar;
 
@@ -49,7 +53,16 @@ public class ImageActivity extends TopBaseActivity {
     private HardWareManager hardWareManager; //leds //touch sensors //voice locate //gyroscope
     private WheelMotionManager wheelMotionManager;
 
-    Button btnComenzar;
+    private Button btnComenzar, btnFinalizar, btnPausar;
+    private TextView txtNuevo;
+    private ImageView gifImagen;
+    private TextView txtBienvenida;
+    private ImageView imagenSaanbot;
+    private LinearLayout linearLayout;
+
+    private Boolean reproduciendose = true;
+
+
 
     @Override
     protected void onMainServiceConnected() {
@@ -89,6 +102,14 @@ public class ImageActivity extends TopBaseActivity {
 
         imageView = findViewById(R.id.imagenView);
         btnComenzar = findViewById(R.id.btnComenzar);
+        txtNuevo = findViewById(R.id.txtNuevo);
+        gifImagen = findViewById(R.id.gifImagen);
+        txtBienvenida = findViewById(R.id.txtBienvenida);
+        imagenSaanbot = findViewById(R.id.imagenSaanbot);
+        linearLayout = findViewById(R.id.linearLayout_botones);
+        btnFinalizar = findViewById(R.id.button_finalizar);
+        btnPausar = findViewById(R.id.button_pausar);
+
 
         // Recibir el intent con la URL de la imagen si se proporciona
         Intent intent = getIntent();
@@ -99,7 +120,47 @@ public class ImageActivity extends TopBaseActivity {
         btnComenzar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                reproducirAcciones();
+                txtBienvenida.setVisibility(View.GONE);
+                btnComenzar.setVisibility(View.GONE);
+                imagenSaanbot.setVisibility(View.GONE);
+
+                txtNuevo.setVisibility(View.VISIBLE);
+                gifImagen.setVisibility(View.VISIBLE);
+                linearLayout.setVisibility(View.VISIBLE);
+
+                Glide.with(ImageActivity.this)
+                        .asGif()
+                        .load(R.drawable.robot_reproduccion)  // Reemplaza con tu archivo GIF
+                        .into(gifImagen);
+
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        reproducirAcciones();
+                    }
+                }, 1000);
+            }
+        });
+
+        btnFinalizar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        btnPausar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Cambiar texto del botón
+                if (btnPausar.getText().equals("Pausar")) {
+                    btnPausar.setText("Reanudar");
+                    reproduciendose = false;
+                } else {
+                    btnPausar.setText("Pausar");
+                    reproduciendose = true;
+                    continueActions();
+                }
             }
         });
 
@@ -117,6 +178,9 @@ public class ImageActivity extends TopBaseActivity {
             String uri = partes[1];
 
             runOnUiThread(() -> {
+                txtNuevo.setVisibility(View.GONE);
+                gifImagen.setVisibility(View.GONE);
+
                 if (uri.startsWith("http")) {
                     Glide.with(this).load(uri).into(imageView);
                 } else {
@@ -126,6 +190,15 @@ public class ImageActivity extends TopBaseActivity {
 
             // Esperar el tiempo especificado antes de liberar el semáforo
             Thread.sleep(Integer.parseInt(tiempo) * 1000L);
+
+            // Quitar imagen de fondo
+            runOnUiThread(() -> {
+                imageView.setImageDrawable(null);
+                txtNuevo.setVisibility(View.VISIBLE);
+                gifImagen.setVisibility(View.VISIBLE);
+            });
+
+
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -138,7 +211,8 @@ public class ImageActivity extends TopBaseActivity {
 
     public void reproducirAcciones(){
         // Recorre el dataList y ejecuta las acciones
-        for (int i = 0; i < dataList.size() ; i++) {
+        for (int i = 0; i < dataList.size() && reproduciendose; i++) {
+            currentIndex = i;
             DataModel data = dataList.get(i);
             System.out.println("Opción: " + data.getSpinnerOption());
 
@@ -184,7 +258,8 @@ public class ImageActivity extends TopBaseActivity {
 
     public void continueActions() {
         // Continuar con las acciones restantes
-        for (int i = currentIndex + 1; i < dataList.size(); i++) {
+        for (int i = currentIndex + 1; i < dataList.size() && reproduciendose; i++) {
+            currentIndex = i;
             DataModel data = dataList.get(i);
             // Ejecutar la acción correspondiente según la opción
             if (data.getSpinnerOption().equals("Síntesis de voz")) {
@@ -225,6 +300,7 @@ public class ImageActivity extends TopBaseActivity {
                 // No se ha seleccionado ninguna opción
             }
         }
+
     }
 
     @Override

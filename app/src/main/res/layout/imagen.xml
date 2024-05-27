@@ -14,8 +14,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Texto de bienvenida -->
-    <!-- Botón de comenzar -->
     <TextView
         android:id="@+id/txtBienvenida"
         android:layout_width="wrap_content"
@@ -24,12 +22,24 @@
         android:textColor="@color/colorPurple"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnComenzar"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.849" />
+        app:layout_constraintBottom_toTopOf="@id/imagenSaanbot"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <ImageView
+        android:id="@+id/imagenSaanbot"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/img"
+        android:scaleType="fitCenter"
+        app:layout_constraintTop_toBottomOf="@id/txtBienvenida"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnComenzar"
+        android:layout_marginBottom="16dp" />
 
     <Button
         android:id="@+id/btnComenzar"
@@ -40,10 +50,74 @@
         android:textAllCaps="false"
         android:textColor="@android:color/white"
         android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/imagenSaanbot"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="16dp"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+
+    <!-- Nuevo TextView para después de comenzar -->
+    <TextView
+        android:id="@+id/txtNuevo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="La presentación se está reproduciendo..."
+        android:textColor="@color/colorPurple"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/gifImagen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <!-- GifImageView -->
+    <ImageView
+        android:id="@+id/gifImagen"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/txtNuevo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginBottom="16dp" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout_botones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp">
+
+        <Button
+            android:id="@+id/button_pausar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:background="@drawable/button_rounded"
+            android:textSize="18sp"
+            android:textAllCaps="false"
+            android:text="Pausar" />
+
+        <Button
+            android:id="@+id/button_finalizar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:background="@drawable/button_rounded"
+            android:textSize="18sp"
+            android:layout_marginLeft="16dp"
+            android:textAllCaps="false"
+            android:text="Finalizar" />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

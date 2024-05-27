@@ -145,43 +145,18 @@ public class ModificarActivity extends TopBaseActivity {
 
         reproducir.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                ArrayList<DataModel> listafinal = new ArrayList<>();
                 // Recorre los bloques y para cada bloque recorre las acciones y las ejecuta
                 for (int i = 0; i < dataList.size(); i++) {
-
                     ArrayList<DataModel> list = mDbHelperAccion.getAccionesBloque(dataList.get(i));
-
                     for (int j = 0; j < list.size(); j++) {
-                        DataModel data = list.get(j);
-                        if (data.getSpinnerOption().equals("Síntesis de voz")) {
-                            funcionalidadesActivity.speakOperation(data.getText(), "Normal");
-
-                        } else if (data.getSpinnerOption().equals("Movimiento de brazos")) {
-                            funcionalidadesActivity.moveBrazosOperation(data.getText());
-
-                        } else if (data.getSpinnerOption().equals("Movimiento de cabeza")) {
-                            funcionalidadesActivity.moveCabezaOperation(data.getText());
-
-                        } else if (data.getSpinnerOption().equals("Movimiento de ruedas")) {
-                            funcionalidadesActivity.moveRuedasOperation(data.getText());
-
-                        } else if (data.getSpinnerOption().equals("Encender LEDs")) {
-                            funcionalidadesActivity.encenderLedsOperation(data.getText());
-
-                        } else if (data.getSpinnerOption().equals("Cambio de expresión facial")) {
-                            funcionalidadesActivity.changeFaceOperation(data.getText());
-
-                        } else if (data.getSpinnerOption().equals("Insertar imagen")) {
-                            funcionalidadesActivity.mostrarImagen(data.getText());
-
-                        } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
-
-                        } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
-                            funcionalidadesActivity.trueFalseOperation(data.getText());
-                        } else {
-                            // No se ha seleccionado ninguna opción
-                        }
+                        listafinal.add(list.get(j));
                     }
                 }
+
+                Intent intent = new Intent(ModificarActivity.this, ImageActivity.class);
+                intent.putExtra("dataList", listafinal);
+                startActivity(intent);
             }
         });
 

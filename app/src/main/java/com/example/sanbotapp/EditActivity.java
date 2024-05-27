@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -59,13 +60,15 @@ public class EditActivity extends TopBaseActivity {
     private Spinner spinnerOptions;
     private Button buttonSave, buttonAdd, buttonAddExpresionFacial, buttonAddMovBrazos;
     private Button buttonAddMovCabeza, buttonAddMovRuedas, buttonAddLED, buttonAddTrueFalse;
-    private Button buttonReproducir, BSelectImage;
+    private Button buttonReproducir, BSelectImage, BSelectVideo;
     private ArrayList<DataModel> dataList;
     private TextView textViewOptions;
     private LinearLayout layoutTextView;
     private AlertDialog dialog;
     private ImageView IVPreviewImage;
+    private VideoView IVPreviewVideo;
     private Uri selectedImageUri;
+    private Uri selectedVideoUri;
 
     private SpeechManager speechManager;
     private SystemManager systemManager;
@@ -86,6 +89,7 @@ public class EditActivity extends TopBaseActivity {
     private AccionesDbAdapter mDbHelperAcciones;
 
     int SELECT_PICTURE = 200;
+    int SELECT_VIDEO = 1;
 
 
     @Override
@@ -222,6 +226,10 @@ public class EditActivity extends TopBaseActivity {
         BSelectImage = findViewById(R.id.BSelectImage);
         LinearLayout layoutImage = findViewById(R.id.layoutImage);
 
+        // Añadir video -------------------------------------------------------------------------------------
+        BSelectVideo = findViewById(R.id.BSelectVideo);
+        LinearLayout layoutVideo = findViewById(R.id.layoutVideo);
+
         // Pregunta verdadero o false
         buttonAddTrueFalse = findViewById(R.id.buttonAddTrueFalse);
         Spinner spinnerTrueFalse = findViewById(R.id.spinnerOptionsTrueFalse);
@@ -274,6 +282,7 @@ public class EditActivity extends TopBaseActivity {
                     editTextOption.setHint("Introduce el discurso");
                     layoutTrueFalse.setVisibility(View.GONE);
                     layoutImage.setVisibility(View.GONE);
+                    layoutVideo.setVisibility(View.GONE);
                 } else if (selectedItem.equals("Movimiento de brazos")) {
                     layoutEditText.setVisibility(View.GONE);
                     layoutExpresionFacial.setVisibility(View.GONE);
@@ -283,7 +292,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovRuedas.setVisibility(View.GONE);
                     layoutTrueFalse.setVisibility(View.GONE);
                     layoutImage.setVisibility(View.GONE);
-
+                    layoutVideo.setVisibility(View.GONE);
                 } else if (selectedItem.equals("Movimiento de cabeza")) {
                     layoutEditText.setVisibility(View.GONE);
                     layoutExpresionFacial.setVisibility(View.GONE);
@@ -293,6 +302,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovRuedas.setVisibility(View.GONE);
                     layoutTrueFalse.setVisibility(View.GONE);
                     layoutImage.setVisibility(View.GONE);
+                    layoutVideo.setVisibility(View.GONE);
 
                 } else if (selectedItem.equals("Movimiento de ruedas")) {
                     layoutEditText.setVisibility(View.GONE);
@@ -303,6 +313,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovRuedas.setVisibility(View.VISIBLE);
                     layoutTrueFalse.setVisibility(View.GONE);
                     layoutImage.setVisibility(View.GONE);
+                    layoutVideo.setVisibility(View.GONE);
 
                 } else if (selectedItem.equals("Encender LEDs")) {
                     layoutEditText.setVisibility(View.GONE);
@@ -313,6 +324,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovRuedas.setVisibility(View.GONE);
                     layoutTrueFalse.setVisibility(View.GONE);
                     layoutImage.setVisibility(View.GONE);
+                    layoutVideo.setVisibility(View.GONE);
                 } else if (selectedItem.equals("Cambio de expresión facial")) {
                     layoutEditText.setVisibility(View.GONE);
                     layoutMovBrazos.setVisibility(View.GONE);
@@ -323,6 +335,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovRuedas.setVisibility(View.GONE);
                     layoutTrueFalse.setVisibility(View.GONE);
                     layoutImage.setVisibility(View.GONE);
+                    layoutVideo.setVisibility(View.GONE);
 
                 } else if (selectedItem.equals("Insertar imagen")) {
                     layoutEditText.setVisibility(View.GONE);
@@ -333,6 +346,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovRuedas.setVisibility(View.GONE);
                     layoutTrueFalse.setVisibility(View.GONE);
                     layoutImage.setVisibility(View.VISIBLE);
+                    layoutVideo.setVisibility(View.GONE);
 
                 } else if (selectedItem.equals("Insertar vídeo")) {
                     layoutEditText.setVisibility(View.GONE);
@@ -343,6 +357,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovRuedas.setVisibility(View.GONE);
                     layoutTrueFalse.setVisibility(View.GONE);
                     layoutImage.setVisibility(View.GONE);
+                    layoutVideo.setVisibility(View.VISIBLE);
 
                 }  else if (selectedItem.equals("Pregunta verdadero o falso")) {
                     layoutEditText.setVisibility(View.GONE);
@@ -353,6 +368,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovRuedas.setVisibility(View.GONE);
                     layoutTrueFalse.setVisibility(View.VISIBLE);
                     layoutImage.setVisibility(View.GONE);
+                    layoutVideo.setVisibility(View.GONE);
 
                 } else {
                     layoutEditText.setVisibility(View.GONE);
@@ -363,6 +379,7 @@ public class EditActivity extends TopBaseActivity {
                     layoutMovRuedas.setVisibility(View.GONE);
                     layoutTrueFalse.setVisibility(View.GONE);
                     layoutImage.setVisibility(View.GONE);
+                    layoutVideo.setVisibility(View.GONE);
 
                 }
             }
@@ -551,6 +568,14 @@ public class EditActivity extends TopBaseActivity {
             public void onClick(View v) {
                 // Crear un intent para seleccionar una imagen de la galería
                 mostrarDialogoSubirImagen();
+            }
+        });
+
+        BSelectVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Crear un intent para seleccionar un video de la galería
+                mostrarDialogoSubirVideo();
             }
         });
 
@@ -778,6 +803,126 @@ public class EditActivity extends TopBaseActivity {
         dialog.show();
     }
 
+    // Dialogo para seleccionar video
+    private void mostrarDialogoSubirVideo() {
+        // Inflar el layout del diálogo personalizado
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.popup_selectvideo, null);
+
+        // Obtener referencias a los botones del layout
+        Button btnSelectVideo = dialogView.findViewById(R.id.btn_select_video);
+        Button btnSelectUrl = dialogView.findViewById(R.id.btn_select_url);
+        Button btnCancel = dialogView.findViewById(R.id.btn_cancel);
+        Button btnAceptar = dialogView.findViewById(R.id.btn_aceptar);
+
+        // Obtener referencias a los elementos del layout url
+        LinearLayout LLUrl = dialogView.findViewById(R.id.layoutEditText);
+        EditText ETUrl = dialogView.findViewById(R.id.editTextOption);
+        Button btnAnadir = dialogView.findViewById(R.id.buttonAdd);
+        // One Preview Image
+        IVPreviewVideo = dialogView.findViewById(R.id.IVPreviewVideo);
+
+        // Configurar el comportamiento del botón "Cancelar"
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Si el usuario elige "Cancelar", simplemente cierra el diálogo
+                dialog.dismiss();
+            }
+        });
+
+        // Configurar el comportamiento del botón "Seleccionar video"
+        btnSelectUrl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LLUrl.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // Configurar el comportamiento del botón "Eliminar"
+        btnAceptar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (selectedVideoUri != null) {
+                    String text =  selectedVideoUri.toString();
+                    String spinnerOption = spinnerOptions.getSelectedItem().toString();
+
+                    // Verificar si el texto y la opción no están vacíos
+                    if (!TextUtils.isEmpty(text)) {
+                        // Crear un nuevo objeto DataModel y agregarlo a la lista
+                        DataModel dataModel = new DataModel(text, spinnerOption);
+                        dataList.add(dataModel);
+                        //adapterV.notifyDataSetChanged();
+                        recyclerView.scrollToPosition(dataList.size() - 1);
+                    } else {
+                        // Mostrar un mensaje de error si el texto está vacío
+                        Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
+                    }
+                } else if ( !ETUrl.toString().isEmpty() ) {
+                    String text = ETUrl.getText().toString();
+                    String spinnerOption = spinnerOptions.getSelectedItem().toString();
+
+                    // Verificar si el texto y la opción no están vacíos
+                    if (!TextUtils.isEmpty(text)) {
+                        // Crear un nuevo objeto DataModel y agregarlo a la lista
+                        DataModel dataModel = new DataModel(text, spinnerOption);
+                        dataList.add(dataModel);
+                        //adapterV.notifyDataSetChanged();
+                        recyclerView.scrollToPosition(dataList.size() - 1);
+                    } else {
+                        // Mostrar un mensaje de error si el texto está vacío
+                        Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+
+                // Si no hay selected image
+                dialog.dismiss();
+            }
+        });
+
+        // Configurar el comportamiento del botón "Seleccionar imagen"
+        btnSelectVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkPermissions();
+                IVPreviewVideo.setVisibility(View.VISIBLE);
+                // Si el usuario elige "Seleccionar un video", se abre la galería
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, SELECT_VIDEO);
+            }
+        });
+
+        btnAnadir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Coger url del edit y mostrar la imagen en el layout de imagen
+                if( ETUrl.getText().toString().isEmpty()){
+                    Toast.makeText(EditActivity.this, "Introduce una URL", Toast.LENGTH_SHORT).show();
+                }else {
+                    IVPreviewVideo.setVisibility(View.VISIBLE);
+                    String url = ETUrl.getText().toString();
+
+                    // Get video de internet
+                    Uri uri = Uri.parse(url);
+                    IVPreviewVideo.setVideoURI(uri);
+                    IVPreviewVideo.start();
+
+
+                }
+
+            }
+        });
+
+        // Configurar AlertDialog con el layout personalizado y el contexto adecuado
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+
+        // Crear y mostrar el diálogo
+        dialog = builder.create();
+        dialog.show();
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -791,6 +936,16 @@ public class EditActivity extends TopBaseActivity {
                 if (null != selectedImageUri) {
                     // update the preview image in the layout
                     IVPreviewImage.setImageURI(selectedImageUri);
+                }
+            }
+
+            if (requestCode == SELECT_VIDEO) {
+                // Get the url of the image from data
+                selectedVideoUri = data.getData();
+                if (null != selectedVideoUri) {
+                    // update the preview image in the layout
+                    IVPreviewVideo.setVideoURI(selectedVideoUri);
+                    IVPreviewVideo.start();
                 }
             }
         }

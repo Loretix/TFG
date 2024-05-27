@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- dialog_confirmacion.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:orientation="vertical">
+
+
+
+    <TextView
+        android:id="@+id/text_confirmacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="10dp"
+        android:textColor="@color/colorPurple"
+        android:textAlignment="center"
+        android:textStyle="bold"
+        android:text="Seleccione el video que desee"
+        android:textSize="18sp"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:id="@+id/text_irreversible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Puede introducir una url o seleccionar un video de la galería"
+        android:textColor="@color/colorPurple"
+        android:textSize="15sp"
+        android:layout_marginBottom="8dp"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/btn_select_video"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/button_rounded"
+            android:textAllCaps="false"
+            android:text="Seleccionar un video" />
+
+        <Button
+            android:id="@+id/btn_select_url"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/button_rounded"
+            android:textAllCaps="false"
+            android:text="Insertar url" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_margin="16dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:textColor="@color/colorPurple"
+        android:textSize="18sp">
+
+        <EditText
+            android:id="@+id/editTextOption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/edittext_border"
+            android:textColor="@color/colorPurple"
+            android:textSize="18sp"
+            android:padding="8dp"
+            android:hint="Introduce la url del video"
+            android:inputType="text"/>
+
+        <Button
+            android:id="@+id/buttonAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:layout_marginLeft="16dp"
+            android:background="@drawable/button_rounded"
+            android:textSize="18sp"
+            android:textAllCaps="false"
+            android:text="Añadir"/>
+
+
+    </LinearLayout>
+
+    <!--ImageView to preview the selected image-->
+    <VideoView
+        android:id="@+id/IVPreviewVideo"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_below="@id/BSelectVideo"
+        android:visibility="gone"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp" />
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/button_rounded"
+            android:textAllCaps="false"
+            android:text="Cancelar" />
+
+        <Button
+            android:id="@+id/btn_aceptar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/button_rounded_green"
+            android:textAllCaps="false"
+            android:text="Aceptar" />
+
+    </LinearLayout>
+
+</LinearLayout>
