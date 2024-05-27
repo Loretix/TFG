@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -903,11 +904,11 @@ public class EditActivity extends TopBaseActivity {
                     IVPreviewVideo.setVisibility(View.VISIBLE);
                     String url = ETUrl.getText().toString();
 
+                    //url = "https://media.istockphoto.com/id/1359102394/es/vídeo/antigua-biblioteca-o-museo-con-estantes-vintage-llenos-de-libros-de-literatura-clásica.mp4?s=mp4-640x640-is&k=20&c=aJBxVjsloW_vdiEPtb6i9hKLravHWnB7GPdFgzXi8yo=";
                     // Get video de internet
                     Uri uri = Uri.parse(url);
                     IVPreviewVideo.setVideoURI(uri);
                     IVPreviewVideo.start();
-
 
                 }
 

@@ -104,9 +104,15 @@ public class FuncionalidadesActivity extends TopBaseActivity {
         String tiempo = partes[0];
         String uri = partes[1];
 
-        Intent intent = new Intent(context, ImageActivity.class);
+        Intent intent = new Intent(context, ImageFijaActivity.class);
         intent.putExtra("uri", uri);
         intent.putExtra("tiempo", tiempo);
+        context.startActivity(intent);
+    }
+
+    public void mostrarVideo(String tipo) {
+        Intent intent = new Intent(context, VideoActivity.class);
+        intent.putExtra("uri", tipo);
         context.startActivity(intent);
     }
 
