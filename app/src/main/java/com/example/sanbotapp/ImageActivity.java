@@ -141,7 +141,8 @@ public class ImageActivity extends TopBaseActivity {
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        reproducirAcciones();
+                        //reproducirAcciones();
+                        continueActions();
                     }
                 }, 1000);
             }
@@ -224,72 +225,14 @@ public class ImageActivity extends TopBaseActivity {
     }
 
 
-    public void reproducirAcciones(){
-        // Recorre el dataList y ejecuta las acciones
-        for (int i = 0; i < dataList.size() && reproduciendose; i++) {
-            currentIndex = i;
-            DataModel data = dataList.get(i);
-            System.out.println("Opción: " + data.getSpinnerOption());
-
-            if (data.getSpinnerOption().equals("Síntesis de voz")) {
-                funcionalidadesActivity.speakOperation(data.getText(), "Normal");
-
-            } else if (data.getSpinnerOption().equals("Movimiento de brazos")) {
-                funcionalidadesActivity.moveBrazosOperation(data.getText());
-
-            } else if (data.getSpinnerOption().equals("Movimiento de cabeza")) {
-                funcionalidadesActivity.moveCabezaOperation(data.getText());
-
-            } else if (data.getSpinnerOption().equals("Movimiento de ruedas")) {
-                funcionalidadesActivity.moveRuedasOperation(data.getText());
-
-            } else if (data.getSpinnerOption().equals("Encender LEDs")) {
-                funcionalidadesActivity.encenderLedsOperation(data.getText());
-
-            } else if (data.getSpinnerOption().equals("Cambio de expresión facial")) {
-                funcionalidadesActivity.changeFaceOperation(data.getText());
-
-            } else if (data.getSpinnerOption().equals("Insertar imagen")) {
-                // Actualizar la imagen en un hilo separado
-                int finalI = i;
-                new Thread(() -> {
-                    updateImage(data.getText());
-                    currentIndex = finalI;
-                    // Después de actualizar la imagen, continuar con la siguiente acción
-                    continueActions();
-                }).start();
-                // Salir del bucle principal para esperar a que la imagen se actualice
-                break;
-
-            } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
-                // Parar presentación para reproducir el video
-                reproduciendose = false;
-                btnPausar.setText("Reanudar");
-                txtNuevo.setVisibility(View.GONE);
-                gifImagen.setVisibility(View.GONE);
-                txtPausa.setVisibility(View.VISIBLE);
-                imagenSaanbot.setVisibility(View.VISIBLE);
-                funcionalidadesActivity.mostrarVideo(data.getText());
-
-            } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
-                funcionalidadesActivity.trueFalseOperation(data.getText());
-            } else {
-                // No se ha seleccionado ninguna opción
-            }
-        }
-        if (currentIndex == dataList.size() - 1) {
-            runOnUiThread(() -> {
-                txtNuevo.setVisibility(View.GONE);
-                gifImagen.setVisibility(View.GONE);
-                txtFinal.setVisibility(View.VISIBLE);
-                imagenSaanbot.setVisibility(View.VISIBLE);
-                btnPausar.setVisibility(View.GONE);
-            });
-        }
-    }
-
     public void continueActions() {
         // Continuar con las acciones restantes
+        // Añadir al final del datalist una acción para mostrar el mensaje de finalización
+        if (currentIndex == dataList.size() - 1) {
+            DataModel data = new DataModel("Finalizado", "Finalizado");
+            dataList.add(data);
+        }
+
         for (int i = currentIndex + 1; i < dataList.size() && reproduciendose; i++) {
             currentIndex = i;
             DataModel data = dataList.get(i);
@@ -336,20 +279,44 @@ public class ImageActivity extends TopBaseActivity {
                 funcionalidadesActivity.mostrarVideo(data.getText());
 
             } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
-                funcionalidadesActivity.trueFalseOperation(data.getText());
+                // Esper el semáforo para mostrar la pregunta
+                try {
+                    imageUpdateSemaphore.acquire();
+                    runOnUiThread(() -> {
+                        reproduciendose = false;
+                        btnPausar.setText("Reanudar");
+                        txtNuevo.setVisibility(View.GONE);
+                        gifImagen.setVisibility(View.GONE);
+                        txtPausa.setVisibility(View.VISIBLE);
+                        imagenSaanbot.setVisibility(View.VISIBLE);
+                        funcionalidadesActivity.trueFalseOperation(data.getText());
+                    });
+                    // Liberar el semáforo después de mostrar la pregunta
+                    imageUpdateSemaphore.release();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                
+            } else if (data.getSpinnerOption().equals("Finalizado")) {
+
+                // Esperar el semáforo para mostrar el mensaje de finalización
+                try {
+                    imageUpdateSemaphore.acquire();
+                    runOnUiThread(() -> {
+                        txtNuevo.setVisibility(View.GONE);
+                        gifImagen.setVisibility(View.GONE);
+                        txtFinal.setVisibility(View.VISIBLE);
+                        imagenSaanbot.setVisibility(View.VISIBLE);
+                        btnPausar.setVisibility(View.GONE);
+                    });
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
             } else {
                 // No se ha seleccionado ninguna opción
             }
-        }
-
-        if (currentIndex == dataList.size() - 1) {
-            runOnUiThread(() -> {
-                txtNuevo.setVisibility(View.GONE);
-                gifImagen.setVisibility(View.GONE);
-                txtFinal.setVisibility(View.VISIBLE);
-                imagenSaanbot.setVisibility(View.VISIBLE);
-                btnPausar.setVisibility(View.GONE);
-            });
         }
 
     }
