@@ -247,6 +247,7 @@ public class ImageActivity extends TopBaseActivity {
                 break;
 
             } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
+                funcionalidadesActivity.mostrarVideo(data.getText());
 
             } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
                 funcionalidadesActivity.trueFalseOperation(data.getText());
@@ -293,6 +294,7 @@ public class ImageActivity extends TopBaseActivity {
                 break;
 
             } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
+                funcionalidadesActivity.mostrarVideo(data.getText());
 
             } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
                 funcionalidadesActivity.trueFalseOperation(data.getText());

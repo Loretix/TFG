@@ -2,10 +2,15 @@ package com.example.sanbotapp;
 
 
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,6 +28,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -111,9 +118,9 @@ public class FuncionalidadesActivity extends TopBaseActivity {
     }
 
     public void mostrarVideo(String tipo) {
-        Intent intent = new Intent(context, VideoActivity.class);
-        intent.putExtra("uri", tipo);
-        context.startActivity(intent);
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(tipo));
+        context.startActivity(browserIntent);
+
     }
 
     public void mostrarImagenAct(String tipo, Activity activity) {

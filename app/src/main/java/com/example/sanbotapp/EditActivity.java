@@ -3,6 +3,7 @@ package com.example.sanbotapp;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -104,6 +105,7 @@ public class EditActivity extends TopBaseActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState);
         onMainServiceConnected();
+        checkPermissions();
         setContentView(R.layout.activity_edit);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.custom_action_bar_title_conf);
@@ -718,6 +720,7 @@ public class EditActivity extends TopBaseActivity {
             @Override
             public void onClick(View v) {
                 LLUrl.setVisibility(View.VISIBLE);
+                IVPreviewImage.setVisibility(View.GONE);
             }
         });
 
@@ -769,6 +772,7 @@ public class EditActivity extends TopBaseActivity {
             public void onClick(View v) {
                 checkPermissions();
                 IVPreviewImage.setVisibility(View.VISIBLE);
+                LLUrl.setVisibility(View.GONE);
                 // Si el usuario elige "Seleccionar imagen", se abre la galería
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, SELECT_PICTURE);
@@ -819,7 +823,6 @@ public class EditActivity extends TopBaseActivity {
         // Obtener referencias a los elementos del layout url
         LinearLayout LLUrl = dialogView.findViewById(R.id.layoutEditText);
         EditText ETUrl = dialogView.findViewById(R.id.editTextOption);
-        Button btnAnadir = dialogView.findViewById(R.id.buttonAdd);
         // One Preview Image
         IVPreviewVideo = dialogView.findViewById(R.id.IVPreviewVideo);
 
@@ -836,7 +839,9 @@ public class EditActivity extends TopBaseActivity {
         btnSelectUrl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 LLUrl.setVisibility(View.VISIBLE);
+                IVPreviewVideo.setVisibility(View.GONE);
             }
         });
 
@@ -888,30 +893,20 @@ public class EditActivity extends TopBaseActivity {
             public void onClick(View v) {
                 checkPermissions();
                 IVPreviewVideo.setVisibility(View.VISIBLE);
+                LLUrl.setVisibility(View.GONE);
+
                 // Si el usuario elige "Seleccionar un video", se abre la galería
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, SELECT_VIDEO);
-            }
-        });
 
-        btnAnadir.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Coger url del edit y mostrar la imagen en el layout de imagen
-                if( ETUrl.getText().toString().isEmpty()){
-                    Toast.makeText(EditActivity.this, "Introduce una URL", Toast.LENGTH_SHORT).show();
-                }else {
-                    IVPreviewVideo.setVisibility(View.VISIBLE);
-                    String url = ETUrl.getText().toString();
-
-                    //url = "https://media.istockphoto.com/id/1359102394/es/vídeo/antigua-biblioteca-o-museo-con-estantes-vintage-llenos-de-libros-de-literatura-clásica.mp4?s=mp4-640x640-is&k=20&c=aJBxVjsloW_vdiEPtb6i9hKLravHWnB7GPdFgzXi8yo=";
-                    // Get video de internet
-                    Uri uri = Uri.parse(url);
-                    IVPreviewVideo.setVideoURI(uri);
-                    IVPreviewVideo.start();
-
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("video/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                try {
+                    startActivityForResult(Intent.createChooser(intent, "Select a Video"), SELECT_VIDEO);
+                } catch (ActivityNotFoundException e) {
+                    e.printStackTrace();
+                    // Handle the error
+                    Toast.makeText(EditActivity.this, "No application found to pick video", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
 
@@ -944,6 +939,7 @@ public class EditActivity extends TopBaseActivity {
                 // Get the url of the image from data
                 selectedVideoUri = data.getData();
                 if (null != selectedVideoUri) {
+                    System.out.println("selectedVideoUri = " + selectedVideoUri);
                     // update the preview image in the layout
                     IVPreviewVideo.setVideoURI(selectedVideoUri);
                     IVPreviewVideo.start();
