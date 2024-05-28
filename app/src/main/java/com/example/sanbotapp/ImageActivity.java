@@ -55,6 +55,8 @@ public class ImageActivity extends TopBaseActivity {
 
     private Button btnComenzar, btnFinalizar, btnPausar;
     private TextView txtNuevo;
+    private TextView txtPausa;
+    private TextView txtFinal;
     private ImageView gifImagen;
     private TextView txtBienvenida;
     private ImageView imagenSaanbot;
@@ -109,6 +111,9 @@ public class ImageActivity extends TopBaseActivity {
         linearLayout = findViewById(R.id.linearLayout_botones);
         btnFinalizar = findViewById(R.id.button_finalizar);
         btnPausar = findViewById(R.id.button_pausar);
+        txtPausa = findViewById(R.id.txtPausa);
+        txtFinal = findViewById(R.id.txtFinal);
+
 
 
         // Recibir el intent con la URL de la imagen si se proporciona
@@ -155,10 +160,18 @@ public class ImageActivity extends TopBaseActivity {
                 // Cambiar texto del botón
                 if (btnPausar.getText().equals("Pausar")) {
                     btnPausar.setText("Reanudar");
+                    txtNuevo.setVisibility(View.GONE);
+                    gifImagen.setVisibility(View.GONE);
+                    txtPausa.setVisibility(View.VISIBLE);
+                    imagenSaanbot.setVisibility(View.VISIBLE);
                     reproduciendose = false;
                 } else {
                     btnPausar.setText("Pausar");
                     reproduciendose = true;
+                    txtPausa.setVisibility(View.GONE);
+                    txtNuevo.setVisibility(View.VISIBLE);
+                    gifImagen.setVisibility(View.VISIBLE);
+                    imagenSaanbot.setVisibility(View.GONE);
                     continueActions();
                 }
             }
@@ -180,6 +193,8 @@ public class ImageActivity extends TopBaseActivity {
             runOnUiThread(() -> {
                 txtNuevo.setVisibility(View.GONE);
                 gifImagen.setVisibility(View.GONE);
+                txtPausa.setVisibility(View.GONE);
+                imagenSaanbot.setVisibility(View.GONE);
 
                 if (uri.startsWith("http")) {
                     Glide.with(this).load(uri).into(imageView);
@@ -247,6 +262,13 @@ public class ImageActivity extends TopBaseActivity {
                 break;
 
             } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
+                // Parar presentación para reproducir el video
+                reproduciendose = false;
+                btnPausar.setText("Reanudar");
+                txtNuevo.setVisibility(View.GONE);
+                gifImagen.setVisibility(View.GONE);
+                txtPausa.setVisibility(View.VISIBLE);
+                imagenSaanbot.setVisibility(View.VISIBLE);
                 funcionalidadesActivity.mostrarVideo(data.getText());
 
             } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
@@ -255,6 +277,15 @@ public class ImageActivity extends TopBaseActivity {
                 // No se ha seleccionado ninguna opción
             }
         }
+        if (currentIndex == dataList.size() - 1) {
+            runOnUiThread(() -> {
+                txtNuevo.setVisibility(View.GONE);
+                gifImagen.setVisibility(View.GONE);
+                txtFinal.setVisibility(View.VISIBLE);
+                imagenSaanbot.setVisibility(View.VISIBLE);
+                btnPausar.setVisibility(View.GONE);
+            });
+        }
     }
 
     public void continueActions() {
@@ -262,6 +293,7 @@ public class ImageActivity extends TopBaseActivity {
         for (int i = currentIndex + 1; i < dataList.size() && reproduciendose; i++) {
             currentIndex = i;
             DataModel data = dataList.get(i);
+            System.out.println("Opción: " + data.getSpinnerOption());
             // Ejecutar la acción correspondiente según la opción
             if (data.getSpinnerOption().equals("Síntesis de voz")) {
                 funcionalidadesActivity.speakOperation(data.getText(), "Normal");
@@ -294,6 +326,13 @@ public class ImageActivity extends TopBaseActivity {
                 break;
 
             } else if (data.getSpinnerOption().equals("Insertar vídeo")) {
+                // Parar presentación para reproducir el video
+                reproduciendose = false;
+                btnPausar.setText("Reanudar");
+                txtNuevo.setVisibility(View.GONE);
+                gifImagen.setVisibility(View.GONE);
+                txtPausa.setVisibility(View.VISIBLE);
+                imagenSaanbot.setVisibility(View.VISIBLE);
                 funcionalidadesActivity.mostrarVideo(data.getText());
 
             } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
@@ -301,6 +340,16 @@ public class ImageActivity extends TopBaseActivity {
             } else {
                 // No se ha seleccionado ninguna opción
             }
+        }
+
+        if (currentIndex == dataList.size() - 1) {
+            runOnUiThread(() -> {
+                txtNuevo.setVisibility(View.GONE);
+                gifImagen.setVisibility(View.GONE);
+                txtFinal.setVisibility(View.VISIBLE);
+                imagenSaanbot.setVisibility(View.VISIBLE);
+                btnPausar.setVisibility(View.GONE);
+            });
         }
 
     }
