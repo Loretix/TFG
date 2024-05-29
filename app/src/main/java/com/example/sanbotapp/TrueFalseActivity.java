@@ -83,6 +83,7 @@ public class TrueFalseActivity extends TopBaseActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                setResult(RESULT_OK);
                 finish();
             }
         });
@@ -108,6 +109,7 @@ public class TrueFalseActivity extends TopBaseActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                setResult(RESULT_OK);
                 finish();
             }
         });

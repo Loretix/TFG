@@ -180,6 +180,10 @@ public class ImageActivity extends TopBaseActivity {
     }
 
     public void reproducirAcciones() {
+
+        DataModel dataadd = new DataModel("Finalizado", "Finalizado");
+        dataList.add(dataadd);
+
         // Recorre el dataList y ejecuta las acciones
         for (int i = 0; i < dataList.size() && reproduciendose; i++) {
             currentIndex = i;
@@ -227,7 +231,24 @@ public class ImageActivity extends TopBaseActivity {
                 funcionalidadesActivity.mostrarVideo(data.getText());
 
             } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
-                funcionalidadesActivity.trueFalseOperation(data.getText());
+                reproduciendose = false;
+                String[] partes = data.getText().split("-");
+                String pregunta = partes[0];
+                String respuesta = partes[1];
+
+                SpeakOption speakOption = new SpeakOption();
+                speakOption.setSpeed(60);
+                speakOption.setIntonation(50);
+                speechManager.startSpeak(pregunta, speakOption);
+
+                // Crear un intent para iniciar la actividad TrueFalseActivity
+                Intent intent = new Intent(this, TrueFalseActivity.class);
+                // Pasar la pregunta y la respuesta como extras del intent
+                intent.putExtra("pregunta", pregunta);
+                intent.putExtra("respuesta", respuesta);
+
+                startActivityForResult(intent, 200);
+                return;
             } else {
                 // No se ha seleccionado ninguna opción
             }
@@ -278,14 +299,9 @@ public class ImageActivity extends TopBaseActivity {
         }
     }
 
-
     public void continueActions() {
         // Continuar con las acciones restantes
-        // Añadir al final del datalist una acción para mostrar el mensaje de finalización
-        if (currentIndex == dataList.size() - 1) {
-            DataModel data = new DataModel("Finalizado", "Finalizado");
-            dataList.add(data);
-        }
+
 
         for (int i = currentIndex + 1; i < dataList.size() && reproduciendose; i++) {
             currentIndex = i;
@@ -336,22 +352,24 @@ public class ImageActivity extends TopBaseActivity {
 
             } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
                 // Esper el semáforo para mostrar la pregunta
-                try {
-                    imageUpdateSemaphore.acquire();
-                    runOnUiThread(() -> {
-                        reproduciendose = false;
-                        btnPausar.setText("Reanudar");
-                        txtNuevo.setVisibility(View.GONE);
-                        gifImagen.setVisibility(View.GONE);
-                        txtPausa.setVisibility(View.VISIBLE);
-                        imagenSaanbot.setVisibility(View.VISIBLE);
-                        funcionalidadesActivity.trueFalseOperation(data.getText());
-                    });
-                    // Liberar el semáforo después de mostrar la pregunta
-                    imageUpdateSemaphore.release();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                reproduciendose = false;
+                String[] partes = data.getText().split("-");
+                String pregunta = partes[0];
+                String respuesta = partes[1];
+
+                SpeakOption speakOption = new SpeakOption();
+                speakOption.setSpeed(60);
+                speakOption.setIntonation(50);
+                speechManager.startSpeak(pregunta, speakOption);
+
+                // Crear un intent para iniciar la actividad TrueFalseActivity
+                Intent intent = new Intent(this, TrueFalseActivity.class);
+                // Pasar la pregunta y la respuesta como extras del intent
+                intent.putExtra("pregunta", pregunta);
+                intent.putExtra("respuesta", respuesta);
+
+                startActivityForResult(intent, 200);
+                return;
                 
             } else if (data.getSpinnerOption().equals("Finalizado")) {
 
@@ -375,6 +393,19 @@ public class ImageActivity extends TopBaseActivity {
             }
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 200 && resultCode == RESULT_OK) {
+            System.out.println("RESULTADO TRUEEEEEEEEE: " + currentIndex );
+            // Continuar con las acciones restantes
+            new Handler().postDelayed(() -> {
+                reproduciendose = true;
+                continueActions();
+            }, 1000);
+        }
     }
 
     @Override
