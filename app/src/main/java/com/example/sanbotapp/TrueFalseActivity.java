@@ -74,8 +74,16 @@ public class TrueFalseActivity extends TopBaseActivity {
                 if ("True".equalsIgnoreCase(respuesta)) {
                     speechManager.startSpeak("¡Correcto! ¡Enhorabuena!", speakOption);
                 } else {
-                    speechManager.startSpeak("¡Incorrecto! ¡Inténtalo de nuevo!", speakOption);
+                    speechManager.startSpeak("¡Incorrecto! La respuesta era falso", speakOption);
                 }
+
+                // Esperar respuesta y cerrar la actividad
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                finish();
             }
         });
 
@@ -91,8 +99,16 @@ public class TrueFalseActivity extends TopBaseActivity {
                 if ("False".equalsIgnoreCase(respuesta)) {
                     speechManager.startSpeak("¡Correcto! ¡Enhorabuena!", speakOption);
                 } else {
-                    speechManager.startSpeak("¡Incorrecto! ¡Inténtalo de nuevo!", speakOption);
+                    speechManager.startSpeak("¡Incorrecto! La respuesta era verdadero", speakOption);
                 }
+
+                // Esperar respuesta y cerrar la actividad
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                finish();
             }
         });
 
