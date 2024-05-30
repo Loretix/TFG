@@ -21,6 +21,7 @@ class DatabaseHelper extends SQLiteOpenHelper {
             + "_id                  integer primary key autoincrement,"
             + "tipoFuncionalidad    text    not null,"
             + "tipoConfiguracion    text    not null,"
+            + "imagen               text    ,"
             + "ordenacion           integer not null,"
             + "idBloquesAcciones    integer not null,"
             + "foreign key(idBloquesAcciones) references bloques_acciones(_id) on delete cascade"

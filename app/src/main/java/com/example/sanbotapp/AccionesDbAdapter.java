@@ -22,6 +22,7 @@ import java.util.ArrayList;
  */
 public class AccionesDbAdapter {
 
+    public static final String KEY_IMAGEN = "imagen";
     public static final String KEY_FUNCIONALIDAD = "tipoFuncionalidad";
     public static final String KEY_CONFIGURACION = "tipoConfiguracion";
     public static final String KEY_ORDENACION = "ordenacion";
@@ -75,7 +76,7 @@ public class AccionesDbAdapter {
      * @return rowId or -1 if failed
      */
 
-    public long createAcciones(String tipoFuncionalidad, String tipoConfiguracion, long idBloquesAcciones) {
+    public long createAcciones(String tipoFuncionalidad, String tipoConfiguracion, long idBloquesAcciones, String imagen) {
         long result = -1;
         try {
             if(tipoFuncionalidad == null || tipoFuncionalidad.length() <= 0) { return -1; }
@@ -89,14 +90,14 @@ public class AccionesDbAdapter {
             long ordenacion = maxOrdenacion + 1;
 
             // Crear la nueva accion
-            result = createAccionesAux(tipoFuncionalidad, tipoConfiguracion, idBloquesAcciones, ordenacion);
+            result = createAccionesAux(tipoFuncionalidad, tipoConfiguracion, idBloquesAcciones, ordenacion, imagen);
         } catch (Exception e) {
             Log.e(DATABASE_TABLE, "Error al crear el bloque de acciones", e);
         }
         return result;
     }
 
-    public long createAccionesAux(String tipoFuncionalidad, String tipoConfiguracion, long idBloquesAcciones, long ordenacion) {
+    public long createAccionesAux(String tipoFuncionalidad, String tipoConfiguracion, long idBloquesAcciones, long ordenacion, String imagen) {
         long result = 0;
         try {
             if (tipoFuncionalidad == null || tipoFuncionalidad.length() <= 0 ) { result =  -1; }
@@ -113,6 +114,7 @@ public class AccionesDbAdapter {
             initialValues.put(KEY_CONFIGURACION, tipoConfiguracion);
             initialValues.put(KEY_ID_BLOQUES, idBloquesAcciones);
             initialValues.put(KEY_ORDENACION, ordenacion);
+            initialValues.put(KEY_IMAGEN, imagen);
             result = mDb.insert(DATABASE_TABLE, null, initialValues);
         }
 
@@ -211,7 +213,7 @@ public class AccionesDbAdapter {
      * @return Cursor over all notes
      */
     public Cursor fetchAllAcciones(long idBloquesAcciones) {
-        return mDb.query(DATABASE_TABLE, new String[]{KEY_ROWID, KEY_FUNCIONALIDAD, KEY_CONFIGURACION, KEY_ID_BLOQUES, KEY_ORDENACION}, KEY_ID_BLOQUES+ "=" + idBloquesAcciones, null, null, null, KEY_ORDENACION);
+        return mDb.query(DATABASE_TABLE, new String[]{KEY_ROWID, KEY_FUNCIONALIDAD, KEY_CONFIGURACION, KEY_ID_BLOQUES, KEY_ORDENACION, KEY_IMAGEN}, KEY_ID_BLOQUES+ "=" + idBloquesAcciones, null, null, null, KEY_ORDENACION);
     }
 
 
@@ -223,7 +225,7 @@ public class AccionesDbAdapter {
      * @throws SQLException if note could not be found/retrieved
      */
     public Cursor fetchAcciones(long rowId) throws SQLException {
-        Cursor mCursor = mDb.query(true, DATABASE_TABLE, new String[]{KEY_ROWID, KEY_FUNCIONALIDAD, KEY_CONFIGURACION, KEY_ID_BLOQUES, KEY_ORDENACION}, KEY_ROWID + "=" + rowId, null, null, null, null, null);
+        Cursor mCursor = mDb.query(true, DATABASE_TABLE, new String[]{KEY_ROWID, KEY_FUNCIONALIDAD, KEY_CONFIGURACION, KEY_ID_BLOQUES, KEY_ORDENACION, KEY_IMAGEN}, KEY_ROWID + "=" + rowId, null, null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
         }
@@ -307,14 +309,14 @@ public class AccionesDbAdapter {
         ArrayList<DataModel> acciones = new ArrayList<DataModel>();
         Cursor cursor = null;
         try {
-            String query = "SELECT " + AccionesDbAdapter.KEY_CONFIGURACION + ", " + AccionesDbAdapter.KEY_FUNCIONALIDAD +
+            String query = "SELECT " + AccionesDbAdapter.KEY_CONFIGURACION + ", " + AccionesDbAdapter.KEY_FUNCIONALIDAD + ", " + AccionesDbAdapter.KEY_IMAGEN +
                     " FROM " + AccionesDbAdapter.DATABASE_TABLE +
                     " WHERE " + AccionesDbAdapter.KEY_ID_BLOQUES + " = " + idBloque +
                     " ORDER BY " + AccionesDbAdapter.KEY_ORDENACION;
             cursor = mDb.rawQuery(query, null);
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    DataModel dataModel = new DataModel(cursor.getString(0), cursor.getString(1));
+                    DataModel dataModel = new DataModel(cursor.getString(0), cursor.getString(1), cursor.getString(2));
                     acciones.add(dataModel);
                 } while (cursor.moveToNext());
             }
@@ -327,6 +329,30 @@ public class AccionesDbAdapter {
         }
         return acciones;
     }
+
+    // Devuelve el string imagen de la acción
+    public String getImagen(long idAccion) {
+        String imagen = "";
+        Cursor cursor = null;
+        try {
+            String query = "SELECT " + AccionesDbAdapter.KEY_IMAGEN +
+                    " FROM " + AccionesDbAdapter.DATABASE_TABLE +
+                    " WHERE " + AccionesDbAdapter.KEY_ROWID + " = " + idAccion;
+            cursor = mDb.rawQuery(query, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                imagen = cursor.getString(0);
+            }
+        } catch (Exception e) {
+            Log.e(DATABASE_TABLE, "Error al obtener la imagen de la acción", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return imagen;
+
+    }
+
 
 
 

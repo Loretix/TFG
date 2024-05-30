@@ -181,7 +181,7 @@ public class ImageActivity extends TopBaseActivity {
 
     public void reproducirAcciones() {
 
-        DataModel dataadd = new DataModel("Finalizado", "Finalizado");
+        DataModel dataadd = new DataModel("Finalizado", "Finalizado", "");
         dataList.add(dataadd);
 
         // Recorre el dataList y ejecuta las acciones
@@ -189,6 +189,20 @@ public class ImageActivity extends TopBaseActivity {
             currentIndex = i;
             DataModel data = dataList.get(i);
             System.out.println("Opción: " + data.getSpinnerOption());
+
+            // Si data.getImagen() no está vacío, mostrar la imagen de fondo
+            if (!data.getImagen().isEmpty()) {
+                txtNuevo.setVisibility(View.GONE);
+                gifImagen.setVisibility(View.GONE);
+                txtPausa.setVisibility(View.GONE);
+                imagenSaanbot.setVisibility(View.GONE);
+
+                if (data.getImagen().startsWith("http")) {
+                    Glide.with(this).load(data.getImagen()).into(imageView);
+                } else {
+                    imageView.setImageURI(Uri.parse(data.getImagen()));
+                }
+            }
 
             if (data.getSpinnerOption().equals("Síntesis de voz")) {
                 funcionalidadesActivity.speakOperation(data.getText(), "Normal");

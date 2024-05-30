@@ -33,6 +33,14 @@
             android:src="@drawable/play" />
 
         <ImageButton
+            android:id="@+id/button_imagen_RV"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:backgroundTint="@color/colorLightPurple"
+            android:src="@drawable/imagen" />
+
+        <ImageButton
             android:id="@+id/button_delete_RV"
             android:layout_width="50dp"
             android:layout_height="50dp"

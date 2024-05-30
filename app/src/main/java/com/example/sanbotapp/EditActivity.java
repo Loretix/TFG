@@ -261,7 +261,7 @@ public class EditActivity extends TopBaseActivity {
 
         funcionalidadesActivity = new FuncionalidadesActivity(speechManager, systemManager, handMotionManager,
                 headMotionManager, hardWareManager, wheelMotionManager, EditActivity.this);
-        adapterV = new DataAdapter(dataList, funcionalidadesActivity);
+        adapterV = new DataAdapter(dataList, funcionalidadesActivity, this);
         recyclerView.setAdapter(adapterV);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -420,7 +420,7 @@ public class EditActivity extends TopBaseActivity {
                 // Verificar si el texto y la opción no están vacíos
                 if (!TextUtils.isEmpty(text)) {
                     // Crear un nuevo objeto DataModel y agregarlo a la lista
-                    DataModel dataModel = new DataModel(text, spinnerOption);
+                    DataModel dataModel = new DataModel(text, spinnerOption, "");
                     dataList.add(dataModel);
 
                     // Limpiar el EditText después de agregar el elemento
@@ -446,7 +446,7 @@ public class EditActivity extends TopBaseActivity {
                 // Verificar si el texto y la opción no están vacíos
                 if (!TextUtils.isEmpty(text)) {
                     // Crear un nuevo objeto DataModel y agregarlo a la lista
-                    DataModel dataModel = new DataModel(text, spinnerOption);
+                    DataModel dataModel = new DataModel(text, spinnerOption, "");
                     dataList.add(dataModel);
                     adapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(dataList.size() - 1);
@@ -467,7 +467,7 @@ public class EditActivity extends TopBaseActivity {
                 // Verificar si el texto y la opción no están vacíos
                 if (!TextUtils.isEmpty(text)) {
                     // Crear un nuevo objeto DataModel y agregarlo a la lista
-                    DataModel dataModel = new DataModel(text, spinnerOption);
+                    DataModel dataModel = new DataModel(text, spinnerOption, "");
                     dataList.add(dataModel);
                     adapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(dataList.size() - 1);
@@ -488,7 +488,7 @@ public class EditActivity extends TopBaseActivity {
                 // Verificar si el texto y la opción no están vacíos
                 if (!TextUtils.isEmpty(text)) {
                     // Crear un nuevo objeto DataModel y agregarlo a la lista
-                    DataModel dataModel = new DataModel(text, spinnerOption);
+                    DataModel dataModel = new DataModel(text, spinnerOption, "");
                     dataList.add(dataModel);
                     adapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(dataList.size() - 1);
@@ -513,7 +513,7 @@ public class EditActivity extends TopBaseActivity {
                 // Verificar si el texto y la opción no están vacíos
                 if (!TextUtils.isEmpty(text)) {
                     // Crear un nuevo objeto DataModel y agregarlo a la lista
-                    DataModel dataModel = new DataModel(text, spinnerOption);
+                    DataModel dataModel = new DataModel(text, spinnerOption, "");
                     dataList.add(dataModel);
                     adapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(dataList.size() - 1);
@@ -534,7 +534,7 @@ public class EditActivity extends TopBaseActivity {
                 // Verificar si el texto y la opción no están vacíos
                 if (!TextUtils.isEmpty(text)) {
                     // Crear un nuevo objeto DataModel y agregarlo a la lista
-                    DataModel dataModel = new DataModel(text, spinnerOption);
+                    DataModel dataModel = new DataModel(text, spinnerOption, "");
                     dataList.add(dataModel);
                     adapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(dataList.size() - 1);
@@ -555,7 +555,7 @@ public class EditActivity extends TopBaseActivity {
                 // Verificar si el texto y la opción no están vacíos
                 if (!TextUtils.isEmpty(text)) {
                     // Crear un nuevo objeto DataModel y agregarlo a la lista
-                    DataModel dataModel = new DataModel(text, spinnerOption);
+                    DataModel dataModel = new DataModel(text, spinnerOption, "");
                     dataList.add(dataModel);
                     adapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(dataList.size() - 1);
@@ -617,7 +617,9 @@ public class EditActivity extends TopBaseActivity {
                 do {
                     String accion = acciones.getString(acciones.getColumnIndexOrThrow(AccionesDbAdapter.KEY_CONFIGURACION));
                     String tipo = acciones.getString(acciones.getColumnIndexOrThrow(AccionesDbAdapter.KEY_FUNCIONALIDAD));
-                    DataModel dataModel = new DataModel(accion, tipo);
+                    String imagen = acciones.getString(acciones.getColumnIndexOrThrow(AccionesDbAdapter.KEY_IMAGEN));
+                    System.out.println("POPULATE FIELDS accion: " + accion + " tipo: " + tipo + " imagen: " + imagen);
+                    DataModel dataModel = new DataModel(accion, tipo, imagen);
                     dataList.add(dataModel);
                 } while (acciones.moveToNext());
             }
@@ -662,7 +664,8 @@ public class EditActivity extends TopBaseActivity {
                         // Para cada elemento del datalist, guardar en la base de datos
                         if(dataList.size() > 0) {
                             for (DataModel data : dataList) {
-                                mDbHelperAcciones.createAcciones(data.getSpinnerOption(), data.getText(), mRowId);
+                                System.out.println("SAVE STATE accion: " + data.getText() + " tipo: " + data.getSpinnerOption() + " imagen: " + data.getImagen());
+                                mDbHelperAcciones.createAcciones(data.getSpinnerOption(), data.getText(), mRowId, data.getImagen());
                             }
                         }
 
@@ -676,7 +679,8 @@ public class EditActivity extends TopBaseActivity {
                     mDbHelperAcciones.deleteAllAcciones(mRowId);
                     // Para cada elemento del datalist, guardar en la base de datos
                     for (DataModel data : dataList) {
-                        mDbHelperAcciones.createAcciones(data.getSpinnerOption(), data.getText(), mRowId);
+                        System.out.println("SAVE STATE accion: " + data.getText() + " tipo: " + data.getSpinnerOption() + " imagen: " + data.getImagen());
+                        mDbHelperAcciones.createAcciones(data.getSpinnerOption(), data.getText(), mRowId, data.getImagen());
                     }
                 }
             }
@@ -735,7 +739,7 @@ public class EditActivity extends TopBaseActivity {
                     // Verificar si el texto y la opción no están vacíos
                     if (!TextUtils.isEmpty(text)) {
                         // Crear un nuevo objeto DataModel y agregarlo a la lista
-                        DataModel dataModel = new DataModel(text, spinnerOption);
+                        DataModel dataModel = new DataModel(text, spinnerOption, "");
                         dataList.add(dataModel);
                         //adapterV.notifyDataSetChanged();
                         recyclerView.scrollToPosition(dataList.size() - 1);
@@ -750,7 +754,7 @@ public class EditActivity extends TopBaseActivity {
                     // Verificar si el texto y la opción no están vacíos
                     if (!TextUtils.isEmpty(text)) {
                         // Crear un nuevo objeto DataModel y agregarlo a la lista
-                        DataModel dataModel = new DataModel(text, spinnerOption);
+                        DataModel dataModel = new DataModel(text, spinnerOption, "");
                         dataList.add(dataModel);
                         //adapterV.notifyDataSetChanged();
                         recyclerView.scrollToPosition(dataList.size() - 1);
@@ -856,7 +860,7 @@ public class EditActivity extends TopBaseActivity {
                     // Verificar si el texto y la opción no están vacíos
                     if (!TextUtils.isEmpty(text)) {
                         // Crear un nuevo objeto DataModel y agregarlo a la lista
-                        DataModel dataModel = new DataModel(text, spinnerOption);
+                        DataModel dataModel = new DataModel(text, spinnerOption, "");
                         dataList.add(dataModel);
                         //adapterV.notifyDataSetChanged();
                         recyclerView.scrollToPosition(dataList.size() - 1);
@@ -871,7 +875,7 @@ public class EditActivity extends TopBaseActivity {
                     // Verificar si el texto y la opción no están vacíos
                     if (!TextUtils.isEmpty(text)) {
                         // Crear un nuevo objeto DataModel y agregarlo a la lista
-                        DataModel dataModel = new DataModel(text, spinnerOption);
+                        DataModel dataModel = new DataModel(text, spinnerOption, "");
                         dataList.add(dataModel);
                         //adapterV.notifyDataSetChanged();
                         recyclerView.scrollToPosition(dataList.size() - 1);
@@ -932,6 +936,18 @@ public class EditActivity extends TopBaseActivity {
                 if (null != selectedImageUri) {
                     // update the preview image in the layout
                     IVPreviewImage.setImageURI(selectedImageUri);
+                }
+            }
+
+            //TODO: VERRRR COMO RENDERIZAR LA IMAGEN
+            if (requestCode == 202) {
+                // Get the url of the image from data
+                Uri uri = data.getData();
+                if (null != uri) {
+                    System.out.println("uri activity result = " + uri);
+                    // Aquí puedes guardar la URI seleccionada y actualizar la vista previa de la imagen
+                    adapterV.updateImagePreview(uri);
+
                 }
             }
 
