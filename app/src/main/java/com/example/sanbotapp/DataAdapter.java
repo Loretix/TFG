@@ -143,7 +143,16 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.DataViewHolder
                     // Acción para eliminar el elemento
                     int position = getAdapterPosition();
                     dataList.remove(position);
+
+                    // Ver elementos restantes
+                    for (DataModel data : dataList) {
+                        System.out.println("DELETE" + data.getSpinnerOption() + ": " + data.getText());
+                    }
+
+
                     notifyItemRemoved(position);
+
+
                 }
             });
 

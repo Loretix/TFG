@@ -97,13 +97,20 @@ public class FuncionalidadesActivity extends TopBaseActivity {
         speechManager.startSpeak(texto, speakOption);
 
         // Calculamos el tiempo que tardará en hablar el texto
-        int tiempo = texto.length() * 100;
+        int tiempo = calcularTiempoEspera(texto, 180);
         // Esperamos el tiempo que tardará en hablar el texto
         try {
             Thread.sleep(tiempo);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public int calcularTiempoEspera(String texto, int velocidadPalabrasPorMinuto) {
+        String[] palabras = texto.split("\\s+");
+        int numPalabras = palabras.length;
+        double minutos = numPalabras / (double) velocidadPalabrasPorMinuto;
+        return (int) (minutos * 60 * 1000); // Convertir minutos a milisegundos
     }
 
     public void mostrarImagen(String tipo) {

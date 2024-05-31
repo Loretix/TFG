@@ -191,36 +191,96 @@ public class ImageActivity extends TopBaseActivity {
             System.out.println("Opción: " + data.getSpinnerOption());
 
             // Si data.getImagen() no está vacío, mostrar la imagen de fondo
-            if (!data.getImagen().isEmpty()) {
-                txtNuevo.setVisibility(View.GONE);
-                gifImagen.setVisibility(View.GONE);
-                txtPausa.setVisibility(View.GONE);
-                imagenSaanbot.setVisibility(View.GONE);
-
-                if (data.getImagen().startsWith("http")) {
-                    Glide.with(this).load(data.getImagen()).into(imageView);
-                } else {
-                    imageView.setImageURI(Uri.parse(data.getImagen()));
-                }
-            }
 
             if (data.getSpinnerOption().equals("Síntesis de voz")) {
-                funcionalidadesActivity.speakOperation(data.getText(), "Normal");
+                if(!data.getImagen().isEmpty()){
+                    int finalI = i;
+                    new Thread(() -> {
+                        putImage(data.getImagen(),data.getText(), "voz");
+                        currentIndex = finalI;
+                        // Después de actualizar la imagen, continuar con la siguiente acción
+                        continueActions();
+                    }).start();
+                    // Salir del bucle principal para esperar a que la imagen se actualice
+                    break;
+                } else {
+                    funcionalidadesActivity.speakOperation(data.getText(), "Normal");
+                }
 
             } else if (data.getSpinnerOption().equals("Movimiento de brazos")) {
-                funcionalidadesActivity.moveBrazosOperation(data.getText());
+                if(!data.getImagen().isEmpty()){
+                    int finalI = i;
+                    new Thread(() -> {
+                        putImage(data.getImagen(),data.getText(), "brazos");
+                        currentIndex = finalI;
+                        // Después de actualizar la imagen, continuar con la siguiente acción
+                        continueActions();
+                    }).start();
+                    // Salir del bucle principal para esperar a que la imagen se actualice
+                    break;
+                } else {
+                    funcionalidadesActivity.moveBrazosOperation(data.getText());
+                }
 
             } else if (data.getSpinnerOption().equals("Movimiento de cabeza")) {
-                funcionalidadesActivity.moveCabezaOperation(data.getText());
+                if(!data.getImagen().isEmpty()){
+                    int finalI = i;
+                    new Thread(() -> {
+                        putImage(data.getImagen(),data.getText(), "cabeza");
+                        currentIndex = finalI;
+                        // Después de actualizar la imagen, continuar con la siguiente acción
+                        continueActions();
+                    }).start();
+                    // Salir del bucle principal para esperar a que la imagen se actualice
+                    break;
+                } else {
+                    funcionalidadesActivity.moveCabezaOperation(data.getText());
+                }
 
             } else if (data.getSpinnerOption().equals("Movimiento de ruedas")) {
-                funcionalidadesActivity.moveRuedasOperation(data.getText());
+                if(!data.getImagen().isEmpty()){
+                    int finalI = i;
+                    new Thread(() -> {
+                        putImage(data.getImagen(),data.getText(), "ruedas");
+                        currentIndex = finalI;
+                        // Después de actualizar la imagen, continuar con la siguiente acción
+                        continueActions();
+                    }).start();
+                    // Salir del bucle principal para esperar a que la imagen se actualice
+                    break;
+                } else {
+                    funcionalidadesActivity.moveRuedasOperation(data.getText());
+                }
 
             } else if (data.getSpinnerOption().equals("Encender LEDs")) {
-                funcionalidadesActivity.encenderLedsOperation(data.getText());
+                if(!data.getImagen().isEmpty()){
+                    int finalI = i;
+                    new Thread(() -> {
+                        putImage(data.getImagen(),data.getText(), "leds");
+                        currentIndex = finalI;
+                        // Después de actualizar la imagen, continuar con la siguiente acción
+                        continueActions();
+                    }).start();
+                    // Salir del bucle principal para esperar a que la imagen se actualice
+                    break;
+                } else {
+                    funcionalidadesActivity.encenderLedsOperation(data.getText());
+                }
 
             } else if (data.getSpinnerOption().equals("Cambio de expresión facial")) {
-                funcionalidadesActivity.changeFaceOperation(data.getText());
+                if(!data.getImagen().isEmpty()){
+                    int finalI = i;
+                    new Thread(() -> {
+                        putImage(data.getImagen(),data.getText(), "facial");
+                        currentIndex = finalI;
+                        // Después de actualizar la imagen, continuar con la siguiente acción
+                        continueActions();
+                    }).start();
+                    // Salir del bucle principal para esperar a que la imagen se actualice
+                    break;
+                } else {
+                    funcionalidadesActivity.changeFaceOperation(data.getText());
+                }
 
             } else if (data.getSpinnerOption().equals("Insertar imagen")) {
                 // Actualizar la imagen en un hilo separado
@@ -313,6 +373,61 @@ public class ImageActivity extends TopBaseActivity {
         }
     }
 
+    public void putImage(String imageUri, String texto, String tipo) {
+        try {
+            System.out.println("INTENTO ADQUIRIR EL SEMAFORO " + imageUpdateSemaphore);
+            // Intentar adquirir el semáforo
+            imageUpdateSemaphore.acquire();
+
+            runOnUiThread(() -> {
+                txtNuevo.setVisibility(View.GONE);
+                gifImagen.setVisibility(View.GONE);
+                txtPausa.setVisibility(View.GONE);
+                imagenSaanbot.setVisibility(View.GONE);
+
+                if (imageUri.startsWith("http")) {
+                    Glide.with(this).load(imageUri).into(imageView);
+                } else {
+                    imageView.setImageURI(Uri.parse(imageUri));
+                }
+            });
+
+            // Esperar a que se cargue la imagen
+            Thread.sleep(1000);
+
+            // Hablar el texto
+            if(tipo.equals("voz")){
+                funcionalidadesActivity.speakOperation(texto, "Normal");
+            } else if (tipo.equals("brazos")){
+                funcionalidadesActivity.moveBrazosOperation(texto);
+            } else if (tipo.equals("cabeza")){
+                funcionalidadesActivity.moveCabezaOperation(texto);
+            } else if (tipo.equals("facial")){
+                funcionalidadesActivity.changeFaceOperation(texto);
+            } else if (tipo.equals("leds")){
+                funcionalidadesActivity.encenderLedsOperation(texto);
+            } else if (tipo.equals("ruedas")){
+                funcionalidadesActivity.moveRuedasOperation(texto);
+            }
+
+
+            // Esperar el tiempo especificado antes de liberar el semáforo
+            Thread.sleep(1000);
+
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            // Liberar el semáforo en el bloque finally para asegurarse de que se libere incluso si ocurre una excepción
+            imageUpdateSemaphore.release();
+            runOnUiThread(() -> {
+                imageView.setImageDrawable(null);
+                txtNuevo.setVisibility(View.VISIBLE);
+                gifImagen.setVisibility(View.VISIBLE);
+            });
+        }
+    }
+
     public void continueActions() {
         // Continuar con las acciones restantes
 
@@ -323,22 +438,94 @@ public class ImageActivity extends TopBaseActivity {
             System.out.println("Opción: " + data.getSpinnerOption());
             // Ejecutar la acción correspondiente según la opción
             if (data.getSpinnerOption().equals("Síntesis de voz")) {
-                funcionalidadesActivity.speakOperation(data.getText(), "Normal");
+                if(!data.getImagen().isEmpty()){
+                    int finalI = i;
+                    new Thread(() -> {
+                        putImage(data.getImagen(),data.getText(), "voz");
+                        currentIndex = finalI;
+                        // Después de actualizar la imagen, continuar con la siguiente acción
+                        continueActions();
+                    }).start();
+                    // Salir del bucle principal para esperar a que la imagen se actualice
+                    break;
+                } else {
+                    funcionalidadesActivity.speakOperation(data.getText(), "Normal");
+                }
 
             } else if (data.getSpinnerOption().equals("Movimiento de brazos")) {
-                funcionalidadesActivity.moveBrazosOperation(data.getText());
+                if(!data.getImagen().isEmpty()){
+                    int finalI = i;
+                    new Thread(() -> {
+                        putImage(data.getImagen(),data.getText(), "brazos");
+                        currentIndex = finalI;
+                        // Después de actualizar la imagen, continuar con la siguiente acción
+                        continueActions();
+                    }).start();
+                    // Salir del bucle principal para esperar a que la imagen se actualice
+                    break;
+                } else {
+                    funcionalidadesActivity.moveBrazosOperation(data.getText());
+                }
 
             } else if (data.getSpinnerOption().equals("Movimiento de cabeza")) {
-                funcionalidadesActivity.moveCabezaOperation(data.getText());
+                if(!data.getImagen().isEmpty()){
+                    int finalI = i;
+                    new Thread(() -> {
+                        putImage(data.getImagen(),data.getText(), "cabeza");
+                        currentIndex = finalI;
+                        // Después de actualizar la imagen, continuar con la siguiente acción
+                        continueActions();
+                    }).start();
+                    // Salir del bucle principal para esperar a que la imagen se actualice
+                    break;
+                } else {
+                    funcionalidadesActivity.moveCabezaOperation(data.getText());
+                }
 
             } else if (data.getSpinnerOption().equals("Movimiento de ruedas")) {
-                funcionalidadesActivity.moveRuedasOperation(data.getText());
+                if(!data.getImagen().isEmpty()){
+                    int finalI = i;
+                    new Thread(() -> {
+                        putImage(data.getImagen(),data.getText(), "ruedas");
+                        currentIndex = finalI;
+                        // Después de actualizar la imagen, continuar con la siguiente acción
+                        continueActions();
+                    }).start();
+                    // Salir del bucle principal para esperar a que la imagen se actualice
+                    break;
+                } else {
+                    funcionalidadesActivity.moveRuedasOperation(data.getText());
+                }
 
             } else if (data.getSpinnerOption().equals("Encender LEDs")) {
-                funcionalidadesActivity.encenderLedsOperation(data.getText());
+                if(!data.getImagen().isEmpty()){
+                    int finalI = i;
+                    new Thread(() -> {
+                        putImage(data.getImagen(),data.getText(), "leds");
+                        currentIndex = finalI;
+                        // Después de actualizar la imagen, continuar con la siguiente acción
+                        continueActions();
+                    }).start();
+                    // Salir del bucle principal para esperar a que la imagen se actualice
+                    break;
+                } else {
+                    funcionalidadesActivity.encenderLedsOperation(data.getText());
+                }
 
             } else if (data.getSpinnerOption().equals("Cambio de expresión facial")) {
-                funcionalidadesActivity.changeFaceOperation(data.getText());
+                if(!data.getImagen().isEmpty()){
+                    int finalI = i;
+                    new Thread(() -> {
+                        putImage(data.getImagen(),data.getText(), "facial");
+                        currentIndex = finalI;
+                        // Después de actualizar la imagen, continuar con la siguiente acción
+                        continueActions();
+                    }).start();
+                    // Salir del bucle principal para esperar a que la imagen se actualice
+                    break;
+                } else {
+                    funcionalidadesActivity.changeFaceOperation(data.getText());
+                }
 
             } else if (data.getSpinnerOption().equals("Insertar imagen")) {
                 // Actualizar la imagen en un hilo separado

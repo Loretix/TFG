@@ -164,6 +164,7 @@ public class ModificarActivity extends TopBaseActivity {
 
     protected void fillData() {
         if(mRowId != null) {
+            System.out.println("FILLDATA ID: " + mRowId);
             Cursor notesCursor = mDbHelperBloque.fetchAllBloqueAcciones(mRowId);
             bloquesLimit = notesCursor.getCount();
             System.out.println("Bloques: " + bloquesLimit);

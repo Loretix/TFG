@@ -584,6 +584,8 @@ public class EditActivity extends TopBaseActivity {
 
         buttonSave.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                // Guardar el estado
+                System.out.println("dataList: " + dataList + "BOTON GUARDAR");
                 setResult(RESULT_OK);
                 finish();
             }
@@ -647,12 +649,13 @@ public class EditActivity extends TopBaseActivity {
     }
 
     private void saveState() {
+        System.out.println("dataList: " + dataList + "SAVE STATE");
         String nombre = mNombreText.getText().toString();
-        if (nombre == null || nombre.equals("")) {
+        if ( nombre.equals("")) {
             Toast.makeText(getApplicationContext(), "Bloque de acciones no creado/modificado, campos inválidos", Toast.LENGTH_SHORT).show();
         } else {
             if (mRowId == null) {
-
+                System.out.println("SAVE STATE mRowId NULO: " + mRowId);
                 if (mRowIdPresentacion == -1) {
                     // No se encontró el ID de la presentación, muestra un mensaje de error
                     Toast.makeText(getApplicationContext(), "No se pudo encontrar el ID de la presentación", Toast.LENGTH_SHORT).show();
@@ -672,6 +675,7 @@ public class EditActivity extends TopBaseActivity {
                     }
                 }
             } else {
+                System.out.println("SAVE STATE mRowId NO NULO: " + mRowId);
                 mDbHelperBloque.updateBloqueAcciones(mRowId, nombre);
                 // Guardar las acciones en la base de datos
                 // Borrar todas las acciones del bloque y las vuelve a crear con los datos del datalist
@@ -682,6 +686,9 @@ public class EditActivity extends TopBaseActivity {
                         System.out.println("SAVE STATE accion: " + data.getText() + " tipo: " + data.getSpinnerOption() + " imagen: " + data.getImagen());
                         mDbHelperAcciones.createAcciones(data.getSpinnerOption(), data.getText(), mRowId, data.getImagen());
                     }
+                } else {
+                    dataList.size();
+                    mDbHelperAcciones.deleteAllAcciones(mRowId);
                 }
             }
 
