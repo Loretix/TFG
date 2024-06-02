@@ -13,27 +13,30 @@
         <item>Pregunta verdadero o falso</item>
     </string-array>
     <string-array name="expresionesFaciales">
-        <item>Arrogancia</item>
-        <item>Sorpresa</item>
-        <item>Ojos brillantes</item>
+        <item>Arrogante</item>
+        <item>Sorprendido</item>
+        <item>Entusiasmado</item>
         <item>Enamorado</item>
-        <item>Despedida emotiva</item>
+        <item>Emocionado</item>
         <item>Tímido</item>
         <item>Inseguro</item>
         <item>Pillo</item>
-        <item>Culpa</item>
-        <item>Llanto</item>
-        <item>Enfado</item>
+        <item>Culpable</item>
+        <item>Triste</item>
+        <item>Enfadado</item>
         <item>Super enamorado</item>
-        <item>Dormir</item>
-        <item>Sonrisa</item>
-        <item>Preocupación</item>
-        <item>Pregunta</item>
-        <item>Desmayo</item>
-        <item>Elogio</item>
+        <item>Dormido</item>
+        <item>Feliz</item>
+        <item>Preocupado</item>
+        <item>Curioso</item>
+        <item>Confuso</item>
+        <item>Elogiado</item>
         <item>Normal</item>
     </string-array>
     <string-array name="movimientoBrazos">
+        <item>Levantar brazo izquierdo</item>
+        <item>Levantar brazo derecho</item>
+        <item>Levantar brazos</item>
         <item>Saludo</item>
         <item>Señalar</item>
         <item>Tengo una duda</item>

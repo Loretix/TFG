@@ -59,10 +59,14 @@ public class ImageActivity extends TopBaseActivity {
     private TextView txtFinal;
     private ImageView gifImagen;
     private TextView txtBienvenida;
+    private TextView txtSubtitulo;
     private ImageView imagenSaanbot;
     private LinearLayout linearLayout;
 
     private Boolean reproduciendose = true;
+    private Boolean subtítulos = false;
+    private Button btnToggleSubtitlesNo;
+    private Button btnToggleSubtitlesYes;
 
 
 
@@ -113,8 +117,10 @@ public class ImageActivity extends TopBaseActivity {
         btnPausar = findViewById(R.id.button_pausar);
         txtPausa = findViewById(R.id.txtPausa);
         txtFinal = findViewById(R.id.txtFinal);
+        txtSubtitulo = findViewById(R.id.txtSubtitulos);
 
-
+        btnToggleSubtitlesNo = findViewById(R.id.btnToggleSubtitlesNo);
+        btnToggleSubtitlesYes = findViewById(R.id.btnToggleSubtitlesYes);
 
         // Recibir el intent con la URL de la imagen si se proporciona
         Intent intent = getIntent();
@@ -177,9 +183,33 @@ public class ImageActivity extends TopBaseActivity {
             }
         });
 
+        // Si clicas en el desactivado quieres que se active por lo que subtitulos OK
+        btnToggleSubtitlesNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnToggleSubtitlesNo.setVisibility(View.GONE);
+                btnToggleSubtitlesYes.setVisibility(View.VISIBLE);
+                txtSubtitulo.setVisibility(View.VISIBLE);
+                subtítulos = true;
+            }
+        });
+
+        // Si clicas en el activado quieres que se desactive por lo que subtitulos NO
+        btnToggleSubtitlesYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnToggleSubtitlesYes.setVisibility(View.GONE);
+                btnToggleSubtitlesNo.setVisibility(View.VISIBLE);
+                txtSubtitulo.setVisibility(View.GONE);
+                subtítulos = false;
+            }
+        });
+
     }
 
     public void reproducirAcciones() {
+
+        String siguienteImagen = "";
 
         DataModel dataadd = new DataModel("Finalizado", "Finalizado", "");
         dataList.add(dataadd);
@@ -190,13 +220,22 @@ public class ImageActivity extends TopBaseActivity {
             DataModel data = dataList.get(i);
             System.out.println("Opción: " + data.getSpinnerOption());
 
+            // Coger la imagen del item siquiente si existe
+            if (i < dataList.size() - 1) {
+                DataModel dataNext = dataList.get(i + 1);
+                if (!dataNext.getImagen().isEmpty()) {
+                    siguienteImagen = dataNext.getImagen();
+                }
+            }
+
             // Si data.getImagen() no está vacío, mostrar la imagen de fondo
 
             if (data.getSpinnerOption().equals("Síntesis de voz")) {
                 if(!data.getImagen().isEmpty()){
                     int finalI = i;
+                    String finalSiguienteImagen = siguienteImagen;
                     new Thread(() -> {
-                        putImage(data.getImagen(),data.getText(), "voz");
+                        putImage(data.getImagen(),data.getText(), "voz", finalSiguienteImagen);
                         currentIndex = finalI;
                         // Después de actualizar la imagen, continuar con la siguiente acción
                         continueActions();
@@ -204,14 +243,42 @@ public class ImageActivity extends TopBaseActivity {
                     // Salir del bucle principal para esperar a que la imagen se actualice
                     break;
                 } else {
-                    funcionalidadesActivity.speakOperation(data.getText(), "Normal");
+                    int finalI = i;
+                    new Thread(() -> {
+                        try {
+                            // Intentar adquirir el semáforo
+                            imageUpdateSemaphore.acquire();
+                            runOnUiThread(() -> {
+                                txtSubtitulo.setText(data.getText());
+                            });
+
+                            Thread.sleep(1000);
+
+                            funcionalidadesActivity.speakOperation(data.getText(), "Normal");
+                            // Esperar el tiempo especificado antes de liberar el semáforo
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } finally {
+                            // Liberar el semáforo
+                            imageUpdateSemaphore.release();
+                        }
+
+                        currentIndex = finalI;
+                        // Después de actualizar la imagen, continuar con la siguiente acción
+                        continueActions();
+                    }).start();
+                    // Salir del bucle principal para esperar a que la imagen se actualice
+                    break;
+
                 }
 
             } else if (data.getSpinnerOption().equals("Movimiento de brazos")) {
                 if(!data.getImagen().isEmpty()){
                     int finalI = i;
+                    String finalSiguienteImagen1 = siguienteImagen;
                     new Thread(() -> {
-                        putImage(data.getImagen(),data.getText(), "brazos");
+                        putImage(data.getImagen(),data.getText(), "brazos", finalSiguienteImagen1);
                         currentIndex = finalI;
                         // Después de actualizar la imagen, continuar con la siguiente acción
                         continueActions();
@@ -225,8 +292,9 @@ public class ImageActivity extends TopBaseActivity {
             } else if (data.getSpinnerOption().equals("Movimiento de cabeza")) {
                 if(!data.getImagen().isEmpty()){
                     int finalI = i;
+                    String finalSiguienteImagen2 = siguienteImagen;
                     new Thread(() -> {
-                        putImage(data.getImagen(),data.getText(), "cabeza");
+                        putImage(data.getImagen(),data.getText(), "cabeza", finalSiguienteImagen2);
                         currentIndex = finalI;
                         // Después de actualizar la imagen, continuar con la siguiente acción
                         continueActions();
@@ -240,8 +308,9 @@ public class ImageActivity extends TopBaseActivity {
             } else if (data.getSpinnerOption().equals("Movimiento de ruedas")) {
                 if(!data.getImagen().isEmpty()){
                     int finalI = i;
+                    String finalSiguienteImagen3 = siguienteImagen;
                     new Thread(() -> {
-                        putImage(data.getImagen(),data.getText(), "ruedas");
+                        putImage(data.getImagen(),data.getText(), "ruedas", finalSiguienteImagen3);
                         currentIndex = finalI;
                         // Después de actualizar la imagen, continuar con la siguiente acción
                         continueActions();
@@ -255,8 +324,9 @@ public class ImageActivity extends TopBaseActivity {
             } else if (data.getSpinnerOption().equals("Encender LEDs")) {
                 if(!data.getImagen().isEmpty()){
                     int finalI = i;
+                    String finalSiguienteImagen4 = siguienteImagen;
                     new Thread(() -> {
-                        putImage(data.getImagen(),data.getText(), "leds");
+                        putImage(data.getImagen(),data.getText(), "leds", finalSiguienteImagen4);
                         currentIndex = finalI;
                         // Después de actualizar la imagen, continuar con la siguiente acción
                         continueActions();
@@ -270,8 +340,9 @@ public class ImageActivity extends TopBaseActivity {
             } else if (data.getSpinnerOption().equals("Cambio de expresión facial")) {
                 if(!data.getImagen().isEmpty()){
                     int finalI = i;
+                    String finalSiguienteImagen5 = siguienteImagen;
                     new Thread(() -> {
-                        putImage(data.getImagen(),data.getText(), "facial");
+                        putImage(data.getImagen(),data.getText(), "facial", finalSiguienteImagen5);
                         currentIndex = finalI;
                         // Después de actualizar la imagen, continuar con la siguiente acción
                         continueActions();
@@ -373,7 +444,7 @@ public class ImageActivity extends TopBaseActivity {
         }
     }
 
-    public void putImage(String imageUri, String texto, String tipo) {
+    public void putImage(String imageUri, String texto, String tipo, String siguienteImagen) {
         try {
             System.out.println("INTENTO ADQUIRIR EL SEMAFORO " + imageUpdateSemaphore);
             // Intentar adquirir el semáforo
@@ -389,6 +460,10 @@ public class ImageActivity extends TopBaseActivity {
                     Glide.with(this).load(imageUri).into(imageView);
                 } else {
                     imageView.setImageURI(Uri.parse(imageUri));
+                }
+
+                if(tipo.equals("voz")){
+                    txtSubtitulo.setText(texto);
                 }
             });
 
@@ -420,28 +495,40 @@ public class ImageActivity extends TopBaseActivity {
         } finally {
             // Liberar el semáforo en el bloque finally para asegurarse de que se libere incluso si ocurre una excepción
             imageUpdateSemaphore.release();
-            runOnUiThread(() -> {
-                imageView.setImageDrawable(null);
-                txtNuevo.setVisibility(View.VISIBLE);
-                gifImagen.setVisibility(View.VISIBLE);
-            });
+            if(!siguienteImagen.equals(imageUri)){
+                // Si las imagenes son iguales no quitamos la imagen de fondo
+                runOnUiThread(() -> {
+                    imageView.setImageDrawable(null);
+                    txtNuevo.setVisibility(View.VISIBLE);
+                    gifImagen.setVisibility(View.VISIBLE);
+                });
+            }
         }
     }
 
     public void continueActions() {
         // Continuar con las acciones restantes
-
+        String siguienteImagen = "";
 
         for (int i = currentIndex + 1; i < dataList.size() && reproduciendose; i++) {
             currentIndex = i;
             DataModel data = dataList.get(i);
             System.out.println("Opción: " + data.getSpinnerOption());
+
+            if (i < dataList.size() - 1) {
+                DataModel dataNext = dataList.get(i + 1);
+                if (!dataNext.getImagen().isEmpty()) {
+                    siguienteImagen = dataNext.getImagen();
+                }
+            }
+
             // Ejecutar la acción correspondiente según la opción
             if (data.getSpinnerOption().equals("Síntesis de voz")) {
                 if(!data.getImagen().isEmpty()){
                     int finalI = i;
+                    String finalSiguienteImagen = siguienteImagen;
                     new Thread(() -> {
-                        putImage(data.getImagen(),data.getText(), "voz");
+                        putImage(data.getImagen(),data.getText(), "voz", finalSiguienteImagen);
                         currentIndex = finalI;
                         // Después de actualizar la imagen, continuar con la siguiente acción
                         continueActions();
@@ -449,14 +536,40 @@ public class ImageActivity extends TopBaseActivity {
                     // Salir del bucle principal para esperar a que la imagen se actualice
                     break;
                 } else {
-                    funcionalidadesActivity.speakOperation(data.getText(), "Normal");
+                    int finalI = i;
+                    new Thread(() -> {
+                        try {
+                            // Intentar adquirir el semáforo
+                            imageUpdateSemaphore.acquire();
+                            runOnUiThread(() -> {
+                                txtSubtitulo.setText(data.getText());
+                            });
+                            // Esperar a que se cargue la imagen
+                            Thread.sleep(1000);
+                            funcionalidadesActivity.speakOperation(data.getText(), "Normal");
+                            // Esperar el tiempo especificado antes de liberar el semáforo
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } finally {
+                            // Liberar el semáforo
+                            imageUpdateSemaphore.release();
+                        }
+
+                        currentIndex = finalI;
+                        // Después de actualizar la imagen, continuar con la siguiente acción
+                        continueActions();
+                    }).start();
+                    // Salir del bucle principal para esperar a que la imagen se actualice
+                    break;
                 }
 
             } else if (data.getSpinnerOption().equals("Movimiento de brazos")) {
                 if(!data.getImagen().isEmpty()){
                     int finalI = i;
+                    String finalSiguienteImagen1 = siguienteImagen;
                     new Thread(() -> {
-                        putImage(data.getImagen(),data.getText(), "brazos");
+                        putImage(data.getImagen(),data.getText(), "brazos", finalSiguienteImagen1);
                         currentIndex = finalI;
                         // Después de actualizar la imagen, continuar con la siguiente acción
                         continueActions();
@@ -470,8 +583,9 @@ public class ImageActivity extends TopBaseActivity {
             } else if (data.getSpinnerOption().equals("Movimiento de cabeza")) {
                 if(!data.getImagen().isEmpty()){
                     int finalI = i;
+                    String finalSiguienteImagen2 = siguienteImagen;
                     new Thread(() -> {
-                        putImage(data.getImagen(),data.getText(), "cabeza");
+                        putImage(data.getImagen(),data.getText(), "cabeza", finalSiguienteImagen2);
                         currentIndex = finalI;
                         // Después de actualizar la imagen, continuar con la siguiente acción
                         continueActions();
@@ -485,8 +599,9 @@ public class ImageActivity extends TopBaseActivity {
             } else if (data.getSpinnerOption().equals("Movimiento de ruedas")) {
                 if(!data.getImagen().isEmpty()){
                     int finalI = i;
+                    String finalSiguienteImagen3 = siguienteImagen;
                     new Thread(() -> {
-                        putImage(data.getImagen(),data.getText(), "ruedas");
+                        putImage(data.getImagen(),data.getText(), "ruedas", finalSiguienteImagen3);
                         currentIndex = finalI;
                         // Después de actualizar la imagen, continuar con la siguiente acción
                         continueActions();
@@ -500,8 +615,9 @@ public class ImageActivity extends TopBaseActivity {
             } else if (data.getSpinnerOption().equals("Encender LEDs")) {
                 if(!data.getImagen().isEmpty()){
                     int finalI = i;
+                    String finalSiguienteImagen4 = siguienteImagen;
                     new Thread(() -> {
-                        putImage(data.getImagen(),data.getText(), "leds");
+                        putImage(data.getImagen(),data.getText(), "leds", finalSiguienteImagen4);
                         currentIndex = finalI;
                         // Después de actualizar la imagen, continuar con la siguiente acción
                         continueActions();
@@ -515,8 +631,9 @@ public class ImageActivity extends TopBaseActivity {
             } else if (data.getSpinnerOption().equals("Cambio de expresión facial")) {
                 if(!data.getImagen().isEmpty()){
                     int finalI = i;
+                    String finalSiguienteImagen5 = siguienteImagen;
                     new Thread(() -> {
-                        putImage(data.getImagen(),data.getText(), "facial");
+                        putImage(data.getImagen(),data.getText(), "facial", finalSiguienteImagen5);
                         currentIndex = finalI;
                         // Después de actualizar la imagen, continuar con la siguiente acción
                         continueActions();

@@ -160,6 +160,9 @@ public class ModificarActivity extends TopBaseActivity {
             }
         });
 
+        // TODO: no se porque no funciona
+        //funcionalidadesActivity.speakOperation(" Agrega nuevos bloques para dar forma a tu presentación.", "Normal");
+
     }
 
     protected void fillData() {

@@ -119,6 +119,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginBottom="16dp" />
 
+
     <LinearLayout
         android:id="@+id/linearLayout_botones"
         android:layout_width="wrap_content"
@@ -150,6 +151,47 @@
             android:textAllCaps="false"
             android:text="Finalizar" />
     </LinearLayout>
+
+    <!-- TextView para subtítulos -->
+    <TextView
+        android:id="@+id/txtSubtitulos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:textColor="@android:color/white"
+        android:textSize="26sp"
+        android:padding="8dp"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@id/linearLayout_botones"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btnToggleSubtitlesNo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:text = "CC"
+        android:textSize="26sp"
+        android:textColor="@color/colorPurple"
+        android:background="@drawable/button_rounded_white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp" />
+
+    <Button
+        android:id="@+id/btnToggleSubtitlesYes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text = "CC"
+        android:textSize="26sp"
+        android:textColor="@color/colorWhite"
+        android:background="@drawable/button_rounded"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

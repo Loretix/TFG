@@ -166,15 +166,15 @@ public class FuncionalidadesActivity extends TopBaseActivity {
 
     // Método que dado un tipo de emoción, cambia la cara del robot a la emoción seleccionada
     public void changeFaceOperation( String tipo){
-        if(Objects.equals(tipo, "Arrogancia")){
+        if(Objects.equals(tipo, "Arrogante")){
             systemManager.showEmotion(EmotionsType.ARROGANCE);
-        } else if (Objects.equals(tipo, "Sorpresa")){
+        } else if (Objects.equals(tipo, "Sorprendido")){
             systemManager.showEmotion(EmotionsType.SURPRISE);
-        } else if (Objects.equals(tipo, "Ojos brillantes")){
+        } else if (Objects.equals(tipo, "Entusiasmado")){
             systemManager.showEmotion(EmotionsType.WHISTLE);
         } else if (Objects.equals(tipo, "Enamorado")){
             systemManager.showEmotion(EmotionsType.LAUGHTER);
-        } else if (Objects.equals(tipo, "Despedida emotiva")){
+        } else if (Objects.equals(tipo, "Emocionado")){
             systemManager.showEmotion(EmotionsType.GOODBYE);
         } else if (Objects.equals(tipo, "Tímido")){
             systemManager.showEmotion(EmotionsType.SHY);
@@ -184,25 +184,25 @@ public class FuncionalidadesActivity extends TopBaseActivity {
             systemManager.showEmotion(EmotionsType.SWEAT);
         } else if (Objects.equals(tipo, "Pillo")){
             systemManager.showEmotion(EmotionsType.SNICKER);
-        } else if (Objects.equals(tipo, "Culpa")){
+        } else if (Objects.equals(tipo, "Culpable")){
             systemManager.showEmotion(EmotionsType.PICKNOSE);
-        } else if (Objects.equals(tipo, "Llanto")){
+        } else if (Objects.equals(tipo, "Triste")){
             systemManager.showEmotion(EmotionsType.CRY);
-        } else if (Objects.equals(tipo, "Enfado")){
+        } else if (Objects.equals(tipo, "Enfadado")){
             systemManager.showEmotion(EmotionsType.ABUSE);
         } else if (Objects.equals(tipo, "Super enamorado")){
             systemManager.showEmotion(EmotionsType.KISS);
-        } else if (Objects.equals(tipo, "Dormir")){
+        } else if (Objects.equals(tipo, "Dormido")){
             systemManager.showEmotion(EmotionsType.SLEEP);
-        } else if (Objects.equals(tipo, "Sonrisa")){
+        } else if (Objects.equals(tipo, "Feliz")){
             systemManager.showEmotion(EmotionsType.SMILE);
-        } else if (Objects.equals(tipo, "Preocupación")){
+        } else if (Objects.equals(tipo, "Preocupado")){
             systemManager.showEmotion(EmotionsType.GRIEVANCE);
-        } else if (Objects.equals(tipo, "Pregunta")){
+        } else if (Objects.equals(tipo, "Curioso")){
             systemManager.showEmotion(EmotionsType.QUESTION);
-        } else if (Objects.equals(tipo, "Desmayo")){
+        } else if (Objects.equals(tipo, "Confuso")){
             systemManager.showEmotion(EmotionsType.FAINT);
-        } else if (Objects.equals(tipo, "Elogio")){
+        } else if (Objects.equals(tipo, "Elogiado")){
             systemManager.showEmotion(EmotionsType.PRISE);
         }
     }
@@ -210,6 +210,17 @@ public class FuncionalidadesActivity extends TopBaseActivity {
     // Método que dado un tipo de movimiento de brazos, realiza el movimiento seleccionado
     public void moveBrazosOperation(String tipo){
         if(Objects.equals(tipo, "Saludo")){
+            SpeakOption speakOption = new SpeakOption();
+            speakOption.setSpeed(60);
+            speakOption.setIntonation(50);
+            speechManager.startSpeak("Hola! Me llamo Lola, encantada de conocerte", speakOption);
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             AbsoluteAngleHandMotion absoluteAngleHandMotion =
                     new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_RIGHT,5,0);
             handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
@@ -272,7 +283,7 @@ public class FuncionalidadesActivity extends TopBaseActivity {
             handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
 
             try {
-                Thread.sleep(5000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -359,6 +370,72 @@ public class FuncionalidadesActivity extends TopBaseActivity {
                 e.printStackTrace();
             }
 
+        } else if (Objects.equals(tipo, "Levantar brazos")){
+
+            AbsoluteAngleHandMotion absoluteAngleHandMotion =
+                    new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_BOTH,5,0);
+            handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
+
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            absoluteAngleHandMotion =
+                    new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_BOTH,5,180);
+            handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        } else if (Objects.equals(tipo, "Levantar brazo izquierdo")){
+
+            AbsoluteAngleHandMotion absoluteAngleHandMotion =
+                    new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_LEFT,5,0);
+            handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
+
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            absoluteAngleHandMotion =
+                    new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_BOTH,5,180);
+            handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        } else if (Objects.equals(tipo, "Levantar brazo derecho")){
+
+            AbsoluteAngleHandMotion absoluteAngleHandMotion =
+                    new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_RIGHT,5,0);
+            handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
+
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            absoluteAngleHandMotion =
+                    new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_BOTH,5,180);
+            handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         } else if (Objects.equals(tipo, "Hagamos una OLA")){
             SpeakOption speakOption = new SpeakOption();
             speakOption.setSpeed(60);
@@ -421,6 +498,7 @@ public class FuncionalidadesActivity extends TopBaseActivity {
             }
 
         } else if (Objects.equals(tipo, "El robot")){
+
             AbsoluteAngleHandMotion absoluteAngleHandMotion =
                     new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_LEFT,8,90);
             handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);

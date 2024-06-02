@@ -29,6 +29,7 @@ import com.qihancloud.opensdk.beans.FuncConstant;
 import com.qihancloud.opensdk.function.unit.HandMotionManager;
 import com.qihancloud.opensdk.function.unit.HardWareManager;
 import com.qihancloud.opensdk.function.unit.HeadMotionManager;
+import com.qihancloud.opensdk.function.unit.ProjectorManager;
 import com.qihancloud.opensdk.function.unit.SpeechManager;
 import com.qihancloud.opensdk.function.unit.SystemManager;
 import com.qihancloud.opensdk.function.unit.WheelMotionManager;
@@ -50,6 +51,7 @@ public class MainActivity extends TopBaseActivity {
     private HeadMotionManager headMotionManager;
     private HardWareManager hardWareManager; //leds //touch sensors //voice locate //gyroscope
     private WheelMotionManager wheelMotionManager;
+    private ProjectorManager projectorManager;
 
     private FuncionalidadesActivity funcionalidadesActivity;
 
@@ -77,6 +79,7 @@ public class MainActivity extends TopBaseActivity {
         headMotionManager = (HeadMotionManager) getUnitManager(FuncConstant.HEADMOTION_MANAGER);
         hardWareManager = (HardWareManager) getUnitManager(FuncConstant.HARDWARE_MANAGER);
         wheelMotionManager = (WheelMotionManager) getUnitManager(FuncConstant.WHEELMOTION_MANAGER);
+        projectorManager = (ProjectorManager) getUnitManager(FuncConstant.PROJECTOR_MANAGER);
 
         funcionalidadesActivity = new FuncionalidadesActivity(speechManager, systemManager, handMotionManager,
                 headMotionManager, hardWareManager, wheelMotionManager, MainActivity.this);
@@ -107,6 +110,8 @@ public class MainActivity extends TopBaseActivity {
             }
         });
 
+        // TODO: no se porque no funciona
+       // funcionalidadesActivity.speakOperation("¡Bienvenido! ¿Estás listo para crear una nueva presentación?", "Normal");
 
     }
 
@@ -171,10 +176,7 @@ public class MainActivity extends TopBaseActivity {
                 @Override
                 public void onClick(View v) {
                     ArrayList<DataModel> list = mDbHelperBloqueAcciones.getDatosPresentacion(id, mDbHelperAcciones);
-
-                    Intent intent = new Intent(MainActivity.this, ImageActivity.class);
-                    intent.putExtra("dataList", list);
-                    startActivity(intent);
+                    mostrarDialogoPresentar(id, list);
 
                 }
             });
@@ -230,10 +232,92 @@ public class MainActivity extends TopBaseActivity {
         dialog.show();
     }
 
+    @SuppressLint("SetTextI18n")
+    private void mostrarDialogoPresentar(long id, ArrayList<DataModel> list) {
+        // Inflar el layout del diálogo personalizado
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.popup_proyectar, null);
+
+        // Obtener referencias a los botones del layout
+        Button btnCancel = dialogView.findViewById(R.id.btn_cancel);
+        Button btnDelete = dialogView.findViewById(R.id.btn_delete);
+
+        TextView textConfirmacion = dialogView.findViewById(R.id.text_confirmacion);
+        textConfirmacion.setText("¿Desea proyectar la presentación?");
+
+
+        // Configurar el comportamiento del botón "Cancelar"
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
+                Intent intent = new Intent(MainActivity.this, ImageActivity.class);
+                intent.putExtra("dataList", list);
+                startActivity(intent);
+
+            }
+        });
+
+        // Configurar el comportamiento del botón "Eliminar"
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
+                // TODO: Encender el proyector
+
+                projectorManager.switchProjector(true);
+
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                projectorManager.setMode(ProjectorManager.MODE_WALL);
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                projectorManager.setBright(31);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                projectorManager.setTrapezoidV(30);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                Intent intent = new Intent(MainActivity.this, ImageActivity.class);
+                intent.putExtra("dataList", list);
+                // Cuando se vuelva de la actividad de proyección, se apaga el proyector
+                startActivityForResult(intent, 1);
+            }
+        });
+
+        // Configurar AlertDialog con el layout personalizado y el contexto adecuado
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+
+        // Crear y mostrar el diálogo
+        dialog = builder.create();
+        dialog.show();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         fillData();
+        // Apagar el proyector
+        projectorManager.switchProjector(false);
     }
 
 
