@@ -262,6 +262,11 @@ public class ImageActivity extends TopBaseActivity {
                         } finally {
                             // Liberar el semáforo
                             imageUpdateSemaphore.release();
+                            runOnUiThread(() -> {
+                                txtSubtitulo.setText("");
+                            });
+
+
                         }
 
                         currentIndex = finalI;
@@ -503,6 +508,11 @@ public class ImageActivity extends TopBaseActivity {
                     gifImagen.setVisibility(View.VISIBLE);
                 });
             }
+            if(tipo.equals("voz")){
+                runOnUiThread(() -> {
+                    txtSubtitulo.setText("");
+                });
+            }
         }
     }
 
@@ -554,6 +564,9 @@ public class ImageActivity extends TopBaseActivity {
                         } finally {
                             // Liberar el semáforo
                             imageUpdateSemaphore.release();
+                            runOnUiThread(() -> {
+                                txtSubtitulo.setText("");
+                            });
                         }
 
                         currentIndex = finalI;
