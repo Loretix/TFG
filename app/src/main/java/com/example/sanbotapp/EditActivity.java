@@ -510,8 +510,9 @@ public class EditActivity extends TopBaseActivity {
                     text = text + "-" + editTextMovRuedas.getText().toString();
                 }
 
+
                 // Verificar si el texto y la opción no están vacíos
-                if (!TextUtils.isEmpty(text)) {
+                if (!TextUtils.isEmpty(text) && !text.equals("Avanzar-") && !text.equals("Retroceder-")) {
                     // Crear un nuevo objeto DataModel y agregarlo a la lista
                     DataModel dataModel = new DataModel(text, spinnerOption, "");
                     dataList.add(dataModel);
@@ -730,6 +731,7 @@ public class EditActivity extends TopBaseActivity {
         btnSelectUrl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                selectedVideoUri = null;
                 LLUrl.setVisibility(View.VISIBLE);
                 IVPreviewImage.setVisibility(View.GONE);
             }
@@ -740,40 +742,48 @@ public class EditActivity extends TopBaseActivity {
             @Override
             public void onClick(View v) {
                 if (selectedImageUri != null) {
+                    System.out.println("IMAGEN SELECCIONADA NO ES NULA:  " + selectedImageUri);
                     String text = ETTexto.getText().toString() + "-" + selectedImageUri.toString();
                     String spinnerOption = spinnerOptions.getSelectedItem().toString();
 
                     // Verificar si el texto y la opción no están vacíos
-                    if (!TextUtils.isEmpty(text)) {
+                    if (!TextUtils.isEmpty(text) && !ETTexto.getText().toString().isEmpty()) {
+                        System.out.println("IMAGEN SELECCIONADA NO ES NULA:  DIALOGO DISMISS" + selectedImageUri);
                         // Crear un nuevo objeto DataModel y agregarlo a la lista
                         DataModel dataModel = new DataModel(text, spinnerOption, "");
                         dataList.add(dataModel);
                         //adapterV.notifyDataSetChanged();
                         recyclerView.scrollToPosition(dataList.size() - 1);
+                        dialog.dismiss();
+
                     } else {
                         // Mostrar un mensaje de error si el texto está vacío
-                        Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditActivity.this, "Seleccione una imagen y el tiempo de acción para insertar una imagen", Toast.LENGTH_SHORT).show();
                     }
-                } else if ( !ETUrl.toString().isEmpty() ) {
+                } else if ( !ETUrl.getText().toString().isEmpty() ) {
+                    System.out.println("URL INSERTADA NO NULA" + ETUrl.getText().toString());
                     String text = ETTexto.getText().toString() + "-" + ETUrl.getText().toString();
                     String spinnerOption = spinnerOptions.getSelectedItem().toString();
 
-                    // Verificar si el texto y la opción no están vacíos
-                    if (!TextUtils.isEmpty(text)) {
+                    // Verificar si el texto y la opción no están vacíos, que el tiempo no este vacio y que la url empiece por http
+                    if (!TextUtils.isEmpty(text) && !ETTexto.getText().toString().isEmpty() && ETUrl.getText().toString().startsWith("http") ) {
+                        System.out.println("URL INSERTADA NO NULA DIALOG DISMISS" + ETUrl.getText().toString());
                         // Crear un nuevo objeto DataModel y agregarlo a la lista
                         DataModel dataModel = new DataModel(text, spinnerOption, "");
                         dataList.add(dataModel);
                         //adapterV.notifyDataSetChanged();
                         recyclerView.scrollToPosition(dataList.size() - 1);
+                        dialog.dismiss();
+
                     } else {
                         // Mostrar un mensaje de error si el texto está vacío
-                        Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditActivity.this, "Introduzca una URL correcta y el tiempo de acción para insertar una imagen", Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    // No se puede añadir una imagen si no hay nada seleccionado
+                    Toast.makeText(EditActivity.this, "Selecciona una imagen", Toast.LENGTH_SHORT).show();
                 }
 
-
-                // Si no hay selected image
-                dialog.dismiss();
             }
         });
 
@@ -781,6 +791,7 @@ public class EditActivity extends TopBaseActivity {
         btnSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ETUrl.setText("");
                 checkPermissions();
                 IVPreviewImage.setVisibility(View.VISIBLE);
                 LLUrl.setVisibility(View.GONE);
@@ -850,7 +861,7 @@ public class EditActivity extends TopBaseActivity {
         btnSelectUrl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                selectedVideoUri = null;
                 LLUrl.setVisibility(View.VISIBLE);
                 IVPreviewVideo.setVisibility(View.GONE);
             }
@@ -871,30 +882,31 @@ public class EditActivity extends TopBaseActivity {
                         dataList.add(dataModel);
                         //adapterV.notifyDataSetChanged();
                         recyclerView.scrollToPosition(dataList.size() - 1);
+                        dialog.dismiss();
                     } else {
                         // Mostrar un mensaje de error si el texto está vacío
-                        Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditActivity.this, "Selecciona un vídeo", Toast.LENGTH_SHORT).show();
                     }
-                } else if ( !ETUrl.toString().isEmpty() ) {
+                } else if ( !ETUrl.getText().toString().isEmpty() ) {
                     String text = ETUrl.getText().toString();
                     String spinnerOption = spinnerOptions.getSelectedItem().toString();
 
                     // Verificar si el texto y la opción no están vacíos
-                    if (!TextUtils.isEmpty(text)) {
+                    if (!TextUtils.isEmpty(text) && ETUrl.getText().toString().startsWith("http")) {
                         // Crear un nuevo objeto DataModel y agregarlo a la lista
                         DataModel dataModel = new DataModel(text, spinnerOption, "");
                         dataList.add(dataModel);
                         //adapterV.notifyDataSetChanged();
                         recyclerView.scrollToPosition(dataList.size() - 1);
+                        dialog.dismiss();
                     } else {
                         // Mostrar un mensaje de error si el texto está vacío
-                        Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditActivity.this, "Introduzca una URL correcta ", Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    // No se puede añadir una imagen si no hay nada seleccionado
+                    Toast.makeText(EditActivity.this, "Selecciona un video", Toast.LENGTH_SHORT).show();
                 }
-
-
-                // Si no hay selected image
-                dialog.dismiss();
             }
         });
 
@@ -902,6 +914,7 @@ public class EditActivity extends TopBaseActivity {
         btnSelectVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ETUrl.setText("");
                 checkPermissions();
                 IVPreviewVideo.setVisibility(View.VISIBLE);
                 LLUrl.setVisibility(View.GONE);

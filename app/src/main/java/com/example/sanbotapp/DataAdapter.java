@@ -103,6 +103,9 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.DataViewHolder
         @SuppressLint("SetTextI18n")
         public void bindData(DataModel data) {
             textView.setText(data.getSpinnerOption() + ": " + data.getText() );
+            if(data.getSpinnerOption().equals("Insertar imagen") || data.getSpinnerOption().equals("Insertar vídeo") || data.getSpinnerOption().equals("Pregunta verdadero o falso")){
+                buttonAddImagen.setVisibility(View.GONE);
+            }
             buttonAction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -245,17 +248,27 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.DataViewHolder
                         System.out.println("ENTRAMOS: " + selectedImageUriEx);
                         // Añadir la imagen al elemento
                         data.setImagen(selectedImageUriEx.toString());
+                        dialog.dismiss();
+                    } else {
+                        Toast.makeText(editActivity, "Selecciona una imagen", Toast.LENGTH_SHORT).show();
                     }
 
-                } else if ( !ETUrl.toString().isEmpty() ) {
+                } else if ( !ETUrl.getText().toString().isEmpty() ) {
                     System.out.println("AQUI NO ENTRAMOS: " + ETUrl.getText().toString());
+                    if(!ETUrl.getText().toString().startsWith("http")){
+                        Toast.makeText(editActivity, "Introduce una URL válida", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     data.setImagen(ETUrl.getText().toString());
+                    dialog.dismiss();
 
+                } else{
+                    Toast.makeText(editActivity, "Selecciona una imagen", Toast.LENGTH_SHORT).show();
                 }
                 // Actualizar el dataList
                 dataList.set(position, data);
                 // Si no hay selected image
-                dialog.dismiss();
+
             }
         });
 
@@ -263,6 +276,7 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.DataViewHolder
         btnSelectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ETUrl.setText("");
                 checkPermissions();
                 IVPreviewImage.setVisibility(View.VISIBLE);
                 LLUrl.setVisibility(View.GONE);
