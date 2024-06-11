@@ -370,7 +370,81 @@ public class FuncionalidadesActivity extends TopBaseActivity {
                 e.printStackTrace();
             }
 
+        } else if (Objects.equals(tipo, "Bajar brazos")){
+
+            AbsoluteAngleHandMotion absoluteAngleHandMotion =
+                    new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_BOTH,5,180);
+            handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        } else if (Objects.equals(tipo, "Bajar brazo izquierdo")){
+
+            AbsoluteAngleHandMotion absoluteAngleHandMotion =
+                    new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_BOTH,5,180);
+            handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        } else if (Objects.equals(tipo, "Bajar brazo derecho")){
+
+            AbsoluteAngleHandMotion absoluteAngleHandMotion =
+                    new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_BOTH,5,180);
+            handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         } else if (Objects.equals(tipo, "Levantar brazos")){
+
+            AbsoluteAngleHandMotion absoluteAngleHandMotion =
+                    new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_BOTH,5,0);
+            handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
+        } else if (Objects.equals(tipo, "Levantar brazo izquierdo")){
+
+            AbsoluteAngleHandMotion absoluteAngleHandMotion =
+                    new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_LEFT,5,0);
+            handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
+        } else if (Objects.equals(tipo, "Levantar brazo derecho")){
+
+            AbsoluteAngleHandMotion absoluteAngleHandMotion =
+                    new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_RIGHT,5,0);
+            handMotionManager.doAbsoluteAngleMotion(absoluteAngleHandMotion);
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        } else if (Objects.equals(tipo, "Levantar y bajar brazos")){
 
             AbsoluteAngleHandMotion absoluteAngleHandMotion =
                     new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_BOTH,5,0);
@@ -392,7 +466,7 @@ public class FuncionalidadesActivity extends TopBaseActivity {
                 e.printStackTrace();
             }
 
-        } else if (Objects.equals(tipo, "Levantar brazo izquierdo")){
+        } else if (Objects.equals(tipo, "Levantar y bajar brazo izquierdo")){
 
             AbsoluteAngleHandMotion absoluteAngleHandMotion =
                     new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_LEFT,5,0);
@@ -414,7 +488,7 @@ public class FuncionalidadesActivity extends TopBaseActivity {
                 e.printStackTrace();
             }
 
-        } else if (Objects.equals(tipo, "Levantar brazo derecho")){
+        } else if (Objects.equals(tipo, "Levantar y bajar brazo derecho")){
 
             AbsoluteAngleHandMotion absoluteAngleHandMotion =
                     new AbsoluteAngleHandMotion(AbsoluteAngleHandMotion.PART_RIGHT,5,0);
@@ -754,9 +828,16 @@ public class FuncionalidadesActivity extends TopBaseActivity {
 
     // Método que dado un tipo de movimiento de ruedas, realiza el movimiento seleccionado
     public void moveRuedasOperation(String tipo){
-        String[] partes = tipo.split("-");
-        String movimiento = partes[0];
-        int distancia = Integer.parseInt(partes[1]);
+
+        String movimiento = tipo;
+        int distancia = 0;
+
+        if(tipo.contains("-")){
+            String[] partes = tipo.split("-");
+            movimiento = partes[0];
+            distancia = Integer.parseInt(partes[1]);
+        }
+
 
         if(Objects.equals(movimiento, "Avanzar")){
 
@@ -826,6 +907,12 @@ public class FuncionalidadesActivity extends TopBaseActivity {
         } else if (Objects.equals(tipo, "Girar sobre si mismo")){
             RelativeAngleWheelMotion movimientoRuedas = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5, 360);
             wheelMotionManager.doRelativeAngleMotion(movimientoRuedas);
+
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -866,6 +953,9 @@ public class FuncionalidadesActivity extends TopBaseActivity {
                 hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_FLICKER_YELLOW));
             }  else if (Objects.equals(modeEsp, "Parpadeo aleatorio")){
                 hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_FLICKER_RANDOM));
+            } else if (Objects.equals(modeEsp, "Apagar")){
+                System.out.println("Apagando luces");
+                hardWareManager.setLED(new LED(LED.PART_ALL, LED.MODE_CLOSE));
             }
         } else if (Objects.equals(partEsp, "Ruedas")){
             if (Objects.equals(modeEsp, "Blanco")){
@@ -898,6 +988,8 @@ public class FuncionalidadesActivity extends TopBaseActivity {
                 hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_FLICKER_YELLOW));
             }  else if (Objects.equals(modeEsp, "Parpadeo aleatorio")){
                 hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_FLICKER_RANDOM));
+            }else if (Objects.equals(modeEsp, "Apagar")){
+                hardWareManager.setLED(new LED(LED.PART_WHEEL, LED.MODE_CLOSE));
             }
         }  else if (Objects.equals(partEsp, "Brazo izquierdo")){
             if (Objects.equals(modeEsp, "Blanco")){
@@ -930,6 +1022,8 @@ public class FuncionalidadesActivity extends TopBaseActivity {
                 hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_FLICKER_YELLOW));
             }  else if (Objects.equals(modeEsp, "Parpadeo aleatorio")){
                 hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_FLICKER_RANDOM));
+            }else if (Objects.equals(modeEsp, "Apagar")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HAND, LED.MODE_CLOSE));
             }
         } else if (Objects.equals(partEsp, "Brazo derecho")){
             if (Objects.equals(modeEsp, "Blanco")){
@@ -962,6 +1056,8 @@ public class FuncionalidadesActivity extends TopBaseActivity {
                 hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_FLICKER_YELLOW));
             }  else if (Objects.equals(modeEsp, "Parpadeo aleatorio")){
                 hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_FLICKER_RANDOM));
+            } else if (Objects.equals(modeEsp, "Apagar")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HAND, LED.MODE_CLOSE));
             }
         } else if (Objects.equals(partEsp, "Oreja izquierda")){
             if (Objects.equals(modeEsp, "Blanco")){
@@ -994,14 +1090,9 @@ public class FuncionalidadesActivity extends TopBaseActivity {
                 hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_YELLOW, (byte) 10, (byte) 3));
             }  else if (Objects.equals(modeEsp, "Parpadeo aleatorio")){
                 hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_FLICKER_RANDOM, (byte) 10, (byte) 3));
+            } else if (Objects.equals(modeEsp, "Apagar")){
+                hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_CLOSE));
             }
-
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            hardWareManager.setLED(new LED(LED.PART_LEFT_HEAD, LED.MODE_CLOSE));
 
         } else if (Objects.equals(partEsp, "Oreja derecha")){
             if (Objects.equals(modeEsp, "Blanco")){
@@ -1034,14 +1125,10 @@ public class FuncionalidadesActivity extends TopBaseActivity {
                 hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_YELLOW, (byte) 10, (byte) 3));
             }  else if (Objects.equals(modeEsp, "Parpadeo aleatorio")){
                 hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_FLICKER_RANDOM, (byte) 10, (byte) 3));
+            } else if (Objects.equals(modeEsp, "Apagar")){
+                hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_CLOSE));
             }
 
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            hardWareManager.setLED(new LED(LED.PART_RIGHT_HEAD, LED.MODE_CLOSE));
         }
 
     }

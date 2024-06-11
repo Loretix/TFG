@@ -36,7 +36,7 @@
         <activity android:name=".EditActivity" />
         <activity android:name=".ModificarActivity" />
         <activity android:name=".TrueFalseActivity" />
-        <activity android:name=".ImageActivity" />
+        <activity android:name=".ImageActivity" android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".ImageFijaActivity" />
 
     </application>

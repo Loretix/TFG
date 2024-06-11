@@ -168,6 +168,7 @@ public class ImageActivity extends TopBaseActivity {
                     btnPausar.setText("Reanudar");
                     txtNuevo.setVisibility(View.GONE);
                     gifImagen.setVisibility(View.GONE);
+                    imageView.setVisibility(View.GONE);
                     txtPausa.setVisibility(View.VISIBLE);
                     imagenSaanbot.setVisibility(View.VISIBLE);
                     reproduciendose = false;
@@ -177,6 +178,7 @@ public class ImageActivity extends TopBaseActivity {
                     txtPausa.setVisibility(View.GONE);
                     txtNuevo.setVisibility(View.VISIBLE);
                     gifImagen.setVisibility(View.VISIBLE);
+                    imageView.setVisibility(View.VISIBLE);
                     imagenSaanbot.setVisibility(View.GONE);
                     continueActions();
                 }
@@ -376,6 +378,7 @@ public class ImageActivity extends TopBaseActivity {
                 btnPausar.setText("Reanudar");
                 txtNuevo.setVisibility(View.GONE);
                 gifImagen.setVisibility(View.GONE);
+                imageView.setVisibility(View.GONE);
                 txtPausa.setVisibility(View.VISIBLE);
                 imagenSaanbot.setVisibility(View.VISIBLE);
                 funcionalidadesActivity.mostrarVideo(data.getText());
@@ -422,7 +425,9 @@ public class ImageActivity extends TopBaseActivity {
                 txtPausa.setVisibility(View.GONE);
                 imagenSaanbot.setVisibility(View.GONE);
 
+                System.out.println("URI EN REPRODUCCION: " + uri);
                 if (uri.startsWith("http")) {
+                    System.out.println("URI EN REPRODUCCION HE ENTRADOOOO: " + uri);
                     Glide.with(this).load(uri).into(imageView);
                 } else {
                     imageView.setImageURI(Uri.parse(uri));
@@ -676,6 +681,7 @@ public class ImageActivity extends TopBaseActivity {
                     btnPausar.setText("Reanudar");
                     txtNuevo.setVisibility(View.GONE);
                     gifImagen.setVisibility(View.GONE);
+                    imageView.setVisibility(View.GONE);
                     txtPausa.setVisibility(View.VISIBLE);
                     imagenSaanbot.setVisibility(View.VISIBLE);
                     funcionalidadesActivity.mostrarVideo(data.getText());
@@ -709,6 +715,7 @@ public class ImageActivity extends TopBaseActivity {
                     imageUpdateSemaphore.acquire();
                     runOnUiThread(() -> {
                         txtNuevo.setVisibility(View.GONE);
+                        imageView.setVisibility(View.GONE);
                         gifImagen.setVisibility(View.GONE);
                         txtFinal.setVisibility(View.VISIBLE);
                         imagenSaanbot.setVisibility(View.VISIBLE);

@@ -170,7 +170,7 @@ public class ModificarActivity extends TopBaseActivity {
             System.out.println("FILLDATA ID: " + mRowId);
             Cursor notesCursor = mDbHelperBloque.fetchAllBloqueAcciones(mRowId);
             bloquesLimit = notesCursor.getCount();
-            System.out.println("Bloques: " + bloquesLimit);
+            System.out.println("Bloques FILL DATA: " + bloquesLimit);
 
             dataList.clear();
             if(notesCursor.moveToFirst()) {
@@ -188,14 +188,19 @@ public class ModificarActivity extends TopBaseActivity {
             mNombreText.setText(presentacion.getString(presentacion.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_NOMBRE)));
 
             Cursor notesCursor = mDbHelperBloque.fetchAllBloqueAcciones(mRowId);
+            startManagingCursor(notesCursor);
             bloquesLimit = notesCursor.getCount();
 
+            System.out.println("Bloques POPULATE: " + bloquesLimit);
             dataList.clear();
             if(notesCursor.moveToFirst()) {
                 do {
                     dataList.add(notesCursor.getLong(notesCursor.getColumnIndexOrThrow(BloqueAccionesDbAdapter.KEY_ROWID)));
                 } while (notesCursor.moveToNext());
             }
+            System.out.println("DATA LIST: " + dataList);
+            
+            adapterV.notifyDataSetChanged();
 
         }
     }
@@ -232,6 +237,7 @@ public class ModificarActivity extends TopBaseActivity {
             }
             // Al guardar el estado se actualiza la ordenación de los bloques
             if(dataList.size() > 0) {
+                // ESTAMOS GUARDANDO EL ARRAY DE ACCIONES ???
                 mDbHelperBloque.updateOrdenacionBloques(dataList, mRowId);
             }
         }

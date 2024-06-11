@@ -37,6 +37,12 @@
         <item>Levantar brazo izquierdo</item>
         <item>Levantar brazo derecho</item>
         <item>Levantar brazos</item>
+        <item>Bajar brazo izquierdo</item>
+        <item>Bajar brazo derecho</item>
+        <item>Bajar brazos</item>
+        <item>Levantar y bajar brazo izquierdo</item>
+        <item>Levantar y bajar brazo derecho</item>
+        <item>Levantar y bajar brazos</item>
         <item>Saludo</item>
         <item>Señalar</item>
         <item>Tengo una duda</item>
@@ -71,6 +77,7 @@
         <item>Oreja derecha</item>
     </string-array>
     <string-array name="fled_mode">
+        <item>Apagar</item>
         <item>Blanco</item>
         <item>Rojo</item>
         <item>Verde</item>
