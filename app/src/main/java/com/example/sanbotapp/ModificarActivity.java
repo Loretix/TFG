@@ -199,7 +199,7 @@ public class ModificarActivity extends TopBaseActivity {
                 } while (notesCursor.moveToNext());
             }
             System.out.println("DATA LIST: " + dataList);
-            
+
             adapterV.notifyDataSetChanged();
 
         }

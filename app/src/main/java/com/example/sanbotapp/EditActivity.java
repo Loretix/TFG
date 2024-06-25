@@ -429,6 +429,8 @@ public class EditActivity extends TopBaseActivity {
                     // Notificar al adaptador que se ha agregado un nuevo elemento
                     adapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(dataList.size() - 1);
+                    // Mostrar un mensaje de éxito
+                    Toast.makeText(EditActivity.this, "Elemento agregado", Toast.LENGTH_SHORT).show();
                 } else {
                     // Mostrar un mensaje de error si el texto está vacío
                     Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
@@ -450,6 +452,8 @@ public class EditActivity extends TopBaseActivity {
                     dataList.add(dataModel);
                     adapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(dataList.size() - 1);
+                    Toast.makeText(EditActivity.this, "Elemento agregado", Toast.LENGTH_SHORT).show();
+
                 } else {
                     // Mostrar un mensaje de error si el texto está vacío
                     Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
@@ -471,6 +475,8 @@ public class EditActivity extends TopBaseActivity {
                     dataList.add(dataModel);
                     adapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(dataList.size() - 1);
+                    Toast.makeText(EditActivity.this, "Elemento agregado", Toast.LENGTH_SHORT).show();
+
                 } else {
                     // Mostrar un mensaje de error si el texto está vacío
                     Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
@@ -492,6 +498,8 @@ public class EditActivity extends TopBaseActivity {
                     dataList.add(dataModel);
                     adapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(dataList.size() - 1);
+                    Toast.makeText(EditActivity.this, "Elemento agregado", Toast.LENGTH_SHORT).show();
+
                 } else {
                     // Mostrar un mensaje de error si el texto está vacío
                     Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
@@ -518,6 +526,8 @@ public class EditActivity extends TopBaseActivity {
                     dataList.add(dataModel);
                     adapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(dataList.size() - 1);
+                    Toast.makeText(EditActivity.this, "Elemento agregado", Toast.LENGTH_SHORT).show();
+
                 } else {
                     // Mostrar un mensaje de error si el texto está vacío
                     Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
@@ -539,6 +549,8 @@ public class EditActivity extends TopBaseActivity {
                     dataList.add(dataModel);
                     adapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(dataList.size() - 1);
+                    Toast.makeText(EditActivity.this, "Elemento agregado", Toast.LENGTH_SHORT).show();
+
                 } else {
                     // Mostrar un mensaje de error si el texto está vacío
                     Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();
@@ -560,6 +572,8 @@ public class EditActivity extends TopBaseActivity {
                     dataList.add(dataModel);
                     adapter.notifyDataSetChanged();
                     recyclerView.scrollToPosition(dataList.size() - 1);
+                    Toast.makeText(EditActivity.this, "Elemento agregado", Toast.LENGTH_SHORT).show();
+
                 } else {
                     // Mostrar un mensaje de error si el texto está vacío
                     Toast.makeText(EditActivity.this, "Introduce un valor", Toast.LENGTH_SHORT).show();

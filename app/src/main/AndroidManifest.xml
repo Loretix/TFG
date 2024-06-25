@@ -33,11 +33,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EditActivity" />
-        <activity android:name=".ModificarActivity" />
-        <activity android:name=".TrueFalseActivity" />
-        <activity android:name=".ImageActivity" android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".ImageFijaActivity" />
+        <activity android:name=".EditActivity" android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".ModificarActivity" android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".TrueFalseActivity" android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".ImageActivity" android:theme="@style/AppTheme.NoActionBar" android:windowSoftInputMode="stateHidden"/>
+        <activity android:name=".ImageFijaActivity" android:windowSoftInputMode="stateHidden" />
 
     </application>
 
