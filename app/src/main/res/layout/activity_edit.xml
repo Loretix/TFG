@@ -101,6 +101,23 @@
                 android:inputType="text"/>
 
             <Button
+                android:id="@+id/buttonGrabar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:background="@drawable/button_rounded"
+                android:textSize="16sp"
+                android:textAllCaps="false"
+                android:drawableEnd="@drawable/baseline_mic_24"
+                android:drawablePadding="8dp"
+                android:text="Dictar"
+                android:padding="10dp"
+                android:layout_marginLeft="15dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_gravity="left"/>
+
+            <Button
                 android:id="@+id/buttonAdd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -10,6 +10,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -41,6 +43,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.sanbotapp.robotControl.SpeechControl;
 import com.qihancloud.opensdk.base.TopBaseActivity;
 import com.qihancloud.opensdk.beans.FuncConstant;
 import com.qihancloud.opensdk.function.beans.EmotionsType;
@@ -62,7 +65,7 @@ public class EditActivity extends TopBaseActivity {
     private Spinner spinnerOptions;
     private Button buttonSave, buttonAdd, buttonAddExpresionFacial, buttonAddMovBrazos;
     private Button buttonAddMovCabeza, buttonAddMovRuedas, buttonAddLED, buttonAddTrueFalse;
-    private Button buttonReproducir, BSelectImage, BSelectVideo;
+    private Button buttonReproducir, BSelectImage, BSelectVideo, buttonGrabar;
     private ArrayList<DataModel> dataList;
     private TextView textViewOptions;
     private LinearLayout layoutTextView;
@@ -89,6 +92,11 @@ public class EditActivity extends TopBaseActivity {
     private EditText mNombreText;
     private BloqueAccionesDbAdapter mDbHelperBloque;
     private AccionesDbAdapter mDbHelperAcciones;
+
+    private SpeechControl speechControl;
+
+    private Handler handler = new Handler(Looper.getMainLooper());
+
 
     int SELECT_PICTURE = 200;
     int SELECT_VIDEO = 1;
@@ -117,6 +125,8 @@ public class EditActivity extends TopBaseActivity {
         hardWareManager = (HardWareManager) getUnitManager(FuncConstant.HARDWARE_MANAGER);
         wheelMotionManager = (WheelMotionManager) getUnitManager(FuncConstant.WHEELMOTION_MANAGER);
 
+        speechControl = new SpeechControl(speechManager);
+
 
         // Database Connection
 
@@ -144,6 +154,7 @@ public class EditActivity extends TopBaseActivity {
 
         // Sistesis de voz
         buttonAdd = findViewById(R.id.buttonAdd);
+        buttonGrabar = findViewById(R.id.buttonGrabar);
         LinearLayout layoutEditText = findViewById(R.id.layoutEditText);
         EditText editTextOption = findViewById(R.id.editTextOption);
 
@@ -409,6 +420,29 @@ public class EditActivity extends TopBaseActivity {
             }
        });
 
+        buttonGrabar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    public void run(){
+                        String respuesta = speechControl.modoEscucha();
+                        while (respuesta.isEmpty()) {
+                        }
+
+                        Log.d("respuesta", "el valor de respuesta es " + respuesta);
+
+                        // Una vez que la variable tiene valor, ejecuta la acción en el hilo principal
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                handler.removeCallbacksAndMessages(null);
+                                editTextOption.setText(respuesta);
+                            }
+                        });
+                    }
+                }).start();
+            }
+        });
 
         buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
