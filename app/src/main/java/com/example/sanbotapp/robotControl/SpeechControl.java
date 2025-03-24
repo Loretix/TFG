@@ -66,10 +66,6 @@ public class SpeechControl {
 
             @Override
             public void onRecognizeVolume(int i) {
-                // Si el volumen es muy alto mandar callar
-                if(i>20){
-                    hablar("¿Podréis bajar el volumen?");
-                }
 
             }
         });

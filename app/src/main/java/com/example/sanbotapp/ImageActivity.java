@@ -26,8 +26,10 @@ import androidx.appcompat.app.ActionBar;
 import com.bumptech.glide.Glide;
 import com.example.sanbotapp.moduloReactivo.MovementControl;
 import com.example.sanbotapp.moduloReactivo.RecognitionControl;
+import com.example.sanbotapp.moduloReactivo.SanbotResponder;
 import com.example.sanbotapp.robotControl.HandsControl;
 import com.example.sanbotapp.robotControl.HeadControl;
+import com.example.sanbotapp.robotControl.SpeechControl;
 import com.example.sanbotapp.robotControl.WheelControl;
 import com.qihancloud.opensdk.base.TopBaseActivity;
 import com.qihancloud.opensdk.beans.FuncConstant;
@@ -83,7 +85,8 @@ public class ImageActivity extends TopBaseActivity {
     private Boolean subtitulos = false;
     private Button btnToggleSubtitlesNo;
     private Button btnToggleSubtitlesYes;
-
+    private SpeechControl speechControl;
+    private SanbotResponder sanbotResponder;
 
 
     @Override
@@ -147,6 +150,7 @@ public class ImageActivity extends TopBaseActivity {
 
         recognitionControl = new RecognitionControl(speechManager, mediaManager, tvMedia);
         movementControl = new MovementControl(modularMotionManager, this, wheelControl, headControl, handsControl);
+        sanbotResponder = new SanbotResponder(hardWareManager, headControl, speechControl, wheelControl);
 
         // Recibir el intent con la URL de la imagen si se proporciona
         Intent intent = getIntent();
@@ -174,7 +178,10 @@ public class ImageActivity extends TopBaseActivity {
                     @Override
                     public void run() {
                         // TODO: Activar realizar moviientos aleatorios
+                        // Programar par que constantemente se encuendan las orejas
+
                         movementControl.activarMovimientoAleatorioWheels();
+                        sanbotResponder.iniciarDeteccion();
                         reproducirAcciones();
                     }
                 }, 1000);

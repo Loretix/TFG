@@ -38,7 +38,8 @@ public class SanbotResponder {
             @Override
             public void voiceLocateResult(int angle) {
                 // Detectar fuente de sonido
-                // Mantener OREJAS encendidas
+                // todo: funciona bien pero se apagan las orejas en la app por lo que no detecta
+                // ¿COMO MANTENERLAS ENCENDIDAS
                 if(speechControl.modoEscucha().equals("hola")){
 
                     // Ángulo detectado según sentido de las agujas del reloj
@@ -77,23 +78,18 @@ public class SanbotResponder {
                 if (isChecked) {  // Si el PIR detecta movimiento
                     if (part == 1) {  // Alguien en frente
                         Log.d("SanbotResponder", "🚶‍♂️ Persona detectada al frente.");
-                        // Ofrecer varias respuestas aleatorias
-                        int randomResponse = (int) (Math.random() * 3) + 1;
 
+                        int randomResponse = (int) (Math.random() * 1) + 1;
                         switch (randomResponse) {
                             case 1:
-                                speechControl.hablar("¡Hola! ¿Puedo ayudarte?");
-                                break;
-                            case 2:
-                                speechControl.hablar("¡Hey! ¿Quién eres? Acércate para que te reconozca");
-                                break;
-                            case 3:
-                                speechControl.hablar("¡Hola! Me llamo Lola ¿Necesitas ayuda?");
+                                speechControl.hablar("¡Hola! Bienvenido.");
                                 break;
                             default:
-                                speechControl.hablar("¡Hola! ¿Puedo ayudarte?");
+                                speechControl.hablar("¡Hola! Toma asiento y disfruta de la presentación");
                                 break;
                         }
+
+
                     } else if (part == 2) {  // Alguien detrás
                         Log.d("SanbotResponder", "🚶‍♂️ Persona detectada detrás.");
 
@@ -104,18 +100,30 @@ public class SanbotResponder {
                                 speechControl.hablar("¡Hey! No me asustes por detrás.");
                                 break;
                             case 2:
-                                speechControl.hablar("¡Te pillé! Pensabas que podías asustarme");
+                                speechControl.hablar("¿Qué haces ahí? Sientate y disfruta de la presentación");
                                 break;
                             case 3:
-                                speechControl.hablar("¡Qué susto! Y tú, ¿Quién eres?");
+                                speechControl.hablar("¡Qué susto! Toma asiento y disfruta de la presentación");
                                 break;
                             default:
                                 speechControl.hablar("¡Hola! ¿Necesitas ayuda?");
                                 break;
                         }
 
-                        // Girar para ver quién es
-                        //wheelControl.controlBasicoRuedas(IZQUIERDA, 180);
+                        // Girar el cuerpo hacia atrás
+                        wheelControl.controlBasicoRuedasLento(WheelControl.AccionesRuedas.DERECHA, 180);
+                        try {
+                            Thread.sleep(6000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        wheelControl.controlBasicoRuedasLento(WheelControl.AccionesRuedas.IZQUIERDA, 180);
+                        try {
+                            Thread.sleep(6000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -123,11 +131,12 @@ public class SanbotResponder {
     }
 
     /**
-     * Desactivar detección de sonido y movimiento PIR
+     * Desactivar detección de sonido y movimiento PIR - UTILIZAR DESDE LA PRESETACIÓN SI MOLESTA SU USO
      */
     public void desactivarDeteccion() {
         hardWareManager.setOnHareWareListener(null);
     }
+
 
     private int convertirAnguloCabeza(int angle) {
         // Angulo cabeza de 0 (izquierda) a 180 (derecha)
