@@ -26,34 +26,56 @@ public class HeadControl {
     public boolean controlBasicoCabeza(AccionesCabeza accion) {
         RelativeAngleHeadMotion relativeAngleHeadMotion;
         AbsoluteAngleHeadMotion absoluteAngleHeadMotion;
+        System.out.println("ACCCIOOOOOOON" + accion);
         switch (accion) {
             case IZQUIERDA:
-                relativeAngleHeadMotion = new RelativeAngleHeadMotion(RelativeAngleHeadMotion.ACTION_LEFT, 180);
-                headMotionManager.doRelativeAngleMotion(relativeAngleHeadMotion);
+                absoluteAngleHeadMotion = new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_HORIZONTAL,0);
+                headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
                 break;
             case DERECHA:
-                relativeAngleHeadMotion = new RelativeAngleHeadMotion(RelativeAngleHeadMotion.ACTION_RIGHT, 180);
-                headMotionManager.doRelativeAngleMotion(relativeAngleHeadMotion);
+                absoluteAngleHeadMotion = new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_HORIZONTAL,180);
+                headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
                 break;
             case ARRIBA:
-                relativeAngleHeadMotion = new RelativeAngleHeadMotion(RelativeAngleHeadMotion.ACTION_UP, 30);
-                headMotionManager.doRelativeAngleMotion(relativeAngleHeadMotion);
+                absoluteAngleHeadMotion = new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_VERTICAL,30);
+                headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
                 break;
             case ABAJO:
-                relativeAngleHeadMotion = new RelativeAngleHeadMotion(RelativeAngleHeadMotion.ACTION_DOWN, 30);
-                headMotionManager.doRelativeAngleMotion(relativeAngleHeadMotion);
+                absoluteAngleHeadMotion = new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_VERTICAL,7);
+                headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
                 break;
             case CENTRO:
                 absoluteAngleHeadMotion = new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_HORIZONTAL,90);
                 headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
                 break;
         }
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
+    public boolean girarCabeza(int angle) {
+        AbsoluteAngleHeadMotion absoluteAngleHeadMotion = new AbsoluteAngleHeadMotion(AbsoluteAngleHeadMotion.ACTION_HORIZONTAL,angle);
+        headMotionManager.doAbsoluteAngleMotion(absoluteAngleHeadMotion);
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         return true;
     }
 
     // Función para poner la cabeza en su posición original, en este caso: en el centro
     public boolean reiniciar(){
         controlBasicoCabeza(AccionesCabeza.CENTRO);
+
         return true;
     }
 }

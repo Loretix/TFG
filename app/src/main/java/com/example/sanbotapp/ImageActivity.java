@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
@@ -23,12 +24,19 @@ import android.widget.VideoView;
 import androidx.appcompat.app.ActionBar;
 
 import com.bumptech.glide.Glide;
+import com.example.sanbotapp.moduloReactivo.MovementControl;
+import com.example.sanbotapp.moduloReactivo.RecognitionControl;
+import com.example.sanbotapp.robotControl.HandsControl;
+import com.example.sanbotapp.robotControl.HeadControl;
+import com.example.sanbotapp.robotControl.WheelControl;
 import com.qihancloud.opensdk.base.TopBaseActivity;
 import com.qihancloud.opensdk.beans.FuncConstant;
 import com.qihancloud.opensdk.function.beans.SpeakOption;
 import com.qihancloud.opensdk.function.unit.HandMotionManager;
 import com.qihancloud.opensdk.function.unit.HardWareManager;
 import com.qihancloud.opensdk.function.unit.HeadMotionManager;
+import com.qihancloud.opensdk.function.unit.MediaManager;
+import com.qihancloud.opensdk.function.unit.ModularMotionManager;
 import com.qihancloud.opensdk.function.unit.SpeechManager;
 import com.qihancloud.opensdk.function.unit.SystemManager;
 import com.qihancloud.opensdk.function.unit.WheelMotionManager;
@@ -52,6 +60,14 @@ public class ImageActivity extends TopBaseActivity {
     private HeadMotionManager headMotionManager;
     private HardWareManager hardWareManager; //leds //touch sensors //voice locate //gyroscope
     private WheelMotionManager wheelMotionManager;
+    private MediaManager mediaManager;
+    private RecognitionControl recognitionControl;
+    private MovementControl movementControl;
+    private WheelControl wheelControl;
+    private HeadControl headControl;
+    private HandsControl handsControl;
+    ModularMotionManager modularMotionManager;
+    TextureView tvMedia;
 
     private Button btnComenzar, btnFinalizar, btnPausar;
     private TextView txtNuevo;
@@ -64,7 +80,7 @@ public class ImageActivity extends TopBaseActivity {
     private LinearLayout linearLayout;
 
     private Boolean reproduciendose = true;
-    private Boolean subtítulos = false;
+    private Boolean subtitulos = false;
     private Button btnToggleSubtitlesNo;
     private Button btnToggleSubtitlesYes;
 
@@ -102,7 +118,7 @@ public class ImageActivity extends TopBaseActivity {
         headMotionManager = (HeadMotionManager) getUnitManager(FuncConstant.HEADMOTION_MANAGER);
         hardWareManager = (HardWareManager) getUnitManager(FuncConstant.HARDWARE_MANAGER);
         wheelMotionManager = (WheelMotionManager) getUnitManager(FuncConstant.WHEELMOTION_MANAGER);
-
+        mediaManager = (MediaManager) getUnitManager(FuncConstant.MEDIA_MANAGER);
         funcionalidadesActivity = new FuncionalidadesActivity(speechManager, systemManager, handMotionManager,
                 headMotionManager, hardWareManager, wheelMotionManager, ImageActivity.this);
 
@@ -118,9 +134,19 @@ public class ImageActivity extends TopBaseActivity {
         txtPausa = findViewById(R.id.txtPausa);
         txtFinal = findViewById(R.id.txtFinal);
         txtSubtitulo = findViewById(R.id.txtSubtitulos);
+        tvMedia = findViewById(R.id.tv_media);
+
 
         btnToggleSubtitlesNo = findViewById(R.id.btnToggleSubtitlesNo);
         btnToggleSubtitlesYes = findViewById(R.id.btnToggleSubtitlesYes);
+
+        modularMotionManager= (ModularMotionManager)getUnitManager(FuncConstant. MODULARMOTION_MANAGER);
+        wheelControl = new WheelControl(wheelMotionManager);
+        headControl = new HeadControl(headMotionManager);
+        handsControl = new HandsControl(handMotionManager);
+
+        recognitionControl = new RecognitionControl(speechManager, mediaManager, tvMedia);
+        movementControl = new MovementControl(modularMotionManager, this, wheelControl, headControl, handsControl);
 
         // Recibir el intent con la URL de la imagen si se proporciona
         Intent intent = getIntent();
@@ -147,6 +173,8 @@ public class ImageActivity extends TopBaseActivity {
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        // TODO: Activar realizar moviientos aleatorios
+                        movementControl.activarMovimientoAleatorioWheels();
                         reproducirAcciones();
                     }
                 }, 1000);
@@ -192,7 +220,7 @@ public class ImageActivity extends TopBaseActivity {
                 btnToggleSubtitlesNo.setVisibility(View.GONE);
                 btnToggleSubtitlesYes.setVisibility(View.VISIBLE);
                 txtSubtitulo.setVisibility(View.VISIBLE);
-                subtítulos = true;
+                subtitulos = true;
             }
         });
 
@@ -203,7 +231,7 @@ public class ImageActivity extends TopBaseActivity {
                 btnToggleSubtitlesYes.setVisibility(View.GONE);
                 btnToggleSubtitlesNo.setVisibility(View.VISIBLE);
                 txtSubtitulo.setVisibility(View.GONE);
-                subtítulos = false;
+                subtitulos = false;
             }
         });
 

@@ -193,5 +193,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="16dp" />
 
+    <TextureView
+        android:id="@+id/tv_media"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"/> <!-- Esto oculta la vista -->
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
