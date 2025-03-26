@@ -1,5 +1,7 @@
 package com.example.sanbotapp.moduloReactivo;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.example.sanbotapp.robotControl.HeadControl;
@@ -15,6 +17,8 @@ public class SanbotResponder {
     private HeadControl headControl;
     private WheelControl wheelControl;
 
+    private final Handler handler = new Handler(Looper.getMainLooper());
+
     public SanbotResponder(HardWareManager hardWareManager, HeadControl headControl, SpeechControl speechControl, WheelControl wheelControl) {
         this.hardWareManager = hardWareManager;
         this.speechControl = speechControl;
@@ -26,7 +30,7 @@ public class SanbotResponder {
      *  Iniciar detección de sonido y movimiento PIR
      */
     public void iniciarDeteccion() {
-        detectarFuenteDeSonido();
+        //detectarFuenteDeSonido();
         detectarMovimientoPIR();
     }
 
@@ -75,60 +79,30 @@ public class SanbotResponder {
         hardWareManager.setOnHareWareListener(new PIRListener() {
             @Override
             public void onPIRCheckResult(boolean isChecked, int part) {
-                if (isChecked) {  // Si el PIR detecta movimiento
-                    if (part == 1) {  // Alguien en frente
-                        Log.d("SanbotResponder", "🚶‍♂️ Persona detectada al frente.");
+                Log.d("SanbotResponder", (part == 1 ? "Front of the body" : "Back of the body") + " PIR has been triggered");
 
-                        int randomResponse = (int) (Math.random() * 1) + 1;
+                if (isChecked) {
+                    handler.post(() -> {
+                        int randomResponse = (int) (Math.random() * (part == 1 ? 2 : 3)) + 1;
                         switch (randomResponse) {
                             case 1:
                                 speechControl.hablar("¡Hola! Bienvenido.");
                                 break;
-                            default:
-                                speechControl.hablar("¡Hola! Toma asiento y disfruta de la presentación");
-                                break;
-                        }
-
-
-                    } else if (part == 2) {  // Alguien detrás
-                        Log.d("SanbotResponder", "🚶‍♂️ Persona detectada detrás.");
-
-                        // Ofrecer respuestas aleatorias
-                        int randomResponse = (int) (Math.random() * 3) + 1;
-                        switch (randomResponse) {
-                            case 1:
-                                speechControl.hablar("¡Hey! No me asustes por detrás.");
-                                break;
                             case 2:
-                                speechControl.hablar("¿Qué haces ahí? Sientate y disfruta de la presentación");
+                                speechControl.hablar(part == 1 ?
+                                        "¡Hola! Toma asiento y disfruta de la presentación" :
+                                        "¿Qué haces ahí? Siéntate y disfruta de la presentación");
                                 break;
                             case 3:
                                 speechControl.hablar("¡Qué susto! Toma asiento y disfruta de la presentación");
                                 break;
-                            default:
-                                speechControl.hablar("¡Hola! ¿Necesitas ayuda?");
-                                break;
                         }
-
-                        // Girar el cuerpo hacia atrás
-                        wheelControl.controlBasicoRuedasLento(WheelControl.AccionesRuedas.DERECHA, 180);
-                        try {
-                            Thread.sleep(6000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        wheelControl.controlBasicoRuedasLento(WheelControl.AccionesRuedas.IZQUIERDA, 180);
-                        try {
-                            Thread.sleep(6000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    });
                 }
             }
         });
     }
+
 
     /**
      * Desactivar detección de sonido y movimiento PIR - UTILIZAR DESDE LA PRESETACIÓN SI MOLESTA SU USO

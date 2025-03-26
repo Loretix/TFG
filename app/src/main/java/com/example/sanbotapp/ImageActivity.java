@@ -143,14 +143,17 @@ public class ImageActivity extends TopBaseActivity {
         btnToggleSubtitlesNo = findViewById(R.id.btnToggleSubtitlesNo);
         btnToggleSubtitlesYes = findViewById(R.id.btnToggleSubtitlesYes);
 
-        modularMotionManager= (ModularMotionManager)getUnitManager(FuncConstant. MODULARMOTION_MANAGER);
+        modularMotionManager= (ModularMotionManager)getUnitManager(FuncConstant.MODULARMOTION_MANAGER);
         wheelControl = new WheelControl(wheelMotionManager);
         headControl = new HeadControl(headMotionManager);
         handsControl = new HandsControl(handMotionManager);
+        speechControl = new SpeechControl(speechManager);
 
         recognitionControl = new RecognitionControl(speechManager, mediaManager, tvMedia);
         movementControl = new MovementControl(modularMotionManager, this, wheelControl, headControl, handsControl);
         sanbotResponder = new SanbotResponder(hardWareManager, headControl, speechControl, wheelControl);
+
+        sanbotResponder.iniciarDeteccion();
 
         // Recibir el intent con la URL de la imagen si se proporciona
         Intent intent = getIntent();
@@ -181,7 +184,6 @@ public class ImageActivity extends TopBaseActivity {
                         // Programar par que constantemente se encuendan las orejas
 
                         movementControl.activarMovimientoAleatorioWheels();
-                        sanbotResponder.iniciarDeteccion();
                         reproducirAcciones();
                     }
                 }, 1000);

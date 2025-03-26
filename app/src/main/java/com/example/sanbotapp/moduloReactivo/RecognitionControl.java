@@ -11,6 +11,7 @@ import android.graphics.YuvImage;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Surface;
@@ -48,6 +49,8 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
     Runnable runnable;
     Handler handler = new Handler();
 
+    private final Handler backgroundHandler = new Handler(Looper.getMainLooper());
+
     private long inicioRuidoAlto = 0;
     private boolean ruidoActivo = false;
     private static final int TIEMPO_UMBRAL_MS = 1000;
@@ -66,53 +69,41 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
         mediaManager.setMediaListener(new MediaStreamListener() {
             @Override
             public void getVideoStream(byte[] bytes) {
-                showViewData(ByteBuffer.wrap(bytes));
-                //frame = convertToBitmap(bytes);
+                backgroundHandler.post(() -> showViewData(ByteBuffer.wrap(bytes))); // Mueve a otro hilo
             }
 
             @Override
             public void getAudioStream(byte[] bytes) {
-
                 if (bytes == null || bytes.length == 0) {
                     Log.e("AudioDebug", "❌ audioData está vacío o es nulo.");
                     return;
                 }
 
-                // Convert byte array to float array
-                float[] floatSamples = convertBytesToFloat(bytes);
+                // Procesar el audio en un hilo en segundo plano
+                new Thread(() -> {
+                    float[] floatSamples = convertBytesToFloat(bytes);
+                    float rms = calculateRMS(floatSamples);
+                    float decibels = calculateDecibels(rms);
+                    float calibratedDecibels = decibels + 90;
 
-                // Calculate RMS
-                float rms = calculateRMS(floatSamples);
+                    Log.d("Audio", "🔊 Decibeles detectados: " + calibratedDecibels + " dB");
 
-                // Calculate decibels
-                float decibels = calculateDecibels(rms);
+                    if (calibratedDecibels > 73) {
+                        if (!ruidoActivo) {
+                            inicioRuidoAlto = System.currentTimeMillis();
+                            ruidoActivo = true;
+                        }
 
-                // Calibrate the decibel value (add an offset if needed)
-                float calibratedDecibels = decibels + 90; // Example calibration offset
-
-                Log.d("Audio", "🔊 Decibeles detectados: " + calibratedDecibels + " dB");
-
-                if (calibratedDecibels > 73) { // Si el ruido es alto
-                    if (!ruidoActivo) {
-                        inicioRuidoAlto = System.currentTimeMillis(); // Marcar el inicio del ruido fuerte
-                        System.out.println("RUIDO activo" + inicioRuidoAlto);
-                        ruidoActivo = true;
+                        if (System.currentTimeMillis() - inicioRuidoAlto >= TIEMPO_UMBRAL_MS) {
+                            backgroundHandler.post(() -> quejarse()); // Ejecutar quejarse() en la UI
+                            ruidoActivo = false;
+                        }
+                    } else {
+                        ruidoActivo = false;
                     }
-
-                    System.out.println("RUIDO ALTO" + System.currentTimeMillis() + " - " + inicioRuidoAlto + " = " + (System.currentTimeMillis() - inicioRuidoAlto));
-                    // Si el ruido ha persistido más del tiempo permitido
-                    if (System.currentTimeMillis() - inicioRuidoAlto >= TIEMPO_UMBRAL_MS) {
-                        quejarse();
-                        ruidoActivo = false; // Resetear para evitar quejas constantes
-                    }
-                } else {
-                    System.out.println("RUIDO BAJO RESETEO");
-                    ruidoActivo = false; // Resetear si el ruido baja
-                }
+                }).start();
             }
-
         });
-
     }
 
     private void quejarse(){
