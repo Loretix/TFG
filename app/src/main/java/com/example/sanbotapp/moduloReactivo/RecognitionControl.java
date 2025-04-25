@@ -61,7 +61,6 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
         this.speechControl = new SpeechControl(speechManager);
         this.tvMedia = tvMedia;
         this.tvMedia.setSurfaceTextureListener(this);
-        startCamera();
     }
 
 
@@ -88,7 +87,7 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
 
                     Log.d("Audio", "🔊 Decibeles detectados: " + calibratedDecibels + " dB");
 
-                    if (calibratedDecibels > 73) {
+                    if (calibratedDecibels > 75) {
                         if (!ruidoActivo) {
                             inicioRuidoAlto = System.currentTimeMillis();
                             ruidoActivo = true;

@@ -37,7 +37,12 @@ class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String PRESENTACIONES = "create table presentaciones ("
             + "_id           integer primary key autoincrement,"
-            + "nombre        text not null"
+            + "nombre        text not null,"
+            + "movnatural    boolean not null,"
+            + "ruido         boolean not null,"
+            + "localizacion  boolean not null,"
+            + "personas      boolean not null,"
+            + "facial        boolean not null"
             + "); ";
 
     DatabaseHelper(Context context) {

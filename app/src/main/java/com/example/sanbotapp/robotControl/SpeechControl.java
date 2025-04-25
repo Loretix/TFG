@@ -61,6 +61,7 @@ public class SpeechControl {
             public boolean onRecognizeResult(Grammar grammar) {
                 cadenaReconocida = grammar.getText();
                 Log.d("pruebaRecognizeResult", cadenaReconocida);
+
                 return true;
             }
 

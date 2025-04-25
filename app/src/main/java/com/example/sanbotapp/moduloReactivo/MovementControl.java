@@ -77,8 +77,6 @@ public class MovementControl {
             public void run() {
                 int accion = random.nextInt(3); // 0 = cabeza, 1 = cuerpo derecha, 2 = cuerpo izquierda
 
-                //int accion = 3;
-
                 if (accion == 0) { // Giro de cabeza simple, mover la cabeza unos 45 grados
 
                     int primerAngulo = 135;
@@ -134,11 +132,11 @@ public class MovementControl {
 
                 } else if (accion == 2) { // Desplazamiento
 
-                    if(desplazamientoAvanzar){
-                        wheelControl.atras(20, 1);
+                   /* if(desplazamientoAvanzar){
+                        wheelControl.atras(10, 1);
                         desplazamientoAvanzar = false;
                     }else{
-                        wheelControl.avanzar(20, 1);
+                        wheelControl.avanzar(10, 1);
                         desplazamientoAvanzar = true;
                     }
 
@@ -146,7 +144,7 @@ public class MovementControl {
                         Thread.sleep(10000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
-                    }
+                    }*/
 
 
                 }
@@ -164,12 +162,19 @@ public class MovementControl {
         if (timer != null) {
             timer.cancel();
             timer.purge();
-            timer = null;
+            //timer = null;
 
             // Asegurar que el robot vuelva a una posición neutra
             //wheelControl.detener();
             //brazoControl.moverBrazo(0);
-            headControl.girarCabeza(0);
+            headControl.girarCabeza(90);
+
+            // Esperar
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

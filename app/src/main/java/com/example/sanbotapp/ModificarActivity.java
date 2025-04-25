@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ public class ModificarActivity extends TopBaseActivity {
     private RecyclerView recyclerView;
     private ArrayList<Long> dataList; // Lista de IDs de los bloques
     private DataAdapterModificarVersion2 adapterV;
+    private CheckBox movnatural, ruido, localizacion, personas, facial;
 
     private PresentacionesDbAdapter mDbHelper;
     private Long mRowId;
@@ -84,6 +86,11 @@ public class ModificarActivity extends TopBaseActivity {
         // RecyclerView
         recyclerView = findViewById(R.id.recycler_view);
         reproducir = findViewById(R.id.button_reproducir);
+        movnatural = findViewById(R.id.checkBoxMovimientosNaturales);
+        ruido = findViewById(R.id.checkBoxDeteccionRuido);
+        localizacion = findViewById(R.id.checkBoxLocalizacionSonido);
+        personas = findViewById(R.id.checkBoxDeteccionPersonas);
+        facial = findViewById(R.id.checkBoxReconocimientoFacial);
 
         // Database Connection
         mDbHelper = new PresentacionesDbAdapter( this );
@@ -186,6 +193,12 @@ public class ModificarActivity extends TopBaseActivity {
             Cursor presentacion = mDbHelper.fetchPresentacion(mRowId);
             startManagingCursor(presentacion);
             mNombreText.setText(presentacion.getString(presentacion.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_NOMBRE)));
+            movnatural.setChecked(presentacion.getInt(presentacion.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_MOVNATURAL)) == 1);
+            ruido.setChecked(presentacion.getInt(presentacion.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_RUIDO)) == 1);
+            localizacion.setChecked(presentacion.getInt(presentacion.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_LOCALIZACION)) == 1);
+            personas.setChecked(presentacion.getInt(presentacion.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_PERSONAS)) == 1);
+            facial.setChecked(presentacion.getInt(presentacion.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_FACIAL)) == 1);
+
 
             Cursor notesCursor = mDbHelperBloque.fetchAllBloqueAcciones(mRowId);
             startManagingCursor(notesCursor);
@@ -230,10 +243,10 @@ public class ModificarActivity extends TopBaseActivity {
             Toast.makeText(getApplicationContext(),"Presentación no creada/modificada, campos inválidos", Toast.LENGTH_SHORT).show();
         } else{
             if ( mRowId == null ) {
-                long id = mDbHelper.createPresentacion( nombre );
+                long id = mDbHelper.createPresentacion( nombre, movnatural.isChecked(), ruido.isChecked(), localizacion.isChecked(), personas.isChecked(), facial.isChecked() );
                 if (id > 0) { mRowId = id; }
             } else {
-                mDbHelper.updatePresentacion( mRowId , nombre );
+                mDbHelper.updatePresentacion( mRowId , nombre, movnatural.isChecked(), ruido.isChecked(), localizacion.isChecked(), personas.isChecked(), facial.isChecked() );
             }
             // Al guardar el estado se actualiza la ordenación de los bloques
             if(dataList.size() > 0) {

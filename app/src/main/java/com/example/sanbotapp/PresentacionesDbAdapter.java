@@ -21,6 +21,11 @@ import android.util.Log;
 public class PresentacionesDbAdapter {
 
     public static final String KEY_NOMBRE = "nombre";
+    public static final String KEY_MOVNATURAL = "movnatural";
+    public static final String KEY_RUIDO = "ruido";
+    public static final String KEY_LOCALIZACION = "localizacion";
+    public static final String KEY_PERSONAS = "personas";
+    public static final String KEY_FACIAL = "facial";
     public static final String KEY_ROWID = "_id";
 
     private static final String DATABASE_TABLE = "presentaciones";
@@ -67,7 +72,7 @@ public class PresentacionesDbAdapter {
      * @param nombre      the title of the note
      * @return rowId or -1 if failed
      */
-    public long createPresentacion(String nombre) {
+    public long createPresentacion(String nombre, boolean movnatural, boolean ruido, boolean localizacion, boolean personas, boolean facial) {
         long result = 0;
         try {
             if (nombre == null || nombre.length() <= 0 ) { result =  -1; }
@@ -78,6 +83,11 @@ public class PresentacionesDbAdapter {
         if (result != -1) {
             ContentValues initialValues = new ContentValues();
             initialValues.put(KEY_NOMBRE, nombre);
+            initialValues.put(KEY_MOVNATURAL, movnatural);
+            initialValues.put(KEY_RUIDO, ruido);
+            initialValues.put(KEY_LOCALIZACION, localizacion);
+            initialValues.put(KEY_PERSONAS, personas);
+            initialValues.put(KEY_FACIAL, facial);
             result = mDb.insert(DATABASE_TABLE, null, initialValues);
         }
 
@@ -110,7 +120,7 @@ public class PresentacionesDbAdapter {
      * @return Cursor over all notes
      */
     public Cursor fetchAllPresentaciones() {
-        return mDb.query(DATABASE_TABLE, new String[]{KEY_ROWID, KEY_NOMBRE}, null, null, null, null, null);
+        return mDb.query(DATABASE_TABLE, new String[]{KEY_ROWID, KEY_NOMBRE, KEY_MOVNATURAL, KEY_RUIDO, KEY_LOCALIZACION, KEY_PERSONAS, KEY_FACIAL}, null, null, null, null, null);
     }
 
 
@@ -122,7 +132,7 @@ public class PresentacionesDbAdapter {
      * @throws SQLException if note could not be found/retrieved
      */
     public Cursor fetchPresentacion(long rowId) throws SQLException {
-        Cursor mCursor = mDb.query(true, DATABASE_TABLE, new String[]{KEY_ROWID, KEY_NOMBRE}, KEY_ROWID + "=" + rowId, null, null, null, null, null);
+        Cursor mCursor = mDb.query(true, DATABASE_TABLE, new String[]{KEY_ROWID, KEY_NOMBRE, KEY_MOVNATURAL, KEY_RUIDO, KEY_LOCALIZACION, KEY_PERSONAS, KEY_FACIAL}, KEY_ROWID + "=" + rowId, null, null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
         }
@@ -138,7 +148,7 @@ public class PresentacionesDbAdapter {
      * @param nombre      value to set note title to
      * @return true if the note was successfully updated, false otherwise
      */
-    public boolean updatePresentacion(long rowId, String nombre) {
+    public boolean updatePresentacion(long rowId, String nombre, boolean movnatural, boolean ruido, boolean localizacion, boolean personas, boolean facial) {
         boolean result = true;
         try {
             if (rowId <= -1) { result = false; }
@@ -150,6 +160,11 @@ public class PresentacionesDbAdapter {
         if (result) {
             ContentValues args = new ContentValues();
             args.put(KEY_NOMBRE, nombre);
+            args.put(KEY_MOVNATURAL, movnatural);
+            args.put(KEY_RUIDO, ruido);
+            args.put(KEY_LOCALIZACION, localizacion);
+            args.put(KEY_PERSONAS, personas);
+            args.put(KEY_FACIAL, facial);
 
             result = mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
         }

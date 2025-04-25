@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -54,6 +55,7 @@ public class MainActivity extends TopBaseActivity {
     private ProjectorManager projectorManager;
 
     private FuncionalidadesActivity funcionalidadesActivity;
+    private boolean movnatural, ruido, localizacion, personas, facial;
 
     private final int PRESENTACIONES_LIMIT = 100;
     private int presentacionesLimit;
@@ -253,8 +255,23 @@ public class MainActivity extends TopBaseActivity {
 
                 dialog.dismiss();
 
+                Cursor notesCursor = mDbHelper.fetchPresentacion(id);
+
+                movnatural = (notesCursor.getInt(notesCursor.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_MOVNATURAL)) == 1);
+                ruido = (notesCursor.getInt(notesCursor.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_RUIDO)) == 1);
+                localizacion = (notesCursor.getInt(notesCursor.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_LOCALIZACION)) == 1);
+                personas = (notesCursor.getInt(notesCursor.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_PERSONAS)) == 1);
+                facial = (notesCursor.getInt(notesCursor.getColumnIndexOrThrow(PresentacionesDbAdapter.KEY_FACIAL)) == 1);
+
+
                 Intent intent = new Intent(MainActivity.this, ImageActivity.class);
                 intent.putExtra("dataList", list);
+                //pasar los booleanos del modulo reactivo
+                intent.putExtra("movnatural", movnatural);
+                intent.putExtra("ruido", ruido);
+                intent.putExtra("localizacion", localizacion);
+                intent.putExtra("personas", personas);
+                intent.putExtra("facial", facial);
                 startActivity(intent);
 
             }
@@ -298,6 +315,11 @@ public class MainActivity extends TopBaseActivity {
 
                 Intent intent = new Intent(MainActivity.this, ImageActivity.class);
                 intent.putExtra("dataList", list);
+                intent.putExtra("movnatural", movnatural);
+                intent.putExtra("ruido", ruido);
+                intent.putExtra("localizacion", localizacion);
+                intent.putExtra("personas", personas);
+                intent.putExtra("facial", facial);
                 // Cuando se vuelva de la actividad de proyección, se apaga el proyector
                 startActivityForResult(intent, 1);
             }

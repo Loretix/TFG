@@ -87,6 +87,8 @@ public class ImageActivity extends TopBaseActivity {
     private Button btnToggleSubtitlesYes;
     private SpeechControl speechControl;
     private SanbotResponder sanbotResponder;
+    private boolean movnatural, ruido, localizacion, personas, facial;
+
 
 
     @Override
@@ -153,12 +155,21 @@ public class ImageActivity extends TopBaseActivity {
         movementControl = new MovementControl(modularMotionManager, this, wheelControl, headControl, handsControl);
         sanbotResponder = new SanbotResponder(hardWareManager, headControl, speechControl, wheelControl);
 
-        sanbotResponder.iniciarDeteccion();
+        //sanbotResponder.iniciarDeteccion();
 
         // Recibir el intent con la URL de la imagen si se proporciona
         Intent intent = getIntent();
         if (intent != null ) {
             dataList = (ArrayList<DataModel>) getIntent().getSerializableExtra("dataList");
+
+            movnatural = getIntent().getBooleanExtra("movnatural", false);
+            ruido = getIntent().getBooleanExtra("ruido", false);
+            localizacion = getIntent().getBooleanExtra("localizacion", false);
+            personas = getIntent().getBooleanExtra("personas", false);
+            facial = getIntent().getBooleanExtra("facial", false);
+
+            System.out.println("MOV NATURAL: " + movnatural + " RUIDO: " + ruido + " LOCALIZACION: " + localizacion + " PERSONAS: " + personas + " FACIAL: " + facial);
+
         }
 
         btnComenzar.setOnClickListener(new View.OnClickListener() {
@@ -183,7 +194,32 @@ public class ImageActivity extends TopBaseActivity {
                         // TODO: Activar realizar moviientos aleatorios
                         // Programar par que constantemente se encuendan las orejas
 
-                        movementControl.activarMovimientoAleatorioWheels();
+                        if(movnatural){
+                            movementControl.activarMovimientoAleatorioWheels();
+                        }
+
+                        if(ruido){
+                            recognitionControl.startCamera();
+                        }
+
+                        if(localizacion){
+                            //Localización de sonido con SanbotResponder
+                            sanbotResponder.detectarFuenteDeSonido();
+                        }
+
+                        if(personas){
+                            //Reconocimiento de personas con SanbotResponder
+                            sanbotResponder.detectarMovimientoPIR();
+
+                            // Reconocimiento de personas con RecognitionControl
+                        }
+
+                        if(facial){
+                            // Muchas funciones, reconocimeinto edad, genero, expresion facial, etc.
+
+                        }
+
+                        //sanbotResponder.desactivarDeteccion();
                         reproducirAcciones();
                     }
                 }, 1000);
@@ -193,6 +229,7 @@ public class ImageActivity extends TopBaseActivity {
         btnFinalizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                movementControl.desactivarMovimientoAleatorioWheels();
                 finish();
             }
         });
@@ -421,6 +458,8 @@ public class ImageActivity extends TopBaseActivity {
                 funcionalidadesActivity.mostrarVideo(data.getText());
 
             } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
+                //DESACTIVAR MOVIMIENTOS NATURALES
+                movementControl.desactivarMovimientoAleatorioWheels();
                 reproduciendose = false;
                 String[] partes = data.getText().split("-");
                 String pregunta = partes[0];
@@ -725,6 +764,7 @@ public class ImageActivity extends TopBaseActivity {
                 });
 
             } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
+                movementControl.desactivarMovimientoAleatorioWheels();
                 // Esper el semáforo para mostrar la pregunta
                 reproduciendose = false;
                 String[] partes = data.getText().split("-");
@@ -778,6 +818,8 @@ public class ImageActivity extends TopBaseActivity {
             // Continuar con las acciones restantes
             new Handler().postDelayed(() -> {
                 reproduciendose = true;
+                // ACTIVAR DE NUEVO EL MOVIMIENTO ALEATORIO
+                movementControl.activarMovimientoAleatorioWheels();
                 continueActions();
             }, 1000);
         }

@@ -70,6 +70,78 @@ robot durante la presentación."
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewPresentacion" />
 
+    <TextView
+        android:id="@+id/textViewmodulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_marginTop="16dp"
+        android:gravity="start"
+        android:text="Módulo reactivo"
+        android:textAlignment="textStart"
+        android:textColor="@color/colorPurple"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewPresentacionexplicacion"  />
+
+    <GridLayout
+        android:id="@+id/gridLayoutChecklist"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:columnCount="3"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/textViewmodulo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <CheckBox
+            android:id="@+id/checkBoxMovimientosNaturales"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Movimientos naturales"
+            android:textColor="@color/colorPurple"
+            android:textSize="18sp" />
+
+        <CheckBox
+            android:id="@+id/checkBoxDeteccionRuido"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Detección de ruido"
+            android:textColor="@color/colorPurple"
+            android:textSize="18sp" />
+
+        <CheckBox
+            android:id="@+id/checkBoxLocalizacionSonido"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Localización de sonido"
+            android:textColor="@color/colorPurple"
+            android:textSize="18sp" />
+
+        <CheckBox
+            android:id="@+id/checkBoxDeteccionPersonas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Detección de personas"
+            android:textColor="@color/colorPurple"
+            android:textSize="18sp" />
+
+        <CheckBox
+            android:id="@+id/checkBoxReconocimientoFacial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reconocimiento facial"
+            android:textColor="@color/colorPurple"
+            android:textSize="18sp" />
+
+    </GridLayout>
+
+
+
     <Button
         android:id="@+id/button_new_block"
         android:layout_width="wrap_content"
@@ -83,7 +155,7 @@ robot durante la presentación."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewPresentacionexplicacion"/>
+        app:layout_constraintTop_toBottomOf="@id/gridLayoutChecklist"/>
 
 
     <ScrollView
