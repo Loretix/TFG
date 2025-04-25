@@ -10,7 +10,7 @@ import android.util.Log;
  */
 class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final int    DATABASE_VERSION = 2;
+    private static final int    DATABASE_VERSION = 3;
     private static final String DATABASE_NAME    = "data";
     private static final String TAG              = "DatabaseHelper";
 
@@ -60,9 +60,20 @@ class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
                 + newVersion + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS acciones");
-        db.execSQL("DROP TABLE IF EXISTS bloques_acciones");
-        db.execSQL("DROP TABLE IF EXISTS presentaciones");
-        onCreate(db);
+
+        if (oldVersion < 3) {
+            // Añadir columnas booleanas con valor por defecto (0 = false, 1 = true)
+            db.execSQL("ALTER TABLE presentaciones ADD COLUMN movnatural INTEGER NOT NULL DEFAULT 0");
+            db.execSQL("ALTER TABLE presentaciones ADD COLUMN ruido INTEGER NOT NULL DEFAULT 0");
+            db.execSQL("ALTER TABLE presentaciones ADD COLUMN localizacion INTEGER NOT NULL DEFAULT 0");
+            db.execSQL("ALTER TABLE presentaciones ADD COLUMN personas INTEGER NOT NULL DEFAULT 0");
+            db.execSQL("ALTER TABLE presentaciones ADD COLUMN facial INTEGER NOT NULL DEFAULT 0");
+        } else{
+            db.execSQL("DROP TABLE IF EXISTS acciones");
+            db.execSQL("DROP TABLE IF EXISTS bloques_acciones");
+            db.execSQL("DROP TABLE IF EXISTS presentaciones");
+            onCreate(db);
+        }
     }
+
 }

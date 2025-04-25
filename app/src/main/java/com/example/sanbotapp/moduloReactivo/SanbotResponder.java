@@ -26,7 +26,7 @@ public class SanbotResponder {
         this.wheelControl = wheelControl;
     }
 
-    private static final long TIEMPO_ENTRE_RESPUESTAS_MS = 10_000; // 10 segundos
+    private static final long TIEMPO_ENTRE_RESPUESTAS_MS = 60_000; // 10 segundos
     private long ultimoTiempoRespuesta = 0;
 
     /**
@@ -76,7 +76,7 @@ public class SanbotResponder {
     }
 
 
-    private static final long TIEMPO_ENTRE_RESPUESTAS_PIR_MS = 15_000; // 15 segundos
+    private static final long TIEMPO_ENTRE_RESPUESTAS_PIR_MS = 30_000; // 15 segundos
     private long ultimoTiempoPIR = 0;
     /**
      *  Detección PIR: Reaccionar si alguien se acerca

@@ -158,6 +158,9 @@ public class MovementControl {
 
     }
 
+    /**
+     * Desactivar movimiento aleatorio con wheels
+     */
     public void desactivarMovimientoAleatorioWheels() {
         if (timer != null) {
             timer.cancel();
