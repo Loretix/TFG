@@ -216,6 +216,7 @@ public class ImageActivity extends TopBaseActivity {
 
                         if(facial){
                             // Muchas funciones, reconocimeinto edad, genero, expresion facial, etc.
+                            recognitionControl.iniciarReconocimientosPeriodicos();
 
                         }
 
@@ -230,6 +231,7 @@ public class ImageActivity extends TopBaseActivity {
             @Override
             public void onClick(View v) {
                 movementControl.desactivarMovimientoAleatorioWheels();
+                recognitionControl.detenerReconocimientosPeriodicos();
                 finish();
             }
         });

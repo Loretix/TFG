@@ -49,23 +49,30 @@ public class SanbotResponder {
 
                     if (headAngle != -1) {
                         headControl.girarCabeza(headAngle);
-                        String[] frases = {
-                                "¿Qué fue eso?",
-                                "¡Creo que oí algo!",
-                                "Interesante sonido por aquí.",
-                                "¡Hey! ¿Hay alguien ahí?",
-                                "¡Escuché algo por esta zona!"
-                        };
-                        speechControl.hablar(frases[(int)(Math.random() * frases.length)]);
+                        // Solo decir la frase si no está hablando
+                        if (!speechControl.isRobotHablando()) {
+                            String[] frases = {
+                                    "¿Qué fue eso?",
+                                    "¡Creo que oí algo!",
+                                    "Interesante sonido por aquí.",
+                                    "¡Hey! ¿Hay alguien ahí?",
+                                    "¡Escuché algo por esta zona!"
+                            };
+                            speechControl.hablar(frases[(int)(Math.random() * frases.length)]);
+                        }
+
                     } else {
-                        String[] frasesDetras = {
-                                "¡Algo sonó detrás de mí!",
-                                "¿Eh? Eso vino de atrás...",
-                                "¡Oh! Hay algo detrás.",
-                                "¡No me asustes así!",
-                                "¡Eso no sonó nada bien!"
-                        };
-                        speechControl.hablar(frasesDetras[(int)(Math.random() * frasesDetras.length)]);
+                        if (!speechControl.isRobotHablando()) {
+                            String[] frasesDetras = {
+                                    "¡Algo sonó detrás de mí!",
+                                    "¿Eh? Eso vino de atrás...",
+                                    "¡Oh! Hay algo detrás.",
+                                    "¡No me asustes así!",
+                                    "¡Eso no sonó nada bien!"
+                            };
+                            speechControl.hablar(frasesDetras[(int)(Math.random() * frasesDetras.length)]);
+                        }
+
                     }
 
                     // Actualizar el tiempo de la última respuesta
@@ -94,37 +101,42 @@ public class SanbotResponder {
 
                 handler.post(() -> {
                     if (part == 1) {
-                        // Parte frontal
-                        String[] respuestasFrente = {
-                                "¡Hola! Bienvenido.",
-                                "¡Hola! Toma asiento y disfruta de la presentación.",
-                                "Qué bueno verte por aquí. Adelante, ponte cómodo."
-                        };
-                        int randomIndex = (int) (Math.random() * respuestasFrente.length);
-                        speechControl.hablar(respuestasFrente[randomIndex]);
+                        if(!speechControl.isRobotHablando()){
+                            // Parte frontal
+                            String[] respuestasFrente = {
+                                    "¡Hola! Bienvenido.",
+                                    "¡Hola! Toma asiento y disfruta de la presentación.",
+                                    "Qué bueno verte por aquí. Adelante, ponte cómodo."
+                            };
+                            int randomIndex = (int) (Math.random() * respuestasFrente.length);
+                            speechControl.hablar(respuestasFrente[randomIndex]);
+                        }
+
                     } else {
-                        // Parte trasera
-                        wheelControl.controlBasicoRuedas(WheelControl.AccionesRuedas.DERECHA, 180);
+                        if(!speechControl.isRobotHablando()){
+                            // Parte trasera
+                            wheelControl.controlBasicoRuedas(WheelControl.AccionesRuedas.DERECHA, 180);
 
-                        String[] frasesDetras = {
-                                "Me asustaste, no te había visto.",
-                                "¿Vienes por detrás? ¡Qué sigiloso!",
-                                "¡Ups! Estabas justo detrás de mí.",
-                                "¡Ah! Debería tener ojos en la espalda.",
-                                "Hola, ¿me estabas espiando?",
-                        };
-                        int randomIndex = (int) (Math.random() * frasesDetras.length);
+                            String[] frasesDetras = {
+                                    "Me asustaste, no te había visto.",
+                                    "¿Vienes por detrás? ¡Qué sigiloso!",
+                                    "¡Ups! Estabas justo detrás de mí.",
+                                    "¡Ah! Debería tener ojos en la espalda.",
+                                    "Hola, ¿me estabas espiando?",
+                            };
+                            int randomIndex = (int) (Math.random() * frasesDetras.length);
 
-                        // Espera un momento antes de hablar y luego girar de nuevo
-                        handler.postDelayed(() -> {
-                            speechControl.hablar(frasesDetras[randomIndex]);
-
-                            // Espera otro momento antes de volver a girar
+                            // Espera un momento antes de hablar y luego girar de nuevo
                             handler.postDelayed(() -> {
-                                wheelControl.controlBasicoRuedas(WheelControl.AccionesRuedas.IZQUIERDA, 180);
-                            }, 3000); // 3 segundos después de hablar
+                                speechControl.hablar(frasesDetras[randomIndex]);
 
-                        }, 1000); // 1 segundo después de girar
+                                // Espera otro momento antes de volver a girar
+                                handler.postDelayed(() -> {
+                                    wheelControl.controlBasicoRuedas(WheelControl.AccionesRuedas.IZQUIERDA, 180);
+                                }, 3000); // 3 segundos después de hablar
+
+                            }, 1000); // 1 segundo después de girar
+                        }
                     }
                 });
             }

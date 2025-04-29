@@ -39,7 +39,6 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
     private SpeechControl speechControl;
     private SurfaceTexture surfaceTexture;
     private Surface surface;
-
     private Bitmap frame;
     MediaCodec mediaCodec;
     TextureView tvMedia;
@@ -54,6 +53,7 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
     private long inicioRuidoAlto = 0;
     private boolean ruidoActivo = false;
     private static final int TIEMPO_UMBRAL_MS = 1000;
+    private ResultadoReconocimiento resultadoReconocimiento = new ResultadoReconocimiento();
 
 
     public RecognitionControl(SpeechManager speechManager, MediaManager mediaManager, TextureView tvMedia){
@@ -61,9 +61,25 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
         this.speechControl = new SpeechControl(speechManager);
         this.tvMedia = tvMedia;
         this.tvMedia.setSurfaceTextureListener(this);
+        initListener();
     }
 
+    /***********************************************************************************************
+     * Inicio de la cámara, activa el video y audio stream
+     */
 
+    private void initListener() {
+        mediaManager.setMediaListener(new MediaStreamListener() {
+            @Override
+            public void getVideoStream(byte[] bytes) {
+                showViewData(ByteBuffer.wrap(bytes));
+            }
+
+            @Override
+            public void getAudioStream(byte[] bytes) {
+            }
+        });
+    }
     public void startCamera() {
         mediaManager.setMediaListener(new MediaStreamListener() {
             @Override
@@ -105,6 +121,10 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
         });
     }
 
+    /***********************************************************************************************
+     * Las siguientes fuciones pertenecen al reconocimiento de ruido. Esta programa una respuesta
+     * si el ruido es alto
+     */
     private void quejarse(){
         // Diversos tipos de respuestas
         int randomResponse = (int) (Math.random() * 3) + 1;
@@ -127,32 +147,6 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
         }
         startCamera();
     }
-
-    /**
-     * Convierte los bytes de audio en decibeles (dB)
-     */
-    private float calculateDecibels(byte[] audioData) {
-        // Convert byte array to short array
-        short[] audioSamples = new short[audioData.length / 2];
-        for (int i = 0; i < audioSamples.length; i++) {
-            audioSamples[i] = (short) ((audioData[2 * i] & 0xFF) | (audioData[2 * i + 1] << 8));
-        }
-
-        // Calculate RMS value
-        double sum = 0;
-        for (short sample : audioSamples) {
-            sum += sample * sample;
-        }
-        double rms = Math.sqrt(sum / audioSamples.length);
-
-        // Convert RMS to decibels
-        // The reference value is the maximum possible value for a short (32767)
-        double referenceValue = 32767.0;
-        double dB = 20 * Math.log10(rms / referenceValue);
-
-        return (float) dB;
-    }
-
     private float[] convertBytesToFloat(byte[] audioData) {
         short[] audioSamples = new short[audioData.length / 2];
         for (int i = 0; i < audioSamples.length; i++) {
@@ -165,7 +159,6 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
         }
         return floatSamples;
     }
-
     private float calculateRMS(float[] samples) {
         double sum = 0;
         for (float sample : samples) {
@@ -173,7 +166,6 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
         }
         return (float) Math.sqrt(sum / samples.length);
     }
-
     private float calculateDecibels(float rms) {
         if (rms == 0) {
             return -96; // Minimum dB value for 16-bit audio
@@ -181,21 +173,7 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
         return (float) (20 * Math.log10(rms));
     }
 
-
-
-    private Bitmap convertToBitmap(byte[] data) {
-        YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21, 640, 480, null);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        // Convertir YUV a JPEG
-        yuvImage.compressToJpeg(new Rect(0, 0, 640, 480), 100, outputStream);
-
-        byte[] jpegData = outputStream.toByteArray();
-        return BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
-    }
-
-
-    /**
+    /***********************************************************************************************
     * Pre: Tarea y métodos que se va a ejecutar
     * Post: Realiza la fotografía en el momento y después la envía al servidor para procesarla y
     * obtener la respuesta según la tarea y el method que se esté usando
@@ -223,7 +201,80 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
         }
     }
 
+    /***********************************************************************************************
+     * Programa el reconocimiento para que se ejecute cada 15 segundos
+     */
+    private boolean reconocimientoActivo = false;
+    private long intervaloReconocimiento = 15000; // cada 15 segundos
+    private Handler recognitionHandler = new Handler(Looper.getMainLooper());
+    private Runnable recognitionTimeoutRunnable;
+    private boolean recognitionInProgress = false;
+
+
+    private final Runnable reconocimientoRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (reconocimientoActivo) {
+                startAllRecognitions();
+            }
+            recognitionHandler.postDelayed(this, intervaloReconocimiento);
+        }
+    };
+
     /**
+     * Realiza la fotografía en el momento y después la envía al servidor para procesarla
+     * Envía la fotografía al servidor y hace una petición por cada tipo de reconocimiento posible,
+     * para así ofrecer una respuesta completa al usuario
+     */
+    public void startAllRecognitions() {
+        System.out.println("START RECOGNITION");
+
+        Bitmap screenshot = takeScreenshotFromTextureView(tvMedia);
+
+        String base64Image = encodeImageToBase64Bitmap(screenshot);
+
+        if (base64Image != null) {
+            recognitionInProgress = true;
+
+            // Lanzamos todas las peticiones
+            new Thread(() -> {
+                sendImageToServerModels(base64Image, "expression", "VGG19");
+                sendImageToServerModels(base64Image, "age_gender", "MiVOLO");
+                sendImageToServerModels(base64Image, "person_detection", "YOLOv8");
+                sendImageToServerModels(base64Image, "face_recognition", "InsightFace");
+                sendImageToServerModels(base64Image, "face_detection", "YOLOv8"); // Se usa para disparar en cuanto llega
+            }).start();
+
+            // Empezamos un timeout por si tarda mucho
+            recognitionTimeoutRunnable = () -> {
+                if (recognitionInProgress) {
+                    construirYHablarRespuesta();
+                }
+            };
+            recognitionHandler.postDelayed(recognitionTimeoutRunnable, 3000); // 3 segundos
+        }
+    }
+
+    /**
+     * Inicio del reconocimiento periódico
+     */
+    public void iniciarReconocimientosPeriodicos() {
+        reconocimientoActivo = true;
+        recognitionHandler.post(reconocimientoRunnable);
+    }
+
+    /**
+     * Detención del reconocimiento periódico
+     */
+    public void detenerReconocimientosPeriodicos() {
+        reconocimientoActivo = false;
+        recognitionHandler.removeCallbacks(reconocimientoRunnable);
+    }
+
+
+
+    /***********************************************************************************************
+     * FUNCIONES CONCRETAS SOBRE RECONOCIMIENTO
      * Realiza fotografía, hace peticion al servidor y reconoce la expresion
      */
     public void recognitionExpresion(){
@@ -235,7 +286,6 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
         System.out.println("screenshot: " + screenshot);
         // TODO: PASAR FRAMES DEL VIDEO A LA API
         String base64Image = encodeImageToBase64Bitmap(screenshot);
-
 
         if (base64Image != null) {
             // Enviar la imagen al servidor
@@ -352,38 +402,8 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
         }
     }
 
-    public void reconocerExpresionStream(){
-        String base64Image = encodeImageToBase64Bitmap(frame);
-        if (base64Image != null) {
-            // Enviar la imagen al servidor
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    sendImageToServerModels(base64Image, "expression", "VGG19");
-                }
-            }).start();
-
-        }
-
-    }
-
-    /**
-     * Pre:
-     * Post: Realiza una fotografía y la devuelve en formato base64
-     */
-    public String takePhoto(){
-
-        System.out.println("TAKE PHOTO");
-
-        Bitmap screenshot = takeScreenshotFromTextureView(tvMedia);
-
-        System.out.println("screenshot: " + screenshot);
-
-        return encodeImageToBase64Bitmap(screenshot);
-
-    }
-
-    /**
+    /***********************************************************************************************
+     * FUNCIONES PROGRAMAR RECONOCIMIENTOS
      * Pre: Tarea y métodos que se va a ejecutar
      * Post: Cada x tiempo realiza la fotografía en el momento y después la envía al servidor
      * para procesarla.
@@ -520,8 +540,22 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
     }
 
 
+    /***********************************************************************************************
+     * FUNCIONES SOBRE TOMAR FOTOGRAFÍA Y ENVIAR A SERVIDOR
+     * Pre:
+     * Post: Realiza una fotografía y la devuelve en formato base64
+     */
+    public String takePhoto(){
 
+        System.out.println("TAKE PHOTO");
 
+        Bitmap screenshot = takeScreenshotFromTextureView(tvMedia);
+
+        System.out.println("screenshot: " + screenshot);
+
+        return encodeImageToBase64Bitmap(screenshot);
+
+    }
     public Bitmap takeScreenshotFromTextureView(TextureView textureView) {
         // Verificar si el TextureView está disponible
         if (textureView.isAvailable()) {
@@ -530,7 +564,6 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
         }
         return null;
     }
-
     public String encodeImageToBase64Bitmap(Bitmap resizedBitmap) {
         try {
 
@@ -578,12 +611,10 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
      * Pre: Imagen en formato base64, tarea y metodo que se va a ejecutar
      * Post: Envia la imagen al servidor para procesarla
      */
-
     public void sendImageToServerModels(String base64Image, String task, String method) {
         try {
 
             // URL de destino
-            //URL url = new URL("http://robot_vision-master.railway.internal:8080/sendImage?task="+task+"&method="+method+"&mode=text");
             URL url = new URL("http://155.210.155.206:8080/sendImage?task="+task+"&method="+method+"&mode=text");
 
             // Abrir la conexión HTTP
@@ -601,8 +632,6 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
             System.out.println("dataoutputstring: " + os);
             System.out.println("url: " + url);
 
-
-
             // Leer la respuesta
             int code = urlConnection.getResponseCode();
             if (code == HttpURLConnection.HTTP_OK) {
@@ -617,7 +646,8 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
 
                 System.out.println("Respuesta del servidor: " + response);
 
-                procesarRespuesta(response.toString(), task);
+                //procesarRespuesta(response.toString(), task);
+                procesarRespuestaAll(response.toString(), task);
 
             } else if( code == HttpURLConnection.HTTP_NOT_FOUND){
                 System.out.println("Error: " + urlConnection.getResponseMessage());
@@ -639,11 +669,11 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
     public void procesarRespuesta(String respuesta, String task) {
         // TODO: CAMBIAR EMOCIONES
         if (Objects.equals(task, "expression")) {
-            if (respuesta.equals("happy") || respuesta.equals("happiness")) {
+            if (respuesta.equals("happiness")) {
                 speechControl.hablar("Hola, pareces feliz");
-            } else if (respuesta.equals("sad") || respuesta.equals("sadness")) {
+            } else if (respuesta.equals("sadness")) {
                 speechControl.hablar("Hoy parecer un poco triste ¿necesitas ayuda en algo?");
-            } else if (respuesta.equals("angry") || respuesta.equals("anger")) {
+            } else if (respuesta.equals("anger")) {
                 speechControl.hablar("Eh! No te enfades conmigo, yo no tengo la culpa");
             } else if (respuesta.equals("fear") ) {
                 speechControl.hablar("¿Tienes miedo de mi?");
@@ -651,8 +681,6 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
                 speechControl.hablar("Parece discustado ¿ocurre algo?");
             } else if (respuesta.equals("surprise")) {
                 speechControl.hablar("¿Te sorprendi con mis habilidades?");
-            } else if (respuesta.equals("neutral")) {
-                speechControl.hablar("Hola, ¿Cómo estas?");
             }
         } else if (Objects.equals(task, "age_gender")) {
             // La respuesta contiene la edad y el género (por ejemplo, (22, 'female')
@@ -691,6 +719,93 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
         }
     }
 
+    public void procesarRespuestaAll(String respuesta, String task) {
+        if (Objects.equals(task, "expression")) {
+            resultadoReconocimiento.emocion = respuesta;
+
+        } else if (Objects.equals(task, "age_gender")) {
+            String[] partes = respuesta.split(",");
+            resultadoReconocimiento.edad = partes[0].trim();
+            resultadoReconocimiento.genero = partes[1].trim();
+
+        } else if (Objects.equals(task, "person_detection")) {
+            resultadoReconocimiento.personaDetectada = true;
+
+        } else if (Objects.equals(task, "face_recognition")) {
+            respuesta = respuesta.replace("\\", "/");
+            String[] partes = respuesta.split("/");
+            String parte2 = partes[2].trim();
+            String[] partes2 = parte2.split("\\.");
+            resultadoReconocimiento.nombreReconocido = partes2[0].trim();
+
+        } else if (Objects.equals(task, "face_detection")) {
+            // face_detection marca el fin esperado, hablar ya
+            if (recognitionInProgress) {
+                recognitionHandler.removeCallbacks(recognitionTimeoutRunnable);
+                construirYHablarRespuesta();
+            }
+        }
+    }
+
+
+    private void construirYHablarRespuesta() {
+        recognitionInProgress = false;
+
+        StringBuilder respuesta = new StringBuilder();
+
+        if (resultadoReconocimiento.personaDetectada) {
+            respuesta.append("He detectado una persona. ");
+        }
+
+        if (resultadoReconocimiento.nombreReconocido != null) {
+            respuesta.append("Parece que eres ").append(resultadoReconocimiento.nombreReconocido).append(". ");
+        }
+
+        if (resultadoReconocimiento.edad != null && resultadoReconocimiento.genero != null) {
+            String genero = resultadoReconocimiento.genero.equals("'female')") ? "mujer" : "hombre";
+            respuesta.append("Tu edad parece ser ").append(resultadoReconocimiento.edad)
+                    .append(" años y tu género es ").append(genero).append(". ");
+        }
+
+        if (resultadoReconocimiento.emocion != null) {
+            switch (resultadoReconocimiento.emocion) {
+                case "happiness":
+                    respuesta.append("Te ves feliz. ");
+                    break;
+                case "sadness":
+                    respuesta.append("Pareces algo triste. ¿Necesitas ayuda? ");
+                    break;
+                case "anger":
+                    respuesta.append("Te noto un poco enfadado. ");
+                    break;
+                case "fear":
+                    respuesta.append("¿Estás asustado? ");
+                    break;
+                case "disgust":
+                    respuesta.append("Detecto cierto disgusto. ");
+                    break;
+                case "surprise":
+                    respuesta.append("Te ves sorprendido. ");
+                    break;
+            }
+        }
+
+        if (respuesta.length() > 0) {
+            speechControl.hablar(respuesta.toString());
+        }
+
+        // Reiniciar para la próxima detección
+        resultadoReconocimiento = new ResultadoReconocimiento();
+    }
+
+
+
+
+
+
+
+
+
 
     /**
      * 显示视频流
@@ -719,11 +834,6 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
             Log.e(TAG, "发生错误", e);
         }
     }
-
-
-
-    // TextureView.SurfaceTextureListener methods
-    // TextureView.SurfaceTextureListener methods
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
         this.surfaceTexture = surfaceTexture;
@@ -760,9 +870,6 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
     public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
         // Called when the content of the TextureView is updated
     }
-
-
-
     /**
      * 初始化视频编解码器
      *
@@ -784,7 +891,6 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
         }
 
     }
-
     /**
      * 结束视频编解码器
      */
