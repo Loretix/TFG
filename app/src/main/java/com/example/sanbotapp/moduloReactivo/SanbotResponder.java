@@ -61,6 +61,11 @@ public class SanbotResponder {
                             speechControl.hablar(frases[(int)(Math.random() * frases.length)]);
                         }
 
+                        // Tras hablar recuperar posicion de la cabeza
+                        handler.postDelayed(() -> {
+                            headControl.girarCabeza(90);
+                        }, 5000);
+
                     } else {
                         if (!speechControl.isRobotHablando()) {
                             String[] frasesDetras = {

@@ -230,8 +230,21 @@ public class ImageActivity extends TopBaseActivity {
         btnFinalizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                movementControl.desactivarMovimientoAleatorioWheels();
-                recognitionControl.detenerReconocimientosPeriodicos();
+                if(movnatural){
+                    movementControl.desactivarMovimientoAleatorioWheels();
+                }
+                if(ruido){
+                   /* recognitionControl.startDeteccionRuido();*/
+                }
+                if(localizacion || personas){
+                    //Localización de sonido con SanbotResponder
+                    sanbotResponder.desactivarDeteccion();
+                }
+                if(facial){
+                    // Muchas funciones, reconocimeinto edad, genero, expresion facial, etc.
+                    recognitionControl.detenerReconocimientosPeriodicos();
+
+                }
                 finish();
             }
         });
@@ -461,7 +474,21 @@ public class ImageActivity extends TopBaseActivity {
 
             } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
                 //DESACTIVAR MOVIMIENTOS NATURALES
-                movementControl.desactivarMovimientoAleatorioWheels();
+                if(movnatural){
+                    movementControl.desactivarMovimientoAleatorioWheels();
+                }
+                if(ruido){
+                    /* recognitionControl.startDeteccionRuido();*/
+                }
+                if(localizacion || personas){
+                    //Localización de sonido con SanbotResponder
+                    sanbotResponder.desactivarDeteccion();
+                }
+                if(facial){
+                    // Muchas funciones, reconocimeinto edad, genero, expresion facial, etc.
+                    recognitionControl.detenerReconocimientosPeriodicos();
+
+                }
                 reproduciendose = false;
                 String[] partes = data.getText().split("-");
                 String pregunta = partes[0];
@@ -766,7 +793,21 @@ public class ImageActivity extends TopBaseActivity {
                 });
 
             } else if (data.getSpinnerOption().equals("Pregunta verdadero o falso")) {
-                movementControl.desactivarMovimientoAleatorioWheels();
+                if(movnatural){
+                    movementControl.desactivarMovimientoAleatorioWheels();
+                }
+                if(ruido){
+                    /* recognitionControl.startDeteccionRuido();*/
+                }
+                if(localizacion || personas){
+                    //Localización de sonido con SanbotResponder
+                    sanbotResponder.desactivarDeteccion();
+                }
+                if(facial){
+                    // Muchas funciones, reconocimeinto edad, genero, expresion facial, etc.
+                    recognitionControl.detenerReconocimientosPeriodicos();
+
+                }
                 // Esper el semáforo para mostrar la pregunta
                 reproduciendose = false;
                 String[] partes = data.getText().split("-");
@@ -821,7 +862,31 @@ public class ImageActivity extends TopBaseActivity {
             new Handler().postDelayed(() -> {
                 reproduciendose = true;
                 // ACTIVAR DE NUEVO EL MOVIMIENTO ALEATORIO
-                movementControl.activarMovimientoAleatorioWheels();
+                if(movnatural){
+                    movementControl.activarMovimientoAleatorioWheels();
+                }
+
+                if(ruido){
+                    recognitionControl.startDeteccionRuido();
+                }
+
+                if(localizacion){
+                    //Localización de sonido con SanbotResponder
+                    sanbotResponder.detectarFuenteDeSonido();
+                }
+
+                if(personas){
+                    //Reconocimiento de personas con SanbotResponder
+                    sanbotResponder.detectarMovimientoPIR();
+
+                    // Reconocimiento de personas con RecognitionControl
+                }
+
+                if(facial){
+                    // Muchas funciones, reconocimeinto edad, genero, expresion facial, etc.
+                    recognitionControl.iniciarReconocimientosPeriodicos();
+
+                }
                 continueActions();
             }, 1000);
         }
