@@ -199,7 +199,7 @@ public class ImageActivity extends TopBaseActivity {
                         }
 
                         if(ruido){
-                            recognitionControl.startCamera();
+                            recognitionControl.startDeteccionRuido();
                         }
 
                         if(localizacion){

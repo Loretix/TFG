@@ -32,6 +32,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.Objects;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 
 public class RecognitionControl implements TextureView.SurfaceTextureListener{
 
@@ -80,7 +83,7 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
             }
         });
     }
-    public void startCamera() {
+    public void startDeteccionRuido() {
         mediaManager.setMediaListener(new MediaStreamListener() {
             @Override
             public void getVideoStream(byte[] bytes) {
@@ -145,7 +148,7 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        startCamera();
+        startDeteccionRuido();
     }
     private float[] convertBytesToFloat(byte[] audioData) {
         short[] audioSamples = new short[audioData.length / 2];
@@ -205,7 +208,7 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
      * Programa el reconocimiento para que se ejecute cada 15 segundos
      */
     private boolean reconocimientoActivo = false;
-    private long intervaloReconocimiento = 15000; // cada 15 segundos
+    private long intervaloReconocimiento = 60000; // cada 60 segundos
     private Handler recognitionHandler = new Handler(Looper.getMainLooper());
     private Runnable recognitionTimeoutRunnable;
     private boolean recognitionInProgress = false;
@@ -720,35 +723,78 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
     }
 
     public void procesarRespuestaAll(String respuesta, String task) {
-        if (Objects.equals(task, "expression")) {
-            resultadoReconocimiento.emocion = respuesta;
+        try {
+            String jsonCompatible = respuesta
+                    .replace("array(", "")
+                    .replace("dtype=float32", "")
+                    .replace("'", "\"")
+                    .replace(")", "")
+                    .replace("nan", "0") // por si hay valores no numéricos
+                    .replace(", ,", ",")              // elimina dobles comas
+                    .replace(",]", "]")              // elimina coma antes de cierre
+                    .replace("[,", "[")              // elimina coma después de apertura
+                    .replace("'", "\"")
+                    .replaceAll("\\s+", " ");
 
-        } else if (Objects.equals(task, "age_gender")) {
-            String[] partes = respuesta.split(",");
-            resultadoReconocimiento.edad = partes[0].trim();
-            resultadoReconocimiento.genero = partes[1].trim();
+            JSONArray jsonArray = new JSONArray(jsonCompatible);
 
-        } else if (Objects.equals(task, "person_detection")) {
-            resultadoReconocimiento.personaDetectada = true;
+            if (task.equals("expression")) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    System.out.println("EXPRESSION obj: " + obj);
+                    if (obj.has("expression")) {
+                        System.out.println("EXPRESSION HA ENTRADO y la emocion es: " + obj.getString("expression"));
+                        String emotion = obj.getString("expression");
+                        resultadoReconocimiento.emocion = emotion;
+                    }
+                }
 
-        } else if (Objects.equals(task, "face_recognition")) {
-            respuesta = respuesta.replace("\\", "/");
-            String[] partes = respuesta.split("/");
-            String parte2 = partes[2].trim();
-            String[] partes2 = parte2.split("\\.");
-            resultadoReconocimiento.nombreReconocido = partes2[0].trim();
+            } else if (task.equals("age_gender")) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    if (obj.has("age") && obj.has("gender")) {
+                        resultadoReconocimiento.edad = String.valueOf(obj.getInt("age"));
+                        resultadoReconocimiento.genero = obj.getString("gender");
+                        break; // Solo tomamos el primero
+                    }
+                }
 
-        } else if (Objects.equals(task, "face_detection")) {
-            // face_detection marca el fin esperado, hablar ya
-            if (recognitionInProgress) {
-                recognitionHandler.removeCallbacks(recognitionTimeoutRunnable);
-                construirYHablarRespuesta();
+            } else if (task.equals("face_recognition")) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    if (obj.has("face_recognition")) {
+                        String ruta = obj.getString("face_recognition").replace("\\", "/");
+                        String[] partes = ruta.split("/");
+                        if (partes.length > 2) {
+                            String nombre = partes[2].split("\\.")[0];
+                            resultadoReconocimiento.nombreReconocido = nombre;
+                        }
+                    }
+                }
+
+            } else if (task.equals("face_detection")) {
+                if (recognitionInProgress) {
+                    recognitionHandler.removeCallbacks(recognitionTimeoutRunnable);
+                    construirYHablarRespuesta();
+                }
+
+            } else if (task.equals("person_detection")) {
+                if (jsonArray.length() > 0) {
+                    resultadoReconocimiento.personaDetectada = true;
+                }
             }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
 
+
     private void construirYHablarRespuesta() {
+        //Ver el objeto reconocido
+        System.out.println("RECONOCIMIENTO: " + resultadoReconocimiento.emocion + " " + resultadoReconocimiento.edad + " " + resultadoReconocimiento.genero);
+
         recognitionInProgress = false;
 
         StringBuilder respuesta = new StringBuilder();
@@ -762,7 +808,7 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
         }
 
         if (resultadoReconocimiento.edad != null && resultadoReconocimiento.genero != null) {
-            String genero = resultadoReconocimiento.genero.equals("'female')") ? "mujer" : "hombre";
+            String genero = resultadoReconocimiento.genero.equals("female") ? "mujer" : "hombre";
             respuesta.append("Tu edad parece ser ").append(resultadoReconocimiento.edad)
                     .append(" años y tu género es ").append(genero).append(". ");
         }
