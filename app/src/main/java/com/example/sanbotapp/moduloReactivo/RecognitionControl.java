@@ -207,8 +207,10 @@ public class RecognitionControl implements TextureView.SurfaceTextureListener{
     /***********************************************************************************************
      * Programa el reconocimiento para que se ejecute cada 15 segundos
      */
+    // Activación del reconocimiento
     private boolean reconocimientoActivo = false;
-    private long intervaloReconocimiento = 60000; // cada 60 segundos
+    // Programación del reconocimiento cada 60 segundos
+    private long intervaloReconocimiento = 60000;
     private Handler recognitionHandler = new Handler(Looper.getMainLooper());
     private Runnable recognitionTimeoutRunnable;
     private boolean recognitionInProgress = false;
